@@ -64,23 +64,23 @@ export function FaqSection({
   };
 
   return (
-    <section className="my-12 sm:my-16">
+    <section className="py-10 sm:py-14" aria-label="Frequently Asked Questions">
       {/* FAQPage JSON-LD Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-200/60 mb-2">
-            <HelpCircle className="h-3.5 w-3.5 text-indigo-600" />
-            Frequently Asked Questions
+      <div className="max-w-4xl">
+        <div className="mb-8 pb-4 border-b border-slate-900">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            <HelpCircle className="h-3.5 w-3.5 text-slate-900" />
+            <span>Knowledge Desk // Frequently Asked Questions</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)]">
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
             {title}
           </h2>
-          <p className="text-xs sm:text-sm text-[var(--foreground-muted)] mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 mt-1">
             {subtitle}
           </p>
         </div>
@@ -91,22 +91,23 @@ export function FaqSection({
             return (
               <div
                 key={idx}
-                className="rounded-2xl border border-[var(--border)] bg-white overflow-hidden shadow-2xs transition-all"
+                className="rounded-xl border border-slate-200 bg-white overflow-hidden transition-all shadow-2xs"
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
-                  className="w-full flex items-center justify-between p-4 sm:p-5 text-left font-bold text-sm sm:text-base text-[var(--foreground)] hover:text-[var(--accent)] transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between p-4 sm:p-5 text-left font-bold text-sm sm:text-base text-slate-900 hover:text-indigo-600 transition-colors cursor-pointer"
                   aria-expanded={isOpen}
                 >
                   <span>{faq.question}</span>
                   <ChevronDown
-                    className={`h-4 w-4 text-[var(--foreground-muted)] flex-shrink-0 transition-transform duration-200 ${
-                      isOpen ? "rotate-180 text-indigo-600" : ""
+                    className={`h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200 ${
+                      isOpen ? "rotate-180 text-slate-900" : ""
                     }`}
                   />
                 </button>
+
                 {isOpen && (
-                  <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs sm:text-sm text-[var(--foreground-secondary)] leading-relaxed border-t border-gray-100 pt-3">
+                  <div className="px-4 pb-5 sm:px-5 sm:pb-6 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                     {faq.answer}
                   </div>
                 )}

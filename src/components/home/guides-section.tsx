@@ -1,85 +1,88 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Scale, ArrowRight, Clock, CheckCircle } from "lucide-react";
+import { ArrowRight, Clock, Scale } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function GuidesSection({ posts }: { posts: any[] }) {
   if (!posts || posts.length === 0) return null;
 
   return (
-    <section className="my-12 sm:my-16">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
+    <section className="py-10 sm:py-14 border-b border-slate-200" aria-label="Guides Desk">
+      {/* Desk Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 pb-4 border-b border-slate-900">
         <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700 border border-violet-200/60 mb-2">
-            <Scale className="h-3.5 w-3.5 text-violet-600" />
-            Head-to-Head Benchmarks
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            <Scale className="h-3.5 w-3.5 text-slate-900" />
+            <span>Desk 04 // Benchmarks &amp; Shootouts</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)]">
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
             Guides &amp; Model Shootouts
           </h2>
-          <p className="text-xs sm:text-sm text-[var(--foreground-muted)] mt-1">
-            Unbiased comparisons, token cost analysis, and actionable implementation tutorials
+          <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+            Unbiased comparisons, token cost analysis, and actionable implementation tutorials.
           </p>
         </div>
         <Link
           href="/category/guides-and-comparisons"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline self-start sm:self-end"
+          className="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-slate-900 hover:text-indigo-600 transition-colors self-start sm:self-end shrink-0"
         >
-          View all comparisons <ArrowRight className="h-3.5 w-3.5" />
+          <span>All Comparisons</span>
+          <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Grid of 2 In-Depth Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
         {posts.map((post) => {
           return (
             <article
               key={post._id}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[var(--border)] bg-white p-6 shadow-2xs hover:shadow-md hover:border-violet-300 transition-all"
+              className="group relative flex flex-col justify-between rounded-xl bg-white transition-all"
             >
               <div>
                 {/* Cover Image */}
                 {post.coverImage && (
-                  <div className="relative aspect-16/9 w-full overflow-hidden rounded-xl bg-[var(--background-secondary)] mb-4">
+                  <div className="relative aspect-16/9 w-full overflow-hidden rounded-xl bg-slate-100 border border-slate-200 mb-4 shadow-2xs">
                     <Image
                       src={post.coverImage}
-                      alt={post.title}
+                      alt={post.coverImageAlt || post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover transition-transform duration-500 group-hover:scale-102"
                     />
-                    <div className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-full bg-violet-700 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-xs">
-                      <Scale className="h-3 w-3" /> Shootout &amp; Guide
+                    <div className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-md bg-slate-900/90 backdrop-blur-xs px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-white">
+                      Shootout &amp; Guide
                     </div>
                   </div>
                 )}
 
                 <div className="flex items-center gap-2 mb-2 text-xs">
-                  <span className="font-bold text-violet-700 uppercase tracking-wider text-[11px]">
+                  <span className="font-mono text-[11px] font-semibold text-slate-700">
                     Detailed Comparison
                   </span>
                 </div>
 
-                <h3 className="font-bold text-lg sm:text-xl text-[var(--foreground)] tracking-tight group-hover:text-violet-700 transition-colors leading-snug line-clamp-2">
+                <h3 className="font-bold text-lg sm:text-xl text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
                   <Link href={`/blog/${post.slug}`}>
                     <span className="absolute inset-0 z-0" />
                     {post.title}
                   </Link>
                 </h3>
 
-                <p className="mt-2.5 text-sm text-[var(--foreground-secondary)] line-clamp-2 leading-relaxed">
+                <p className="mt-2.5 text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
                   {post.excerpt}
                 </p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--foreground-muted)]">
+              <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                 {post.readingTime && (
-                  <span className="flex items-center gap-1 font-medium">
-                    <Clock className="h-3.5 w-3.5 text-violet-600" />
+                  <span className="flex items-center gap-1 text-[11px]">
+                    <Clock className="h-3 w-3" />
                     {post.readingTime} min deep-dive
                   </span>
                 )}
-                <span className="font-semibold text-violet-700 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  View Full Verdict <ArrowRight className="h-3.5 w-3.5" />
+                <span className="font-semibold text-slate-900 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all inline-flex items-center gap-1">
+                  View Full Verdict <ArrowRight className="h-3 w-3" />
                 </span>
               </div>
             </article>

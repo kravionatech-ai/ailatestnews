@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Rss, Cpu } from "lucide-react";
+import { Rss } from "lucide-react";
 import { TwitterIcon, GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 
 export interface FooterLink {
@@ -59,28 +59,33 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
 
   const activeSections = sections && sections.length > 0 ? sections : defaultSections;
   return (
-    <footer className="border-t border-[var(--border)] bg-[var(--background-secondary)] text-sm text-[var(--foreground-muted)]">
+    <footer className="border-t border-slate-200 bg-slate-50 text-sm text-slate-600">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4 lg:grid-cols-5">
           {/* Brand info */}
           <div className="md:col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5 font-bold text-lg text-[var(--foreground)]">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-500 text-white">
-                <Cpu className="h-4 w-4" />
+            <Link href="/" className="group inline-flex flex-col">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xl font-black tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
+                  AI LATEST NEWS
+                </span>
+                <span className="h-2 w-2 rounded-full bg-rose-600 shrink-0" />
               </div>
-              <span>
-                AI Latest <span className="text-[var(--accent)]">News</span>
+              <span className="text-[10px] font-mono font-medium uppercase tracking-widest text-slate-500 -mt-0.5">
+                The AI Journal for India
               </span>
             </Link>
-            <p className="text-xs leading-relaxed max-w-sm text-[var(--foreground-secondary)]">
+
+            <p className="text-xs leading-relaxed max-w-sm text-slate-600">
               {aboutText || defaultAbout}
             </p>
-            <div className="flex items-center gap-3 pt-2">
+
+            <div className="flex items-center gap-2 pt-2">
               <a
                 href="https://twitter.com/ailatestnews_in"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-white text-[var(--foreground-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
                 aria-label="Twitter"
               >
                 <TwitterIcon className="h-4 w-4" />
@@ -89,7 +94,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
                 href="https://github.com"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-white text-[var(--foreground-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
                 aria-label="GitHub"
               >
                 <GithubIcon className="h-4 w-4" />
@@ -98,14 +103,14 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
                 href="https://linkedin.com/company/ailatestnews"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-white text-[var(--foreground-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
                 aria-label="LinkedIn"
               >
                 <LinkedinIcon className="h-4 w-4" />
               </a>
               <Link
                 href="/feed.xml"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-white text-[var(--foreground-muted)] hover:text-amber-600 hover:border-amber-500 transition-all"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-rose-600 hover:border-rose-500 transition-all shadow-2xs"
                 aria-label="RSS Feed"
               >
                 <Rss className="h-4 w-4" />
@@ -116,7 +121,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
           {/* Dynamic Link Columns */}
           {activeSections.map((sec, sIdx) => (
             <div key={sIdx}>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)] mb-3">
+              <h3 className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-900 mb-3">
                 {sec.title}
               </h3>
               <ul className="space-y-2 text-xs">
@@ -126,7 +131,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
                       href={link.href}
                       target={link.isExternal ? "_blank" : undefined}
                       rel={link.isExternal ? "noreferrer" : undefined}
-                      className="hover:text-[var(--accent)] transition-colors"
+                      className="text-slate-600 hover:text-slate-900 transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -137,10 +142,10 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
           ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between text-xs gap-4">
-          <p>© {new Date().getFullYear()} {copyrightText || "AI Latest News (ainews.kraviona.com). All rights reserved."}</p>
-          <p className="text-[var(--foreground-muted)]">
-            Covering Artificial Intelligence with speed, rigor &amp; India focus.
+        <div className="mt-12 pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs gap-4 text-slate-500">
+          <p>© {new Date().getFullYear()} {copyrightText || "AI Latest News. All rights reserved."}</p>
+          <p className="font-mono text-[11px]">
+            Independent AI Journalism · Primary Source Grounded · Published for India
           </p>
         </div>
       </div>

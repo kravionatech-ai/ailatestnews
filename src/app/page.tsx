@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import { PublicShell } from "@/components/layout/public-shell";
 import { Hero } from "@/components/home/hero";
 import { BreakingNewsStrip } from "@/components/home/breaking-news-strip";
-import { FeaturedSection } from "@/components/home/featured-section";
 import { ModelLaunchesSection } from "@/components/home/model-launches-section";
 import { AiToolsSection } from "@/components/home/ai-tools-section";
 import { IndiaAiSection } from "@/components/home/india-ai-section";
@@ -156,58 +155,56 @@ export default async function HomePage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      {/* b) Hero Section with H1, 2-line description, 2 CTAs, and 3D orb */}
-      <Hero {...heroProps} />
-
-      {/* c) Breaking/Latest AI news strip */}
+      {/* a) Breaking / Developing Wire Strip */}
       <BreakingNewsStrip headlines={headlines} />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* d) Featured story (large cover image) + 3 secondary stories with images */}
-        <FeaturedSection
-          featuredPost={featuredPost}
-          secondaryPosts={secondaryPosts}
-        />
+      {/* b) Front Page Lead Story & The Developing Wire */}
+      <Hero
+        featuredPost={featuredPost}
+        secondaryPosts={secondaryPosts}
+        {...heroProps}
+      />
 
-        {/* e) Model Launches: horizontal cards (model, company, date, one-line summary) */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* c) Foundation Models & Open Weights Desk */}
         {modelLaunchesPosts.length > 0 && (
           <ModelLaunchesSection posts={modelLaunchesPosts} />
         )}
 
-        {/* f) AI Tools: grid of tool cards (name, category, free/paid, link to review) */}
-        {aiToolsPosts.length > 0 && (
-          <AiToolsSection posts={aiToolsPosts} />
-        )}
-
-        {/* g) India AI: 3-4 stories about Indian AI */}
+        {/* d) Sovereign Compute & India AI Desk */}
         {indiaAiPosts.length > 0 && (
           <IndiaAiSection posts={indiaAiPosts} />
         )}
 
-        {/* h) Guides and Comparisons: "X vs Y" and "Best of" cards */}
+        {/* e) Developer Gear & AI Tools Desk */}
+        {aiToolsPosts.length > 0 && (
+          <AiToolsSection posts={aiToolsPosts} />
+        )}
+
+        {/* f) Benchmarks, Shootouts & Technical Guides */}
         {guidesPosts.length > 0 && (
           <GuidesSection posts={guidesPosts} />
         )}
 
-        {/* i) Enterprise AI section */}
+        {/* g) Enterprise AI Architecture Desk */}
         {enterpriseAiPosts.length > 0 && (
           <EnterpriseAiSection posts={enterpriseAiPosts} />
         )}
 
-        {/* j) Trending sidebar (real views) and Latest posts list with pagination link */}
+        {/* h) The Most Read Wire & Latest Chronological Stream */}
         <TrendingLatestSection
           latestPosts={latestPosts.length > 0 ? latestPosts : allPosts.slice(0, 3)}
           trendingPosts={trendingPosts}
         />
 
-        {/* k) Short intro text (150-250 words) about the site with internal links to category hubs */}
+        {/* i) The Daily Intelligence Dispatch (Newsletter) */}
+        <NewsletterBox />
+
+        {/* j) Newsroom Mission & Editorial Standards */}
         <SiteIntroSection {...introProps} />
 
-        {/* l) FAQ block (4-5 questions) with FAQPage schema */}
+        {/* k) Editorial FAQ with FAQPage Schema */}
         <FaqSection {...faqProps} />
-
-        {/* m) Newsletter signup (placeholder "your@email.com") */}
-        <NewsletterBox />
       </div>
     </PublicShell>
   );

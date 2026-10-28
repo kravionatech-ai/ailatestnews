@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Zap, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Radio } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface HeadlineItem {
@@ -17,12 +17,11 @@ export function BreakingNewsStrip({ headlines }: { headlines: HeadlineItem[] }) 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Auto-advance ticker every 5 seconds if not paused
   useEffect(() => {
     if (!headlines || headlines.length <= 1 || isPaused) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % headlines.length);
-    }, 4500);
+    }, 5000);
     return () => clearInterval(interval);
   }, [headlines, isPaused]);
 
@@ -42,57 +41,52 @@ export function BreakingNewsStrip({ headlines }: { headlines: HeadlineItem[] }) 
 
   return (
     <div
-      className="border-b border-indigo-100 bg-gradient-to-r from-indigo-50/70 via-white to-sky-50/50 py-2"
+      className="border-b border-slate-200 bg-white py-2.5 transition-colors"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      role="region"
+      aria-label="Breaking AI Dispatches"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-3 overflow-hidden">
-          {/* Left: Breaking Badge */}
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <div className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-2xs">
-              <Zap className="h-3 w-3 fill-current text-amber-300 animate-pulse" />
-              <span>Breaking AI</span>
-            </div>
-
-            <span className="hidden md:inline-block font-mono text-[11px] text-[var(--foreground-muted)] font-semibold">
-              {currentIndex + 1}/{headlines.length}
+        <div className="flex items-center justify-between gap-4">
+          {/* Breaking Kicker */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <span className="flex items-center gap-1.5 rounded-sm bg-rose-600 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+              <Radio className="h-3 w-3 animate-pulse" />
+              <span>Developing</span>
+            </span>
+            <span className="hidden sm:inline-block font-mono text-[11px] font-semibold text-slate-400">
+              {currentIndex + 1} of {headlines.length}
             </span>
           </div>
 
-          {/* Center: Active Headline (smooth fade, zero scrollbars) */}
-          <div className="flex-1 min-w-0 px-2 sm:px-4">
+          {/* Current Headline */}
+          <div className="min-w-0 flex-1 flex items-center gap-3">
             <Link
               href={`/blog/${current.slug}`}
-              className="group inline-flex items-center gap-2 max-w-full text-xs sm:text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors"
+              className="text-xs sm:text-sm font-bold text-slate-900 hover:text-indigo-600 truncate transition-colors"
             >
-              <span className="text-indigo-600 font-bold group-hover:underline truncate">
-                {current.title}
-              </span>
-
-              {dateValue && (
-                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-normal text-[var(--foreground-muted)] flex-shrink-0">
-                  <Clock className="h-3 w-3" />
-                  {formatRelativeTime(dateValue)}
-                </span>
-              )}
+              {current.title}
             </Link>
+            {dateValue && (
+              <span className="hidden md:inline shrink-0 font-mono text-[11px] text-slate-400">
+                · {formatRelativeTime(dateValue)}
+              </span>
+            )}
           </div>
 
-          {/* Right: Quick Controls */}
-          <div className="flex items-center gap-1 flex-shrink-0">
+          {/* Controls */}
+          <div className="flex items-center gap-1 shrink-0">
             <button
-              type="button"
               onClick={handlePrev}
-              className="h-6 w-6 flex items-center justify-center rounded-md border border-[var(--border)] bg-white text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:border-indigo-300 transition-all cursor-pointer shadow-3xs"
+              className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer"
               aria-label="Previous headline"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
             <button
-              type="button"
               onClick={handleNext}
-              className="h-6 w-6 flex items-center justify-center rounded-md border border-[var(--border)] bg-white text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:border-indigo-300 transition-all cursor-pointer shadow-3xs"
+              className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer"
               aria-label="Next headline"
             >
               <ChevronRight className="h-3.5 w-3.5" />

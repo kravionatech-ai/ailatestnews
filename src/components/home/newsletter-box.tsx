@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
+import { Mail, CheckCircle2, AlertCircle } from "lucide-react";
 import { subscribeNewsletterAction } from "@/actions/newsletter";
 
 export function NewsletterBox() {
@@ -22,7 +22,7 @@ export function NewsletterBox() {
     try {
       const res = await subscribeNewsletterAction(formData);
       if (res.success) {
-        setStatus({ type: "success", msg: res.message || "Thank you for subscribing!" });
+        setStatus({ type: "success", msg: res.message || "Thank you for subscribing to the Daily Dispatch." });
         setEmail("");
       } else {
         setStatus({ type: "error", msg: res.error || "Failed to subscribe" });
@@ -37,64 +37,66 @@ export function NewsletterBox() {
   return (
     <section
       id="newsletter"
-      className="scroll-mt-24 my-16 rounded-3xl border border-indigo-100 bg-gradient-to-b from-white via-indigo-50/20 to-[var(--background-secondary)] p-8 sm:p-12 text-center shadow-xs"
+      className="scroll-mt-24 my-12 sm:my-16 rounded-2xl border border-slate-900 bg-slate-950 p-8 sm:p-12 text-center text-white shadow-md relative overflow-hidden"
+      aria-label="Daily AI Intelligence Dispatch"
     >
-      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-700 mb-4 shadow-2xs">
-        <Mail className="h-6 w-6" />
-      </div>
-      <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-200/60 mb-3">
-        <Sparkles className="h-3.5 w-3.5" />
-        Weekly India AI Digest
-      </div>
-      <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--foreground)] tracking-tight">
-        Never Miss an AI Breakthrough in India
-      </h2>
-      <p className="mt-2 text-sm text-[var(--foreground-secondary)] max-w-lg mx-auto leading-relaxed">
-        Join 15,000+ Indian engineers, founders, and researchers receiving our weekly teardowns of new foundation models, GPU compute subsidies, and local tooling. Zero spam.
-      </p>
-
-      <form
-        onSubmit={handleSubmit}
-        className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-2 max-w-md mx-auto"
-      >
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="your@email.com"
-          className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--foreground-muted)] outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-indigo-100 transition-all shadow-2xs"
-          aria-label="Email address for AI newsletter"
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full sm:w-auto flex-shrink-0 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-2xs hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50 cursor-pointer"
-        >
-          {loading ? "Joining..." : "Subscribe"}
-        </button>
-      </form>
-
-      {status && (
-        <div
-          className={`mt-4 inline-flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-xl ${
-            status.type === "success"
-              ? "bg-green-50 text-green-700 border border-green-200"
-              : "bg-red-50 text-red-700 border border-red-200"
-          }`}
-        >
-          {status.type === "success" ? (
-            <CheckCircle2 className="h-4 w-4" />
-          ) : (
-            <AlertCircle className="h-4 w-4" />
-          )}
-          <span>{status.msg}</span>
+      <div className="relative z-10 max-w-2xl mx-auto">
+        <div className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-rose-400 mb-3">
+          <Mail className="h-3.5 w-3.5" />
+          <span>The Morning Wire // Curated Intelligence</span>
         </div>
-      )}
 
-      <p className="mt-3 text-[11px] text-[var(--foreground-muted)]">
-        By subscribing, you agree to our <a href="/privacy" className="underline hover:text-indigo-600">Privacy Policy</a>. Unsubscribe anytime in 1 click.
-      </p>
+        <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
+          The AI Latest News Daily Dispatch
+        </h2>
+
+        <p className="mt-3 text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+          Join 15,000+ Indian engineers, founders, and researchers receiving verified morning briefings on new model weights, IndiaAI GPU tenders, and local tooling.
+        </p>
+
+        <form
+          onSubmit={handleSubmit}
+          className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-2 max-w-md mx-auto"
+        >
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email address"
+            className="w-full rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all"
+            aria-label="Email address for AI newsletter"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full sm:w-auto shrink-0 rounded-xl bg-white px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider text-slate-950 hover:bg-slate-200 transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+          >
+            {loading ? "Joining..." : "Get Wire"}
+          </button>
+        </form>
+
+        {status && (
+          <div
+            className={`mt-4 inline-flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-xl ${
+              status.type === "success"
+                ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                : "bg-rose-950 text-rose-300 border border-rose-800"
+            }`}
+          >
+            {status.type === "success" ? (
+              <CheckCircle2 className="h-4 w-4" />
+            ) : (
+              <AlertCircle className="h-4 w-4" />
+            )}
+            <span>{status.msg}</span>
+          </div>
+        )}
+
+        <p className="mt-4 text-[11px] text-slate-400">
+          Published Monday through Friday at 07:00 IST. Zero promotional spam. Unsubscribe in 1 click.
+        </p>
+      </div>
     </section>
   );
 }

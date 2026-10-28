@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildEntityMetadata } from "@/lib/seo/fallback";
+import { buildEntityMetadata, getSiteUrl } from "@/lib/seo/fallback";
 
 describe("Data-driven SEO & Global Metadata Integration", () => {
+  const siteUrl = getSiteUrl();
+
   it("buildEntityMetadata applies custom entity title and canonicalUrl accurately", async () => {
     const meta = await buildEntityMetadata({
       entityType: "page",
@@ -29,7 +31,7 @@ describe("Data-driven SEO & Global Metadata Integration", () => {
     });
 
     expect(meta.title).toContain("AI Latest News");
-    expect(meta.alternates?.canonical).toBe("https://ailatestnews.in/");
+    expect(meta.alternates?.canonical).toBe(`${siteUrl}/`);
   });
 
   it("buildEntityMetadata handles author entity schema seamlessly", async () => {
@@ -45,6 +47,6 @@ describe("Data-driven SEO & Global Metadata Integration", () => {
     });
 
     expect(meta.title).toContain("Sarah Connor");
-    expect(meta.alternates?.canonical).toBe("https://ailatestnews.in/author/sarah-connor");
+    expect(meta.alternates?.canonical).toBe(`${siteUrl}/author/sarah-connor`);
   });
 });
