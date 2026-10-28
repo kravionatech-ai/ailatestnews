@@ -1002,7 +1002,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
           slug={slug}
           contentHtml={contentHtml}
           excerpt={excerpt}
-          baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ailatestnews.in"}
+          baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
         />
       )}
 

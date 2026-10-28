@@ -41,7 +41,7 @@ async function seed() {
     const adminUser = await User.create({
       name: "Site Administrator",
       slug: "site-administrator",
-      email: "admin@techblog.com",
+      email: "kravionatech@gmail.com",
       passwordHash,
       role: "admin",
       bio: "Chief Editor and Systems Architect at AI Latest News.",
@@ -59,7 +59,7 @@ async function seed() {
     const editorialTeam = await User.create({
       name: "AI Latest News Editorial Team",
       slug: "ai-latest-news-editorial-team",
-      email: "editorial@ailatestnews.in",
+      email: "kravionatech@gmail.com",
       passwordHash,
       role: "editor",
       bio: "Dedicated team of AI researchers, benchmark evaluators, and technology journalists in Bengaluru, Hyderabad, and Delhi.",
@@ -871,7 +871,7 @@ async function seed() {
     console.log(`  Subscribers:  ${await Subscriber.countDocuments()}`);
     console.log("===========================================");
     console.log("\n🔑 Admin Credentials:");
-    console.log("   Email:    admin@techblog.com");
+    console.log("   Email:    kravionatech@gmail.com");
     console.log("   Password: Admin123!");
     console.log("===========================================\n");
   } catch (err) {

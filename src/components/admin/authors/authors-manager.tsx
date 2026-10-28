@@ -509,7 +509,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                     title={name}
                     slug={`author/${slug}`}
                     excerpt={bio}
-                    baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ailatestnews.in"}
+                    baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
                   />
                 </div>
               )}

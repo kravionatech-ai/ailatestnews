@@ -88,7 +88,7 @@ export async function GET(request: Request) {
             }}
           >
             <span>AI News, Tools &amp; Guides, Explained for India</span>
-            <span style={{ color: "#4F46E5" }}>ailatestnews.in</span>
+            <span style={{ color: "#4F46E5" }}>ainews.kraviona.com</span>
           </div>
         </div>
       ),

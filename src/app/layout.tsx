@@ -14,7 +14,7 @@ const lora = Lora({
   variable: "--font-lora",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ailatestnews.in";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ainews.kraviona.com";
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? "AI Latest News";
 
 export const metadata: Metadata = {
@@ -85,6 +85,9 @@ export const metadata: Metadata = {
     types: {
       "application/rss+xml": `${siteUrl}/feed.xml`,
     },
+  },
+  verification: {
+    google: "yYmrp2HizDB-EGRruieHxpCxHFLCqmFsQblkGULJHtc",
   },
 };
 

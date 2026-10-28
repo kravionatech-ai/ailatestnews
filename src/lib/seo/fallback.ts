@@ -15,7 +15,7 @@ const DEFAULT_OG_IMAGE =
 export function getSiteUrl(): string {
   return (
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-    "https://ailatestnews.in"
+    "https://ainews.kraviona.com"
   );
 }
 

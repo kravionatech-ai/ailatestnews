@@ -44,7 +44,7 @@ export function SeoEditorPanel({
   contentHtml = "",
   coverImage = "",
   excerpt = "",
-  baseUrl = "https://ailatestnews.in",
+  baseUrl = "https://ainews.kraviona.com",
 }: SeoEditorPanelProps) {
   const [activeTab, setActiveTab] = useState<"general" | "social" | "advanced" | "schema" | "preview">("general");
   const [serpDevice, setSerpDevice] = useState<"desktop" | "mobile">("desktop");
@@ -606,7 +606,7 @@ export function SeoEditorPanel({
                   {/* Text Container */}
                   <div className="p-3.5 bg-slate-50 border-t border-slate-100">
                     <span className="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                      ailatestnews.in
+                      {baseUrl.replace(/^https?:\/\//, "")}
                     </span>
                     <h4 className="font-bold text-xs sm:text-sm text-slate-900 line-clamp-2 mt-0.5">
                       {seo.ogTitle || effectiveTitle}

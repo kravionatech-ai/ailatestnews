@@ -784,7 +784,7 @@ function CategoryEditorModal({
               title={name}
               slug={slug}
               excerpt={description}
-              baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ailatestnews.in"}
+              baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
             />
           )}
         </div>
@@ -952,7 +952,7 @@ function TagEditorModal({
                   title={name}
                   slug={slug}
                   excerpt={description}
-                  baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ailatestnews.in"}
+                  baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
                 />
               </div>
             )}

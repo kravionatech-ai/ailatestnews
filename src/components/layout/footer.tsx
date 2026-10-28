@@ -138,7 +138,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
         </div>
 
         <div className="mt-12 pt-8 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between text-xs gap-4">
-          <p>© {new Date().getFullYear()} {copyrightText || "AI Latest News (ailatestnews.in). All rights reserved."}</p>
+          <p>© {new Date().getFullYear()} {copyrightText || "AI Latest News (ainews.kraviona.com). All rights reserved."}</p>
           <p className="text-[var(--foreground-muted)]">
             Covering Artificial Intelligence with speed, rigor &amp; India focus.
           </p>

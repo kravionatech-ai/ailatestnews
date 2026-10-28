@@ -32,7 +32,7 @@ async function seedProd() {
       return;
     }
 
-    const email = process.env.ADMIN_EMAIL ?? "admin@techblog.com";
+    const email = process.env.ADMIN_EMAIL ?? "kravionatech@gmail.com";
     const password = process.env.ADMIN_PASSWORD;
 
     if (!password) {

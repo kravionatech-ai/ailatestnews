@@ -21,7 +21,7 @@ export async function saveGlobalSettingsAction(formData: FormData) {
     const siteUrl =
       (formData.get("siteUrl") as string)?.trim() ||
       process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://ailatestnews.in";
+      "https://ainews.kraviona.com";
     const separator = (formData.get("separator") as string)?.trim() || "|";
     const defaultOgImage =
       (formData.get("defaultOgImage") as string)?.trim() ||
@@ -63,7 +63,7 @@ export async function saveGlobalSettingsAction(formData: FormData) {
     const orgName = (formData.get("orgName") as string)?.trim() || siteName;
     const orgUrl = (formData.get("orgUrl") as string)?.trim() || siteUrl;
     const orgDescription = (formData.get("orgDescription") as string)?.trim() || tagline;
-    const orgEmail = (formData.get("orgEmail") as string)?.trim() || "editorial@ailatestnews.in";
+    const orgEmail = (formData.get("orgEmail") as string)?.trim() || "kravionatech@gmail.com";
     const socialRaw = (formData.get("socialProfiles") as string)?.trim() || "";
     const socialProfiles = socialRaw
       ? socialRaw.split("\n").map((s) => s.trim()).filter(Boolean)

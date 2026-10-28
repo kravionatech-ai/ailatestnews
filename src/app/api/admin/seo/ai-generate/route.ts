@@ -148,7 +148,7 @@ export async function POST(req: Request) {
           description: excerpt || "Analysis from AI Latest News",
           mainEntityOfPage: {
             "@type": "WebPage",
-            "@id": `https://ailatestnews.in/blog/${title.toLowerCase().replace(/\s+/g, "-")}`,
+            "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}/blog/${title.toLowerCase().replace(/\s+/g, "-")}`,
           },
         };
 

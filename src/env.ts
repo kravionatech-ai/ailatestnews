@@ -21,7 +21,7 @@ export const env = createEnv({
     CLOUDINARY_API_KEY: z.string().optional().default(""),
     CLOUDINARY_API_SECRET: z.string().optional().default(""),
     RESEND_API_KEY: z.string().optional().default(""),
-    RESEND_FROM_EMAIL: z.string().optional().default("newsletter@ailatestnews.in"),
+    RESEND_FROM_EMAIL: z.string().optional().default("kravionatech@gmail.com"),
     UPSTASH_REDIS_REST_URL: z.string().optional().default(""),
     UPSTASH_REDIS_REST_TOKEN: z.string().optional().default(""),
 

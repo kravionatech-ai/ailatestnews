@@ -13,7 +13,7 @@ export async function getGlobalSettings(): Promise<Partial<IGlobalSettings>> {
   return {
     siteName: "AI Latest News",
     tagline: "AI news, tools and guides, explained for India",
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://ailatestnews.in",
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com",
     separator: "|",
     navigation: [
       { label: "Home", href: "/", order: 1 },
@@ -26,7 +26,7 @@ export async function getGlobalSettings(): Promise<Partial<IGlobalSettings>> {
     footer: {
       aboutText:
         "India's authoritative AI publication tracking foundational model releases, LLM benchmarks, Indian AI breakthroughs (Sarvam, Krutrim, BharatGPT), and hands-on tooling comparisons in clear, in-depth English.",
-      copyrightText: "AI Latest News (ailatestnews.in). All rights reserved.",
+      copyrightText: "AI Latest News (ainews.kraviona.com). All rights reserved.",
       sections: [
         {
           title: "Categories",

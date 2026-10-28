@@ -23,7 +23,7 @@ export async function generateMetadata({
   searchParams,
 }: SearchPageProps): Promise<Metadata> {
   const { q } = await searchParams;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ailatestnews.in";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com";
 
   if (q && q.trim()) {
     const cleanQ = q.trim();

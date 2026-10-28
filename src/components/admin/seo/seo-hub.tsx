@@ -497,7 +497,7 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                 excerpt={activeEditItem.excerpt}
                 coverImage={activeEditItem.coverImage}
                 contentHtml={activeEditItem.contentHtml}
-                baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ailatestnews.in"}
+                baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
               />
             </div>
 

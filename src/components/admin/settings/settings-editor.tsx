@@ -46,7 +46,7 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
   const defaultFooter = {
     aboutText:
       "India's authoritative AI publication tracking foundational model releases, LLM benchmarks, Indian AI breakthroughs (Sarvam, Krutrim, BharatGPT), and hands-on tooling comparisons in clear, in-depth English.",
-    copyrightText: "AI Latest News (ailatestnews.in). All rights reserved.",
+    copyrightText: "AI Latest News (ainews.kraviona.com). All rights reserved.",
     sections: [
       {
         title: "Categories",
@@ -243,9 +243,9 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
               <input
                 type="url"
                 name="siteUrl"
-                defaultValue={settings.siteUrl || "https://ailatestnews.in"}
+                defaultValue={settings.siteUrl || "https://ainews.kraviona.com"}
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-medium text-slate-900 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 font-mono"
-                placeholder="https://ailatestnews.in"
+                placeholder="https://ainews.kraviona.com"
                 required
               />
             </div>
@@ -578,7 +578,7 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
               <input
                 type="email"
                 name="orgEmail"
-                defaultValue={settings.organization?.email || "editorial@ailatestnews.in"}
+                defaultValue={settings.organization?.email || "kravionatech@gmail.com"}
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-medium text-slate-900 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
               />
             </div>

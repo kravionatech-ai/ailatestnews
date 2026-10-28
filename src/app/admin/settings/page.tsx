@@ -13,7 +13,7 @@ export default async function AdminSettingsPage() {
     : {
         siteName: "AI Latest News",
         tagline: "AI news, tools and guides, explained for India",
-        siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://ailatestnews.in",
+        siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com",
         separator: "|",
         defaultOgImage:
           "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
@@ -46,9 +46,9 @@ export default async function AdminSettingsPage() {
         },
         organization: {
           name: "AI Latest News",
-          url: "https://ailatestnews.in",
+          url: "https://ainews.kraviona.com",
           description: "India's premier artificial intelligence intelligence platform.",
-          email: "editorial@ailatestnews.in",
+          email: "kravionatech@gmail.com",
           socialProfiles: [
             "https://twitter.com/ailatestnews_in",
             "https://linkedin.com/company/ailatestnews",
