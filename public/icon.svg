@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="url(#aiGrad)" />
+  <!-- Neural Nodes -->
+  <circle cx="35" cy="40" r="7" fill="#FFFFFF" />
+  <circle cx="35" cy="80" r="7" fill="#FFFFFF" />
+  <circle cx="60" cy="30" r="8" fill="#FDE047" />
+  <circle cx="60" cy="60" r="9" fill="#FFFFFF" />
+  <circle cx="60" cy="90" r="8" fill="#FFFFFF" />
+  <circle cx="85" cy="45" r="7" fill="#FFFFFF" />
+  <circle cx="85" cy="75" r="7" fill="#38BDF8" />
+  <!-- Neural Connections -->
+  <line x1="35" y1="40" x2="60" y2="30" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.8" />
+  <line x1="35" y1="40" x2="60" y2="60" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.8" />
+  <line x1="35" y1="80" x2="60" y2="60" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.8" />
+  <line x1="35" y1="80" x2="60" y2="90" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.8" />
+  <line x1="60" y1="30" x2="85" y2="45" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.8" />
+  <line x1="60" y1="60" x2="85" y2="45" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.8" />
+  <line x1="60" y1="60" x2="85" y2="75" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.8" />
+  <line x1="60" y1="90" x2="85" y2="75" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity="0.8" />
+</svg>
