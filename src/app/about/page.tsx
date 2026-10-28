@@ -48,21 +48,17 @@ export default async function AboutPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--accent-light)] text-[var(--accent)]">
-            <BookOpen className="h-4 w-4" />
-          </div>
-          <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
-            Our Mission
-          </span>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+          <BookOpen className="h-3.5 w-3.5 text-slate-900" />
+          <span>Editorial Charter // Mission</span>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[var(--foreground)] leading-[1.15]">
-          {page?.title || "A Digital Publication Engineered for Real Builders"}
+        <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 leading-[1.12]">
+          {page?.title || "An Independent AI Publication Engineered for Builders"}
         </h1>
 
-        <p className="mt-6 text-lg text-[var(--foreground-secondary)] leading-relaxed">
+        <p className="mt-4 text-lg font-serif text-slate-700 leading-relaxed">
           {page?.excerpt ||
             "AI Latest News was founded to bridge the gap between high-level foundation model research and practical deployment for Indian developers, enterprises, and startups. We deliver rigorous, verified benchmarks and independent news dispatches."}
         </p>
@@ -74,21 +70,21 @@ export default async function AboutPage() {
           />
         ) : (
           <>
-            <div className="my-12 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="my-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
               {pillars.map((p, idx) => {
                 const Icon = p.icon;
                 return (
                   <div
                     key={idx}
-                    className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-2xs space-y-3"
+                    className="rounded-xl border border-slate-200 bg-white p-6 shadow-2xs space-y-3"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--background-secondary)] text-[var(--accent)]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-900">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="text-base font-bold text-[var(--foreground)]">
+                    <h3 className="text-base font-bold text-slate-900">
                       {p.title}
                     </h3>
-                    <p className="text-xs leading-relaxed text-[var(--foreground-muted)]">
+                    <p className="text-xs leading-relaxed text-slate-600">
                       {p.desc}
                     </p>
                   </div>
@@ -96,15 +92,15 @@ export default async function AboutPage() {
               })}
             </div>
 
-            <div className="prose-article text-base">
-              <h2>Our Technology Stack</h2>
+            <div className="prose-article text-base text-slate-800 leading-relaxed space-y-4">
+              <h2>Verified Research &amp; Independent Benchmarks</h2>
               <p>
-                The platform itself is a showcase of state-of-the-art web engineering: Next.js App Router, React 19 Server Components, MongoDB Atlas with connection pooling, Auth.js RBAC, Lenis smooth scrolling, and dynamic next/og image synthesis.
+                Our reporting prioritizes verified reproducibility over press release hype. When new frontier models like DeepSeek-R1, Claude 3.7, or Sarvam-1 launch, our technical editors evaluate context windows, tokenization ratios on Indic scripts (Hindi, Tamil, Telugu), and actual rupee pricing for Indian engineering teams.
               </p>
 
-              <h2>Contributing &amp; Peer Review</h2>
+              <h2>Peer Review &amp; Primary Sources</h2>
               <p>
-                We welcome technical contributions from staff engineers, researchers, and open-source maintainers. All submissions undergo double-blind technical review before publication.
+                We welcome submissions and tips from AI researchers, founders, and engineers. Every claim is corroborated by primary sources (official weights, arXiv preprints, or government tenders) before publication.
               </p>
             </div>
           </>

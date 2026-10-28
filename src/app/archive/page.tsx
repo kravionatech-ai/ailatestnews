@@ -53,66 +53,62 @@ export default async function ArchivePage() {
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--accent-light)] text-[var(--accent)]">
-            <ArchiveIcon className="h-4 w-4" />
-          </div>
-          <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
-            Chronology
-          </span>
+        <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+          <ArchiveIcon className="h-3.5 w-3.5 text-slate-900" />
+          <span>Chronological Index // AI Dispatches</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--foreground)]">
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
           Publication Archive
         </h1>
-        <p className="mt-2 text-sm text-[var(--foreground-muted)] mb-12">
+        <p className="mt-2 text-sm text-slate-600 mb-12">
           A historical index of all published engineering articles, guides, and architectural notes.
         </p>
 
         <div className="space-y-12">
           {Object.entries(grouped).map(([year, months]) => (
-            <div key={year} className="relative pl-6 border-l-2 border-[var(--border)]">
-              <span className="absolute -left-[17px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent-light)] text-xs font-bold text-[var(--accent)] border-2 border-white">
+            <div key={year} className="relative pl-6 border-l-2 border-slate-900">
+              <span className="absolute -left-[17px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-xs font-mono font-bold text-white border-2 border-white">
                 {year.slice(-2)}
               </span>
 
-              <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
+              <h2 className="text-2xl font-black text-slate-900 mb-6 font-mono">
                 {year}
               </h2>
 
               <div className="space-y-8">
                 {Object.entries(months).map(([month, monthPosts]) => (
                   <div key={month} className="space-y-3">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground-muted)]">
+                    <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-500">
                       {month}
                     </h3>
-                    <div className="divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white overflow-hidden shadow-2xs">
+                    <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
                       {monthPosts.map((post) => (
                         <div
                           key={post._id}
-                          className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-[var(--background-secondary)] transition-colors gap-2"
+                          className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-slate-50 transition-colors gap-2"
                         >
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
                             {post.category && (
-                              <span className="rounded-lg bg-[var(--background-tertiary)] px-2 py-0.5 text-[10px] font-semibold text-[var(--foreground-secondary)]">
+                              <span className="font-mono rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-700 shrink-0">
                                 {post.category.name}
                               </span>
                             )}
                             <Link
                               href={`/blog/${post.slug}`}
-                              className="text-sm font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors"
+                              className="text-xs sm:text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors truncate"
                             >
                               {post.title}
                             </Link>
                           </div>
 
-                          <div className="flex items-center gap-3 text-xs text-[var(--foreground-muted)] sm:flex-shrink-0">
+                          <div className="flex items-center gap-3 text-xs text-slate-500 sm:shrink-0 font-mono text-[11px]">
                             <span className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
                               {formatDate(post.publishedAt)}
                             </span>
                             {post.readingTime && (
-                              <span>{post.readingTime} min</span>
+                              <span>{post.readingTime}m read</span>
                             )}
                           </div>
                         </div>

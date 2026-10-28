@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Sparkles, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Zap, Mail } from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
 import { NewsletterBox } from "@/components/home/newsletter-box";
 import { connectDB } from "@/lib/db/connection";
@@ -33,63 +33,63 @@ export default async function NewsletterPage() {
     {
       icon: Zap,
       title: "Actionable Patterns",
-      desc: "Every email contains reproducible code patterns and architectural diagrams.",
+      desc: "Every email contains reproducible code patterns, latency numbers, and architecture breakdowns.",
     },
     {
       icon: CheckCircle2,
       title: "Double Opt-In Protected",
-      desc: "Strict adherence to anti-spam protocols with one-click unsubscribe links in every footer.",
+      desc: "Strict adherence to anti-spam protocols with one-click unsubscribe links in every dispatch.",
     },
     {
       icon: ShieldCheck,
-      title: "100% Sponsor Vetted",
-      desc: "No low-quality sponsored content. Only tools and infrastructure we actively run in production.",
+      title: "Primary Source Grounded",
+      desc: "Zero unverified hype. Only models, benchmarks, and infrastructure verified in production.",
     },
   ];
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-3 py-1 text-xs font-semibold text-[var(--accent)] shadow-2xs mb-4">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Weekly Tech Dispatch</span>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-3xl mb-8 pb-4 border-b border-slate-900">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            <Mail className="h-3.5 w-3.5 text-rose-600" />
+            <span>The Daily Wire // Intelligence Briefing</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[var(--foreground)]">
-            {page?.title || "The Technical Briefing for Senior Engineers"}
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
+            {page?.title || "The Morning AI Dispatch for Builders"}
           </h1>
-          <p className="mt-4 text-base text-[var(--foreground-muted)] leading-relaxed">
+          <p className="mt-2 text-sm text-slate-600 leading-relaxed">
             {page?.excerpt ||
-              "Every Thursday morning, we dissect modern web infrastructure, distributed system bottlenecks, and emerging AI tooling."}
+              "Every morning at 07:00 IST, we dissect new foundation model weights, GPU compute subsidies, and local tooling."}
           </p>
         </div>
 
         {page?.contentHtml && (
           <div
-            className="prose-article text-sm max-w-2xl mx-auto my-6"
+            className="prose-article text-sm max-w-3xl my-6"
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         )}
 
-        <div className="my-10 max-w-2xl mx-auto">
+        <div className="my-8 max-w-3xl">
           <NewsletterBox />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mt-12">
           {perks.map((p, idx) => {
             const Icon = p.icon;
             return (
               <div
                 key={idx}
-                className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-2 text-center"
+                className="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs space-y-2"
               >
-                <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-light)] text-[var(--accent)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-900">
                   <Icon className="h-4 w-4" />
                 </div>
-                <h3 className="text-sm font-bold text-[var(--foreground)]">
+                <h3 className="text-sm font-bold text-slate-900">
                   {p.title}
                 </h3>
-                <p className="text-xs text-[var(--foreground-muted)]">
+                <p className="text-xs leading-relaxed text-slate-600">
                   {p.desc}
                 </p>
               </div>

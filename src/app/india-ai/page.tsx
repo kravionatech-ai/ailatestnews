@@ -51,17 +51,17 @@ export default async function IndiaAiHubPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
-        <div className="mb-10 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200/60 mb-3">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            National AI Mission &amp; Indic Computing
+        <div className="mb-8 pb-4 border-b border-slate-900 max-w-3xl">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            <Flag className="h-3.5 w-3.5 text-rose-600" />
+            <span>Sovereign Compute // India AI Mission</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--foreground)] tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
             {page?.title || "India AI Ecosystem Hub"}
           </h1>
-          <p className="mt-2 text-sm text-[var(--foreground-secondary)] leading-relaxed">
+          <p className="mt-2 text-sm text-slate-600 leading-relaxed">
             {page?.excerpt ||
               "Dedicated technical coverage of India's ₹10,372 crore IndiaAI Mission, domestic foundation models (Sarvam, Krutrim, BharatGen), GPU datacenter clusters, and Indic NLP."}
           </p>

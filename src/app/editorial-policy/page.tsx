@@ -33,21 +33,17 @@ export default async function EditorialPolicyPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--accent-light)] text-[var(--accent)]">
-            <Scale className="h-4 w-4" />
-          </div>
-          <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
-            Journalistic Integrity
-          </span>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+          <Scale className="h-3.5 w-3.5 text-slate-900" />
+          <span>Journalistic Integrity // Standards</span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--foreground)] mb-6">
+        <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 leading-[1.12] mb-4">
           {page?.title || "Editorial Policy & Technical Verification Standards"}
         </h1>
 
-        <p className="text-base text-[var(--foreground-secondary)] leading-relaxed mb-8">
+        <p className="text-lg font-serif text-slate-700 leading-relaxed mb-8 pb-6 border-b border-slate-200">
           {page?.excerpt ||
             "AI Latest News maintains strict journalistic independence from cloud providers, foundation model labs, and venture-backed accelerator programs."}
         </p>
@@ -58,7 +54,7 @@ export default async function EditorialPolicyPage() {
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         ) : (
-          <div className="prose-article text-sm leading-relaxed space-y-6">
+          <div className="prose-article text-base text-slate-800 leading-relaxed space-y-6">
             <h3>1. Independent Model Benchmarking</h3>
             <p>
               We evaluate foundation models, multimodal checkpoints, and local quantization runtimes on identical hardware clusters located in Indian datacenters. We never accept sponsored benchmark modifications, curated prompts, or cherry-picked evaluation runs.

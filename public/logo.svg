@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" width="600" height="120">
+  <rect width="600" height="120" fill="#0F172A" rx="12"/>
+  <text x="40" y="68" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="1.5">
+    AI LATEST NEWS
+  </text>
+  <circle cx="340" cy="58" r="5" fill="#E11D48"/>
+  <text x="40" y="94" font-family="ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace" font-size="13" font-weight="600" fill="#94A3B8" letter-spacing="2.5">
+    THE AI JOURNAL FOR INDIA
+  </text>
+</svg>

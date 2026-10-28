@@ -10,6 +10,8 @@ import { SearchFilters } from "@/components/search/search-filters";
 import { SearchEmptyState } from "@/components/search/search-empty-state";
 import { getGlobalSettings } from "@/lib/db/queries/settings";
 
+import { buildEntityMetadata, getSiteUrl } from "@/lib/seo/fallback";
+
 interface SearchPageProps {
   searchParams: Promise<{
     q?: string;
@@ -23,7 +25,7 @@ export async function generateMetadata({
   searchParams,
 }: SearchPageProps): Promise<Metadata> {
   const { q } = await searchParams;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com";
+  const siteUrl = getSiteUrl();
 
   if (q && q.trim()) {
     const cleanQ = q.trim();

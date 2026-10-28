@@ -31,17 +31,18 @@ export default async function ContactPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-10">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-light)] text-[var(--accent)] mb-4">
-            <Mail className="h-6 w-6" />
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-8 pb-4 border-b border-slate-900">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            <Mail className="h-3.5 w-3.5 text-slate-900" />
+            <span>Communication Desk // Inquiries &amp; Tips</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--foreground)]">
-            {page?.title || "Contact the Editorial Desk"}
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
+            {page?.title || "Contact the Newsroom Desk"}
           </h1>
-          <p className="mt-2 text-sm text-[var(--foreground-muted)]">
+          <p className="mt-2 text-sm text-slate-600 leading-relaxed">
             {page?.excerpt ||
-              "Have a technical correction, research preprint tip, or editorial proposal? We'd love to hear from you."}
+              "Have a technical correction, research preprint tip, or editorial proposal? Connect directly with our editors."}
           </p>
         </div>
 

@@ -47,26 +47,29 @@ export default async function BlogPage({
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
-        <div className="max-w-2xl mb-10">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--foreground)]">
-            AI Dispatches &amp; Deep Dives
+        <div className="max-w-3xl mb-8 pb-4 border-b border-slate-900">
+          <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+            Continuous River // All Intelligence
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
+            Articles &amp; Technical Dispatches
           </h1>
-          <p className="mt-2 text-base text-[var(--foreground-muted)]">
-            In-depth analysis of frontier models, Indian compute initiatives, practical implementation guides, and open benchmarks.
+          <p className="mt-2 text-sm text-slate-600">
+            Independent coverage of frontier models, Indian compute initiatives, practical implementation guides, and open benchmarks.
           </p>
         </div>
 
         {/* Filter bar */}
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border)] pb-6">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
           <div className="flex flex-wrap items-center gap-2">
             <Link
               href="/blog"
-              className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+              className={`rounded-lg px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all ${
                 !category
-                  ? "bg-[var(--accent)] text-white shadow-xs"
-                  : "border border-[var(--border)] bg-white text-[var(--foreground-secondary)] hover:bg-[var(--background-secondary)]"
+                  ? "bg-slate-900 text-white shadow-2xs"
+                  : "border border-slate-200 bg-white text-slate-700 hover:border-slate-900"
               }`}
             >
               All Topics
@@ -75,10 +78,10 @@ export default async function BlogPage({
               <Link
                 key={c._id}
                 href={`/blog?category=${c.slug}${sort ? `&sort=${sort}` : ""}`}
-                className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                className={`rounded-lg px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all ${
                   category === c.slug
-                    ? "bg-[var(--accent)] text-white shadow-xs"
-                    : "border border-[var(--border)] bg-white text-[var(--foreground-secondary)] hover:bg-[var(--background-secondary)]"
+                    ? "bg-slate-900 text-white shadow-2xs"
+                    : "border border-slate-200 bg-white text-slate-700 hover:border-slate-900"
                 }`}
               >
                 {c.name}
@@ -86,22 +89,22 @@ export default async function BlogPage({
             ))}
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
-            <Filter className="h-3.5 w-3.5 text-[var(--foreground-muted)]" />
-            <span className="text-[var(--foreground-muted)]">Sort:</span>
+          <div className="flex items-center gap-2 font-mono text-xs text-slate-500">
+            <Filter className="h-3.5 w-3.5 text-slate-700" />
+            <span>Sort:</span>
             <Link
               href={`/blog?${category ? `category=${category}&` : ""}sort=latest`}
-              className={`font-semibold ${
-                sort === "latest" ? "text-[var(--accent)]" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+              className={`font-bold uppercase ${
+                sort === "latest" ? "text-slate-900 underline" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Latest
             </Link>
-            <span>•</span>
+            <span>·</span>
             <Link
               href={`/blog?${category ? `category=${category}&` : ""}sort=popular`}
-              className={`font-semibold ${
-                sort === "popular" ? "text-[var(--accent)]" : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+              className={`font-bold uppercase ${
+                sort === "popular" ? "text-slate-900 underline" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               Most Read

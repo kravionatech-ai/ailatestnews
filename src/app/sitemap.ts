@@ -20,6 +20,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${siteUrl}/model-launches`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/india-ai`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/ai-tools`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
       url: `${siteUrl}/about`,
       lastModified: new Date(),
       changeFrequency: "monthly",
@@ -134,6 +152,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       "privacy",
       "terms",
       "search",
+      "model-launches",
+      "india-ai",
+      "ai-tools",
     ]);
 
     const customPageRoutes: MetadataRoute.Sitemap = pages
