@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 
@@ -16,6 +17,7 @@ const lora = Lora({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ainews.kraviona.com";
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? "AI Latest News";
+const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-RC5GPJKKW2";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -162,6 +164,22 @@ export default function RootLayout({
         <JsonLd />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="manifest" href="/manifest.webmanifest" />
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
       </head>
       <body className="min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--foreground)]">
         {children}
