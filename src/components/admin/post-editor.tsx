@@ -36,6 +36,7 @@ import {
 import { createCategoryAction, createTagAction } from "@/actions/taxonomies";
 import { slugify, formatDate } from "@/lib/utils";
 import { SeoEditorPanel } from "@/components/admin/seo/seo-editor-panel";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { analyzeSeoContent } from "@/lib/seo/analyzer";
 import type { ISeoMetadata } from "@/lib/seo/types";
 
@@ -635,83 +636,21 @@ export function PostEditor({
               />
             </div>
 
-            {/* Rich Editor Toolbar & Area */}
-            <div className="rounded-2xl border border-[var(--border)] bg-white shadow-2xs overflow-hidden">
-              <div className="flex flex-wrap items-center gap-1 border-b border-[var(--border)] bg-[var(--background-secondary)] p-2">
-                <button
-                  type="button"
-                  onClick={() => insertFormatting("h2")}
-                  className="p-1.5 rounded hover:bg-white text-xs font-bold"
-                  title="Heading 2"
-                >
-                  <Heading2 className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertFormatting("h3")}
-                  className="p-1.5 rounded hover:bg-white text-xs font-bold"
-                  title="Heading 3"
-                >
-                  <Heading3 className="h-4 w-4" />
-                </button>
-                <span className="h-4 w-px bg-slate-300 mx-1" />
-                <button
-                  type="button"
-                  onClick={() => insertFormatting("b")}
-                  className="p-1.5 rounded hover:bg-white"
-                  title="Bold"
-                >
-                  <Bold className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertFormatting("i")}
-                  className="p-1.5 rounded hover:bg-white"
-                  title="Italic"
-                >
-                  <Italic className="h-4 w-4" />
-                </button>
-                <span className="h-4 w-px bg-slate-300 mx-1" />
-                <button
-                  type="button"
-                  onClick={() => insertFormatting("code")}
-                  className="p-1.5 rounded hover:bg-white"
-                  title="Code snippet"
-                >
-                  <Code className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertFormatting("quote")}
-                  className="p-1.5 rounded hover:bg-white"
-                  title="Blockquote"
-                >
-                  <Quote className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertFormatting("list")}
-                  className="p-1.5 rounded hover:bg-white"
-                  title="Bulleted List"
-                >
-                  <List className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => insertFormatting("callout")}
-                  className="p-1.5 rounded hover:bg-white text-[11px] font-semibold text-[var(--accent)]"
-                  title="Callout Box"
-                >
-                  + Callout
-                </button>
+            {/* Rich Text Editor */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Article Body // Rich Text Editor
+                </label>
+                <span className="text-[11px] text-slate-500 font-medium">
+                  WYSIWYG Visual, HTML Source &amp; Split Preview
+                </span>
               </div>
-
-              <textarea
-                rows={16}
+              <RichTextEditor
                 value={contentHtml}
-                onChange={(e) => setContentHtml(e.target.value)}
-                placeholder="Write article HTML or markdown here..."
-                className="w-full p-4 font-mono text-xs leading-relaxed outline-none"
+                onChange={setContentHtml}
+                placeholder="Write your editorial dispatch, analysis, or news story here..."
+                minHeight="480px"
               />
             </div>
           </div>
