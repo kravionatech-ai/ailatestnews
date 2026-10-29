@@ -11,6 +11,9 @@ import { TrendingLatestSection } from "@/components/home/trending-latest-section
 import { SiteIntroSection } from "@/components/home/site-intro-section";
 import { FaqSection } from "@/components/home/faq-section";
 import { NewsletterBox } from "@/components/home/newsletter-box";
+import { BenchmarkLeaderboardSection } from "@/components/home/benchmark-leaderboard-section";
+import { ModelCalculatorWidget } from "@/components/interactive/model-calculator-widget";
+import { CommunityPollWidget } from "@/components/interactive/community-poll-widget";
 import { connectDB } from "@/lib/db/connection";
 import { Post, Page } from "@/lib/db/models";
 import { buildEntityMetadata } from "@/lib/seo/fallback";
@@ -171,6 +174,9 @@ export default async function HomePage() {
           <ModelLaunchesSection posts={modelLaunchesPosts} />
         )}
 
+        {/* c2) Frontier AI Models Benchmark Arena (Interactive) */}
+        <BenchmarkLeaderboardSection />
+
         {/* d) Sovereign Compute & India AI Desk */}
         {indiaAiPosts.length > 0 && (
           <IndiaAiSection posts={indiaAiPosts} />
@@ -186,10 +192,16 @@ export default async function HomePage() {
           <GuidesSection posts={guidesPosts} />
         )}
 
+        {/* f2) Interactive Compute & Token Cost Sandbox */}
+        <ModelCalculatorWidget />
+
         {/* g) Enterprise AI Architecture Desk */}
         {enterpriseAiPosts.length > 0 && (
           <EnterpriseAiSection posts={enterpriseAiPosts} />
         )}
+
+        {/* g2) Newsroom Community Pulse Poll */}
+        <CommunityPollWidget />
 
         {/* h) The Most Read Wire & Latest Chronological Stream */}
         <TrendingLatestSection

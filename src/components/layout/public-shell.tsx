@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { Header, type NavItem } from "./header";
 import { Footer, type FooterProps } from "./footer";
 import { SmoothScrollProvider } from "../providers/smooth-scroll";
+import { ReadingQueueDrawer } from "../interactive/reading-queue-drawer";
 
 // Lazy-load the chat widget so it does not block critical bundle or LCP
 const AIChatWidget = dynamic(
@@ -36,6 +37,7 @@ export function PublicShell({ children, navLinks, footerConfig }: PublicShellPro
         <main className="flex-1">{children}</main>
         <Footer {...footerConfig} />
         <AIChatWidget />
+        <ReadingQueueDrawer />
       </div>
     </SmoothScrollProvider>
   );

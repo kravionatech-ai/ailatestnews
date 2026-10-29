@@ -20,6 +20,10 @@ import { Reactions } from "@/components/blog/reactions";
 import { CommentSection } from "@/components/blog/comment-section";
 import { PostCard } from "@/components/blog/post-card";
 import { ArticleAnalyticsTracker } from "@/components/blog/article-analytics-tracker";
+import { ReadingControlsBar } from "@/components/interactive/reading-controls-bar";
+import { KeyTakeawaysBox } from "@/components/interactive/key-takeaways-box";
+import { CommunityPollWidget } from "@/components/interactive/community-poll-widget";
+import { UpNextSlideup } from "@/components/interactive/up-next-slideup";
 import { getPostBySlug } from "@/lib/db/queries/posts";
 import { getCommentsByPost } from "@/lib/db/queries/comments";
 import { formatDate } from "@/lib/utils";
@@ -264,6 +268,14 @@ export default async function SinglePostPage({ params }: PostPageProps) {
           </div>
         </header>
 
+        {/* Reading Controls Toolbar */}
+        <ReadingControlsBar
+          postId={String(post._id)}
+          slug={post.slug}
+          title={post.title}
+          readingTime={post.readingTime || 6}
+        />
+
         {/* 12-Column Editorial Grid (8 cols main article + 4 cols sticky sidebar) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Main Article Column (lg:col-span-8) */}
@@ -289,6 +301,12 @@ export default async function SinglePostPage({ params }: PostPageProps) {
                 </figcaption>
               </figure>
             )}
+
+            {/* 60-Second Executive Briefing */}
+            <KeyTakeawaysBox
+              title={post.title}
+              excerpt={post.excerpt}
+            />
 
             {/* Editorial Trust & Primary Source Verification Banner */}
             <div className="mb-8 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700 flex items-start gap-3 shadow-2xs">
@@ -408,6 +426,12 @@ export default async function SinglePostPage({ params }: PostPageProps) {
                   Read Editorial Policy →
                 </Link>
               </div>
+
+              {/* Community Reader Poll in Sidebar */}
+              <CommunityPollWidget
+                pollId={`poll-${post.slug}`}
+                question="Will open-weight reasoning models (DeepSeek, Llama) replace closed APIs in your stack by 2027?"
+              />
             </div>
           </aside>
         </div>
@@ -440,6 +464,12 @@ export default async function SinglePostPage({ params }: PostPageProps) {
           </section>
         )}
       </article>
+
+      {/* Continuous Reading Slide-up Drawer */}
+      <UpNextSlideup
+        currentSlug={post.slug}
+        nextPost={relatedPosts?.[0] || null}
+      />
     </PublicShell>
   );
 }
