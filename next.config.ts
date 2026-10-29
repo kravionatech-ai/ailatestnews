@@ -44,6 +44,12 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: "/(icon.svg|manifest.webmanifest|robots.txt|sitemap.xml)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        ],
+      },
+      {
         source: "/api/(.*)",
         headers: [
           { key: "Cache-Control", value: "no-store, max-age=0" },
@@ -54,9 +60,16 @@ const nextConfig: NextConfig = {
 
   experimental: {
     optimizePackageImports: [
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
       "@radix-ui/react-icons",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-tooltip",
+      "clsx",
       "framer-motion",
       "lucide-react",
+      "tailwind-merge",
     ],
   },
 };

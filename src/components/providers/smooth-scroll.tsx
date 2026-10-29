@@ -1,38 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import Lenis from "lenis";
+import React from "react";
 
+/**
+ * Zero-overhead native scroll provider.
+ * Uses native browser compositor smooth scrolling (configured via CSS scroll-behavior: smooth)
+ * avoiding main-thread JS animation loops, input lag, and scroll jank.
+ */
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    // Respect prefers-reduced-motion
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReducedMotion) return;
-
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 1,
-    });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    const animFrame = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(animFrame);
-      lenis.destroy();
-    };
-  }, []);
-
   return <>{children}</>;
 }

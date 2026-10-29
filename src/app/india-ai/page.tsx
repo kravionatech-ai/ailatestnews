@@ -41,6 +41,7 @@ export default async function IndiaAiHubPage() {
   }
 
   const postsRaw = await Post.find(filter)
+    .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author")
     .populate("category", "name slug")
     .populate("author", "name image slug")
     .sort({ publishedAt: -1 })

@@ -26,6 +26,17 @@ interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  try {
+    const categories = await getAllCategories();
+    return categories.map((c: { slug: string }) => ({ slug: c.slug }));
+  } catch (error) {
+    return [];
+  }
+}
+
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);

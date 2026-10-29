@@ -14,6 +14,8 @@ interface AuthorPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const revalidate = 300;
+
 export async function generateMetadata({ params }: AuthorPageProps): Promise<Metadata> {
   const { slug } = await params;
   const author = await getAuthorBySlug(slug);

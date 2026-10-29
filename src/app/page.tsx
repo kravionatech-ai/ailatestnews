@@ -42,11 +42,12 @@ export default async function HomePage() {
   // Fetch all posts, homepage settings, and global settings in parallel
   const [allPostsRaw, homePageRaw, settings] = await Promise.all([
     Post.find(statusFilter)
+      .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author")
       .populate("category", "name slug")
       .populate("author", "name image slug")
       .sort({ publishedAt: -1, createdAt: -1 })
       .lean(),
-    Page.findOne({ slug: "home" }).lean(),
+    Page.findOne({ slug: "home" }).select("title subtitle excerpt blocks seo").lean(),
     getGlobalSettings(),
   ]);
 

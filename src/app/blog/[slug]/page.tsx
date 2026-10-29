@@ -24,7 +24,7 @@ import { ReadingControlsBar } from "@/components/interactive/reading-controls-ba
 import { KeyTakeawaysBox } from "@/components/interactive/key-takeaways-box";
 import { CommunityPollWidget } from "@/components/interactive/community-poll-widget";
 import { UpNextSlideup } from "@/components/interactive/up-next-slideup";
-import { getPostBySlug } from "@/lib/db/queries/posts";
+import { getPostBySlug, getAllPostSlugs } from "@/lib/db/queries/posts";
 import { getCommentsByPost } from "@/lib/db/queries/comments";
 import { formatDate } from "@/lib/utils";
 import { buildEntityMetadata, getSiteUrl } from "@/lib/seo/fallback";
@@ -34,6 +34,15 @@ interface PostPageProps {
 }
 
 export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  try {
+    const posts = await getAllPostSlugs();
+    return posts.map((p: { slug: string }) => ({ slug: p.slug }));
+  } catch (error) {
+    return [];
+  }
+}
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params;

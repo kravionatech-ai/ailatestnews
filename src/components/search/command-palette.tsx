@@ -203,7 +203,6 @@ export function CommandPalette({
                           src={post.coverImage}
                           alt={post.title}
                           fill
-                          unoptimized
                           className="object-cover"
                           sizes="64px"
                         />

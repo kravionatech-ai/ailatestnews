@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/db/connection";
 import { Setting, AuditLog } from "@/lib/db/models";
 import { auth } from "@/lib/auth/auth";
+import { invalidateSettingsCache } from "@/lib/db/queries/settings";
 
 export async function saveGlobalSettingsAction(formData: FormData) {
   try {
@@ -178,6 +179,8 @@ export async function saveGlobalSettingsAction(formData: FormData) {
       new: true,
       setDefaultsOnInsert: true,
     });
+
+    invalidateSettingsCache();
 
     await AuditLog.create({
       user: session.user.id,

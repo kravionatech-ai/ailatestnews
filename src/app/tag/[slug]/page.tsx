@@ -19,6 +19,8 @@ interface TagPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const revalidate = 300;
+
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const { slug } = await params;
   const tag = await getTagBySlug(slug);

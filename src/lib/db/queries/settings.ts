@@ -1,16 +1,34 @@
+import { cache } from "react";
 import { connectDB } from "../connection";
 import { Setting } from "../models";
 import type { IGlobalSettings } from "../models/setting.model";
 
-export async function getGlobalSettings(): Promise<Partial<IGlobalSettings>> {
+// In-memory cache with 60-second TTL to avoid redundant MongoDB Atlas network roundtrips
+let cachedSettings: Partial<IGlobalSettings> | null = null;
+let cacheExpiresAt = 0;
+
+export function invalidateSettingsCache() {
+  cachedSettings = null;
+  cacheExpiresAt = 0;
+}
+
+export const getGlobalSettings = cache(async function getGlobalSettings(): Promise<Partial<IGlobalSettings>> {
+  const now = Date.now();
+  if (cachedSettings && now < cacheExpiresAt) {
+    return cachedSettings;
+  }
+
   await connectDB();
   const settings = await Setting.findOne().lean();
   if (settings) {
-    return JSON.parse(JSON.stringify(settings));
+    const parsed = JSON.parse(JSON.stringify(settings));
+    cachedSettings = parsed;
+    cacheExpiresAt = now + 60_000; // 60 seconds
+    return parsed;
   }
 
   // Fallback defaults if no record exists yet
-  return {
+  const fallback: Partial<IGlobalSettings> = {
     siteName: "AI Latest News",
     tagline: "AI news, tools and guides, explained for India",
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com",
@@ -62,4 +80,8 @@ export async function getGlobalSettings(): Promise<Partial<IGlobalSettings>> {
       ],
     },
   };
-}
+
+  cachedSettings = fallback;
+  cacheExpiresAt = now + 60_000;
+  return fallback;
+});

@@ -11,6 +11,7 @@ export async function GET() {
 
   await connectDB();
   const posts = await Post.find({ status: "published" })
+    .select("title slug publishedAt excerpt author")
     .sort({ publishedAt: -1 })
     .limit(20)
     .populate("author", "name")

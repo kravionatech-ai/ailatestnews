@@ -51,7 +51,6 @@ export function PostCard({ post, featured = false }: PostCardProps) {
               src={post.coverImage}
               alt={post.coverImageAlt || post.title}
               fill
-              unoptimized
               onError={() => setImageError(true)}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition-transform duration-500 group-hover:scale-102"
@@ -121,7 +120,6 @@ export function PostCard({ post, featured = false }: PostCardProps) {
                 src={post.author.image}
                 alt={post.author.name || "Author"}
                 fill
-                unoptimized
                 className="object-cover"
                 sizes="24px"
               />

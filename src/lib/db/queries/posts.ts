@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { connectDB } from "../connection";
 import { Post, Category, Tag, User } from "../models";
 import { auth } from "@/lib/auth/auth";
@@ -81,6 +82,7 @@ export async function getPublishedPosts({
       .sort(sortOption)
       .skip(skip)
       .limit(limit)
+      .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author tags")
       .populate("author", "name email image slug bio")
       .populate("category", "name slug")
       .populate("tags", "name slug")
@@ -101,7 +103,11 @@ export async function getPublishedPosts({
   };
 }
 
-export async function getPostBySlug(slug: string, isPreview = false, previewToken?: string) {
+export const getPostBySlug = cache(async function getPostBySlug(
+  slug: string,
+  isPreview = false,
+  previewToken?: string
+) {
   await connectDB();
 
   // Explicitly authenticated preview flow: allow draft only if session is active or valid token
@@ -151,7 +157,7 @@ export async function getPostBySlug(slug: string, isPreview = false, previewToke
     post: JSON.parse(JSON.stringify(post)),
     relatedPosts: JSON.parse(JSON.stringify(relatedPosts)),
   };
-}
+});
 
 export async function getFeaturedPosts(limit = 4, excludeIds: string[] = []) {
   await connectDB();
@@ -169,6 +175,7 @@ export async function getFeaturedPosts(limit = 4, excludeIds: string[] = []) {
   const posts = await Post.find(query)
     .sort({ publishedAt: -1, createdAt: -1 })
     .limit(limit)
+    .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author")
     .populate("author", "name image slug")
     .populate("category", "name slug")
     .lean();
@@ -207,8 +214,8 @@ export async function getBreakingHeadlines(limit = 5) {
   return JSON.parse(JSON.stringify(posts));
 }
 
-export async function getAllPostSlugs() {
+export const getAllPostSlugs = cache(async function getAllPostSlugs() {
   await connectDB();
   const posts = await Post.find({ status: "published" }).select("slug updatedAt").lean();
   return JSON.parse(JSON.stringify(posts));
-}
+});
