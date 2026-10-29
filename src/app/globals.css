@@ -207,6 +207,12 @@ body {
   }
 }
 
+@keyframes shimmer-slide {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 .skeleton {
   background: linear-gradient(
     90deg,
