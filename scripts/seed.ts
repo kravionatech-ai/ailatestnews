@@ -1,5 +1,5 @@
 /**
- * AI Latest News (ailatestnews.in) - Comprehensive 100% English Seed Script
+ * AI Latest News - Comprehensive 100% English Seed Script
  *
  * Populates database with:
  * 1. Admin & Editorial Team Authors
@@ -47,8 +47,8 @@ async function seed() {
       bio: "Chief Editor and Systems Architect at AI Latest News.",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
       socialLinks: {
-        twitter: "https://twitter.com/ailatestnews_in",
-        linkedin: "https://linkedin.com/company/ailatestnews",
+        twitter: "https://twitter.com/kraviona",
+        linkedin: "https://linkedin.com/company/kraviona",
       },
       isActive: true,
       emailVerified: new Date(),
@@ -65,8 +65,8 @@ async function seed() {
       bio: "Dedicated team of AI researchers, benchmark evaluators, and technology journalists in Bengaluru, Hyderabad, and Delhi.",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
       socialLinks: {
-        twitter: "https://twitter.com/ailatestnews_in",
-        linkedin: "https://linkedin.com/company/ailatestnews",
+        twitter: "https://twitter.com/kraviona",
+        linkedin: "https://linkedin.com/company/kraviona",
       },
       isActive: true,
       emailVerified: new Date(),
@@ -93,7 +93,7 @@ async function seed() {
           },
           {
             question: "How can startups submit press releases and tip-offs?",
-            answer: "Founders and PR teams can email news tips to editorial@ailatestnews.in with benchmark data, whitepapers, or demo credentials for evaluation.",
+            answer: "Founders and PR teams can email news tips to editorial@kraviona.com with benchmark data, whitepapers, or demo credentials for evaluation.",
           },
         ],
       },

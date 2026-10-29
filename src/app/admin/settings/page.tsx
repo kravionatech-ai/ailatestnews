@@ -50,9 +50,9 @@ export default async function AdminSettingsPage() {
           description: "India's premier artificial intelligence intelligence platform.",
           email: "kravionatech@gmail.com",
           socialProfiles: [
-            "https://twitter.com/ailatestnews_in",
-            "https://linkedin.com/company/ailatestnews",
-            "https://github.com/ailatestnews",
+            "https://twitter.com/kraviona",
+            "https://linkedin.com/company/kraviona",
+            "https://github.com/kravionatech-ai",
           ],
         },
         verification: {},

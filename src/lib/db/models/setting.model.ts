@@ -175,9 +175,9 @@ const SettingSchema = new Schema<IGlobalSettings>(
       socialProfiles: {
         type: [String],
         default: [
-          "https://twitter.com/ailatestnews_in",
-          "https://linkedin.com/company/ailatestnews",
-          "https://github.com/ailatestnews",
+          "https://twitter.com/kraviona",
+          "https://linkedin.com/company/kraviona",
+          "https://github.com/kravionatech-ai",
         ],
       },
     },

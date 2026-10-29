@@ -381,7 +381,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="sarah@ailatestnews.in"
+                        placeholder="author@kraviona.com"
                         className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs font-mono"
                       />
                     </div>

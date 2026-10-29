@@ -607,9 +607,9 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
               name="socialProfiles"
               rows={4}
               defaultValue={(settings.organization?.socialProfiles || [
-                "https://twitter.com/ailatestnews_in",
-                "https://linkedin.com/company/ailatestnews",
-                "https://github.com/ailatestnews",
+                "https://twitter.com/kraviona",
+                "https://linkedin.com/company/kraviona",
+                "https://github.com/kravionatech-ai",
               ]).join("\n")}
               placeholder="https://twitter.com/..."
               className="w-full rounded-xl border border-slate-200 p-3.5 text-xs font-mono text-slate-900 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"

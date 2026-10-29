@@ -30,7 +30,7 @@ export function SiteIntroSection({
         ) : (
           <div className="prose prose-slate text-sm sm:text-base text-slate-700 leading-relaxed space-y-4">
             <p>
-              <strong>AI Latest News</strong> (ailatestnews.in) is India&apos;s premier independent digital publication dedicated exclusively to artificial intelligence, foundation model engineering, and sovereign computing infrastructure. As global frontier labs compete on reasoning and multimodal architectures, our mission is to deliver fast, rigorous, and verified reporting tailored specifically for Indian software developers, startup founders, policy makers, and researchers.
+              <strong>AI Latest News</strong> is India&apos;s premier independent digital publication dedicated exclusively to artificial intelligence, foundation model engineering, and sovereign computing infrastructure. As global frontier labs compete on reasoning and multimodal architectures, our mission is to deliver fast, rigorous, and verified reporting tailored specifically for Indian software developers, startup founders, policy makers, and researchers.
             </p>
 
             <p>

@@ -86,7 +86,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
           {
             question: "What is AI Latest News and what does it cover?",
             answer:
-              "AI Latest News (ailatestnews.in) is an independent technology publication focusing on artificial intelligence, frontier foundation models, sovereign compute policies, and developer tooling with a specialized India lens. We cover model launches, GPU subsidies, local LLM deployment, and Indic language NLP for engineers and technology leaders.",
+              "AI Latest News is an independent technology publication focusing on artificial intelligence, frontier foundation models, sovereign compute policies, and developer tooling with a specialized India lens. We cover model launches, GPU subsidies, local LLM deployment, and Indic language NLP for engineers and technology leaders.",
           },
           {
             question: "How do you evaluate and benchmark AI models for India?",

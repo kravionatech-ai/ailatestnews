@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     title: `${siteName} — Breaking AI News & Model Launches`,
     description:
       "Daily breaking AI news, benchmark comparisons, and India's AI ecosystem covered in depth.",
-    creator: "@ailatestnews_in",
+    creator: "@kraviona",
   },
   robots: {
     index: process.env.NODE_ENV === "production",
@@ -111,8 +111,8 @@ function JsonLd() {
     description:
       "Leading Indian tech publication covering Artificial Intelligence, foundational models, open-weights, and compute policy.",
     sameAs: [
-      "https://twitter.com/ailatestnews_in",
-      "https://linkedin.com/company/ailatestnews",
+      "https://twitter.com/kraviona",
+      "https://linkedin.com/company/kraviona",
     ],
   };
 

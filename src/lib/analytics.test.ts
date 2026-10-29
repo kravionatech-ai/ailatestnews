@@ -81,7 +81,7 @@ describe("Audience Intelligence & Traffic Telemetry Unit Tests", () => {
     expect(sanitizeReferrer("https://t.co/xyz123")).toBe("X (Twitter)");
     expect(sanitizeReferrer("https://linkedin.com/feed/")).toBe("LinkedIn");
     expect(sanitizeReferrer("https://news.ycombinator.com/item?id=123")).toBe("news.ycombinator.com");
-    expect(sanitizeReferrer("https://ailatestnews.in/category/ai-news", "ailatestnews.in")).toBe("Direct / Internal");
+    expect(sanitizeReferrer("https://ainews.kraviona.com/category/ai-news", "ainews.kraviona.com")).toBe("Direct / Internal");
     expect(sanitizeReferrer("")).toBe("Direct / Internal");
   });
 

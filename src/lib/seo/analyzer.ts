@@ -379,7 +379,7 @@ export function analyzeSeoContent(input: AnalyzeContentInput): ISeoAnalysisResul
   }
 
   // 9. Internal Links
-  const internalLinks = (cleanHtml.match(/href=["'](\/|https?:\/\/ailatestnews\.in)/gi) || []).length;
+  const internalLinks = (cleanHtml.match(/href=["'](\/|https?:\/\/(?:ainews\.kraviona\.com|kraviona\.com))/gi) || []).length;
   if (internalLinks >= 2) {
     checklist.push({
       id: "internal_links",
@@ -411,7 +411,7 @@ export function analyzeSeoContent(input: AnalyzeContentInput): ISeoAnalysisResul
   }
 
   // 10. External Reference Links
-  const externalLinks = (cleanHtml.match(/href=["']https?:\/\/(?!ailatestnews\.in)/gi) || []).length;
+  const externalLinks = (cleanHtml.match(/href=["']https?:\/\/(?!(?:ainews\.kraviona\.com|kraviona\.com))/gi) || []).length;
   if (externalLinks >= 1) {
     checklist.push({
       id: "external_links",

@@ -12,13 +12,13 @@ describe("Data-driven SEO & Global Metadata Integration", () => {
       excerpt: "Independent AI reporting for India.",
       entitySeo: {
         metaTitle: "Custom Meta Title Overridden",
-        canonicalUrl: "https://ailatestnews.in/about",
+        canonicalUrl: "https://ainews.kraviona.com/about",
         robots: { index: true, follow: true, maxImagePreview: "large" },
       },
     });
 
     expect(meta.title).toBe("Custom Meta Title Overridden");
-    expect(meta.alternates?.canonical).toBe("https://ailatestnews.in/about");
+    expect(meta.alternates?.canonical).toBe("https://ainews.kraviona.com/about");
     expect(meta.robots).toHaveProperty("googleBot");
   });
 

@@ -276,7 +276,7 @@ export async function buildEntityMetadata(
       title: ogTitle,
       description: ogDescription,
       images: [ogImage],
-      creator: "@ailatestnews_in",
+      creator: "@kraviona",
     },
   };
 }

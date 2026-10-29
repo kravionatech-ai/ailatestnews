@@ -763,7 +763,7 @@ export async function runImport(publishDirectly = false) {
         metaDescription: item.seo.metaDescription,
         focusKeyword: item.seo.focusKeyword,
         secondaryKeywords: item.seo.secondaryKeywords,
-        canonicalUrl: `https://ailatestnews.in/blog/${item.slug}`,
+        canonicalUrl: `https://ainews.kraviona.com/blog/${item.slug}`,
         robots: {
           index: publishDirectly,
           follow: true,

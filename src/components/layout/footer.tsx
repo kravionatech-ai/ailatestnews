@@ -82,7 +82,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
 
             <div className="flex items-center gap-2 pt-2">
               <a
-                href="https://twitter.com/ailatestnews_in"
+                href="https://twitter.com/kraviona"
                 target="_blank"
                 rel="noreferrer"
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
@@ -91,7 +91,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
                 <TwitterIcon className="h-4 w-4" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/kravionatech-ai"
                 target="_blank"
                 rel="noreferrer"
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
@@ -100,7 +100,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
                 <GithubIcon className="h-4 w-4" />
               </a>
               <a
-                href="https://linkedin.com/company/ailatestnews"
+                href="https://linkedin.com/company/kraviona"
                 target="_blank"
                 rel="noreferrer"
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
