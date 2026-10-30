@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Save,
@@ -26,6 +26,9 @@ import {
   Crosshair,
   X,
   FileCheck,
+  Upload,
+  Image as ImageIcon,
+  Loader2,
 } from "lucide-react";
 import {
   createPostAction,
@@ -37,6 +40,7 @@ import { createCategoryAction, createTagAction } from "@/actions/taxonomies";
 import { slugify, formatDate } from "@/lib/utils";
 import { SeoEditorPanel } from "@/components/admin/seo/seo-editor-panel";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
+import { MediaPickerModal } from "@/components/admin/media/media-picker-modal";
 import { analyzeSeoContent } from "@/lib/seo/analyzer";
 import type { ISeoMetadata } from "@/lib/seo/types";
 
@@ -109,6 +113,10 @@ export function PostEditor({
   const [coverImage, setCoverImage] = useState(initialData?.coverImage || "");
   const [coverImageAlt, setCoverImageAlt] = useState(initialData?.coverImageAlt || "");
   const [coverImageCaption, setCoverImageCaption] = useState(initialData?.coverImageCaption || "");
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [coverUploadError, setCoverUploadError] = useState("");
+  const [showCoverPickerModal, setShowCoverPickerModal] = useState(false);
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
   const [focalPoint, setFocalPoint] = useState<{ x: number; y: number }>(
     initialData?.focalPoint || { x: 50, y: 50 }
   );
@@ -235,6 +243,39 @@ export function PostEditor({
     setTitle(val);
     if (isSlugAuto) {
       setSlug(slugify(val));
+    }
+  };
+
+  const handleCoverFileUpload = async (file: File) => {
+    if (!file) return;
+    setIsUploadingCover(true);
+    setCoverUploadError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "ailatestnews");
+
+      const res = await fetch("/api/admin/media/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to upload cover image.");
+      }
+
+      setCoverImage(data.url);
+      if (!coverImageAlt) {
+        const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+        setCoverImageAlt(cleanName);
+      }
+    } catch (err: any) {
+      setCoverUploadError(err.message || "Failed to upload cover image.");
+    } finally {
+      setIsUploadingCover(false);
+      if (coverFileInputRef.current) coverFileInputRef.current.value = "";
     }
   };
 
@@ -815,20 +856,70 @@ export function PostEditor({
 
             {/* Media & Cover Image Card */}
             <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
-                Featured Cover Image
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                  Featured Cover Image
+                </h3>
+                <span className="text-[10px] text-slate-400 font-mono">1200x630 Optimal</span>
+              </div>
 
+              {/* Direct Choose Image Buttons */}
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  disabled={isUploadingCover}
+                  onClick={() => coverFileInputRef.current?.click()}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-3 py-2 text-xs font-bold text-white hover:bg-slate-800 disabled:opacity-50 transition-colors cursor-pointer shadow-xs"
+                >
+                  {isUploadingCover ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      <span>Uploading to CDN...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-3.5 w-3.5" />
+                      <span>Choose File from Device</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowCoverPickerModal(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <ImageIcon className="h-3.5 w-3.5 text-indigo-600" />
+                  <span>Media Library</span>
+                </button>
+
+                <input
+                  ref={coverFileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleCoverFileUpload(file);
+                  }}
+                  className="hidden"
+                />
+              </div>
+
+              {coverUploadError && (
+                <p className="text-xs text-rose-600 font-semibold">{coverUploadError}</p>
+              )}
+
+              {/* URL Display / Manual Edit */}
               <div>
                 <label className="block text-xs font-semibold text-[var(--foreground-secondary)] mb-1">
-                  Image URL (1200x630 optimal)
+                  Active Image URL (Auto-filled on upload)
                 </label>
                 <input
                   type="text"
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs outline-none focus:border-[var(--accent)]"
+                  placeholder="https://res.cloudinary.com/... or https://..."
+                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs font-mono outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
@@ -1258,6 +1349,18 @@ export function PostEditor({
           </div>
         </div>
       )}
+      {/* Cover Image Media Library Picker Modal */}
+      <MediaPickerModal
+        isOpen={showCoverPickerModal}
+        onClose={() => setShowCoverPickerModal(false)}
+        title="Select Featured Cover Image"
+        onSelect={(url, item) => {
+          setCoverImage(url);
+          if (item?.alt && !coverImageAlt) {
+            setCoverImageAlt(item.alt);
+          }
+        }}
+      />
     </div>
   );
 }

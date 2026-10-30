@@ -10,8 +10,14 @@ import { getGlobalSettings } from "@/lib/db/queries/settings";
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
-  await connectDB();
-  const page = await Page.findOne({ slug: "india-ai" }).lean();
+  let page: any = null;
+  try {
+    await connectDB();
+    page = await Page.findOne({ slug: "india-ai" }).lean();
+  } catch (err) {
+    // Graceful fallback
+  }
+
   return buildEntityMetadata({
     entityType: "page",
     entitySeo: page?.seo,
@@ -25,30 +31,40 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function IndiaAiHubPage() {
-  await connectDB();
-  const [pageRaw, settings, categoryDoc] = await Promise.all([
-    Page.findOne({ slug: "india-ai" }).lean(),
-    getGlobalSettings(),
-    Category.findOne({ slug: "india-ai" }).lean(),
-  ]);
+  let pageRaw: any = null;
+  let settings: any = {};
+  let posts: any[] = [];
 
-  const page: any = pageRaw ? JSON.parse(JSON.stringify(pageRaw)) : null;
+  try {
+    await connectDB();
+    const [p, s, categoryDoc] = await Promise.all([
+      Page.findOne({ slug: "india-ai" }).lean(),
+      getGlobalSettings(),
+      Category.findOne({ slug: "india-ai" }).lean(),
+    ]);
+    pageRaw = p;
+    settings = s;
 
-  // Query strictly published posts
-  const filter: any = { status: "published" };
-  if (categoryDoc) {
-    filter.category = categoryDoc._id;
+    // Query strictly published posts
+    const filter: any = { status: "published" };
+    if (categoryDoc) {
+      filter.category = categoryDoc._id;
+    }
+
+    const postsRaw = await Post.find(filter)
+      .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author")
+      .populate("category", "name slug")
+      .populate("author", "name image slug")
+      .sort({ publishedAt: -1 })
+      .limit(18)
+      .lean();
+
+    posts = JSON.parse(JSON.stringify(postsRaw));
+  } catch (err) {
+    settings = await getGlobalSettings();
   }
 
-  const postsRaw = await Post.find(filter)
-    .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author")
-    .populate("category", "name slug")
-    .populate("author", "name image slug")
-    .sort({ publishedAt: -1 })
-    .limit(18)
-    .lean();
-
-  const posts = JSON.parse(JSON.stringify(postsRaw));
+  const page: any = pageRaw ? JSON.parse(JSON.stringify(pageRaw)) : null;
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>

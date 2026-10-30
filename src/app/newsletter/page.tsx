@@ -10,8 +10,14 @@ import { getGlobalSettings } from "@/lib/db/queries/settings";
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  await connectDB();
-  const page = await Page.findOne({ slug: "newsletter" }).lean();
+  let page: any = null;
+  try {
+    await connectDB();
+    page = await Page.findOne({ slug: "newsletter" }).lean();
+  } catch (err) {
+    // Graceful fallback
+  }
+
   return buildEntityMetadata({
     entityType: "page",
     entitySeo: page?.seo,
@@ -22,11 +28,21 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function NewsletterPage() {
-  await connectDB();
-  const [pageRaw, settings] = await Promise.all([
-    Page.findOne({ slug: "newsletter" }).lean(),
-    getGlobalSettings(),
-  ]);
+  let pageRaw: any = null;
+  let settings: any = {};
+
+  try {
+    await connectDB();
+    const [p, s] = await Promise.all([
+      Page.findOne({ slug: "newsletter" }).lean(),
+      getGlobalSettings(),
+    ]);
+    pageRaw = p;
+    settings = s;
+  } catch (err) {
+    settings = await getGlobalSettings();
+  }
+
   const page: any = pageRaw ? JSON.parse(JSON.stringify(pageRaw)) : null;
 
   const perks = [

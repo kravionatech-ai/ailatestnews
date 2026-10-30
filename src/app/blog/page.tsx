@@ -13,8 +13,14 @@ import { getGlobalSettings } from "@/lib/db/queries/settings";
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
-  await connectDB();
-  const page = await Page.findOne({ slug: "blog" }).lean();
+  let page: any = null;
+  try {
+    await connectDB();
+    page = await Page.findOne({ slug: "blog" }).lean();
+  } catch (err) {
+    // Graceful fallback
+  }
+
   return buildEntityMetadata({
     entityType: "page",
     entitySeo: page?.seo,

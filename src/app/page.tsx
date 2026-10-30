@@ -22,8 +22,14 @@ import { getGlobalSettings } from "@/lib/db/queries/settings";
 export const revalidate = 300; // 5 minutes ISR
 
 export async function generateMetadata(): Promise<Metadata> {
-  await connectDB();
-  const homePage = await Page.findOne({ slug: "home" }).lean();
+  let homePage: any = null;
+  try {
+    await connectDB();
+    homePage = await Page.findOne({ slug: "home" }).lean();
+  } catch (err) {
+    // Graceful fallback
+  }
+
   return buildEntityMetadata({
     entityType: "home",
     entitySeo: homePage?.seo,
@@ -34,22 +40,34 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  await connectDB();
+  let allPostsRaw: any[] = [];
+  let homePageRaw: any = null;
+  let settings: any = {};
 
-  // Public listing: strictly published posts only. Never expose drafts.
-  const statusFilter = { status: "published" };
+  try {
+    await connectDB();
 
-  // Fetch all posts, homepage settings, and global settings in parallel
-  const [allPostsRaw, homePageRaw, settings] = await Promise.all([
-    Post.find(statusFilter)
-      .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author")
-      .populate("category", "name slug")
-      .populate("author", "name image slug")
-      .sort({ publishedAt: -1, createdAt: -1 })
-      .lean(),
-    Page.findOne({ slug: "home" }).select("title subtitle excerpt blocks seo").lean(),
-    getGlobalSettings(),
-  ]);
+    // Public listing: strictly published posts only. Never expose drafts.
+    const statusFilter = { status: "published" };
+
+    // Fetch all posts, homepage settings, and global settings in parallel
+    const [p, h, s] = await Promise.all([
+      Post.find(statusFilter)
+        .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author")
+        .populate("category", "name slug")
+        .populate("author", "name image slug")
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .lean(),
+      Page.findOne({ slug: "home" }).select("title subtitle excerpt blocks seo").lean(),
+      getGlobalSettings(),
+    ]);
+
+    allPostsRaw = p;
+    homePageRaw = h;
+    settings = s;
+  } catch (err) {
+    settings = await getGlobalSettings();
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const allPosts: any[] = JSON.parse(JSON.stringify(allPostsRaw));

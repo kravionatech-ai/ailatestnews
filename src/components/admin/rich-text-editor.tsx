@@ -37,6 +37,9 @@ import {
   CheckCircle2,
   Bookmark,
   Trash2,
+  Upload,
+  Loader2,
+  FolderOpen,
 } from "lucide-react";
 
 export interface RichTextEditorProps {
@@ -48,6 +51,16 @@ export interface RichTextEditorProps {
 
 type EditorMode = "visual" | "code" | "split";
 type CalloutType = "info" | "warning" | "success" | "takeaway";
+type ImageTabType = "upload" | "library" | "url";
+
+interface MediaAsset {
+  _id: string;
+  filename: string;
+  url: string;
+  format?: string;
+  size?: number;
+  alt?: string;
+}
 
 export function RichTextEditor({
   value,
@@ -58,21 +71,34 @@ export function RichTextEditor({
   const [mode, setMode] = useState<EditorMode>("visual");
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Modal dialog states
+  // Link modal
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [linkText, setLinkText] = useState("");
   const [linkTargetBlank, setLinkTargetBlank] = useState(true);
 
+  // Image modal states
   const [showImageModal, setShowImageModal] = useState(false);
+  const [imageTab, setImageTab] = useState<ImageTabType>("upload");
   const [imageUrl, setImageUrl] = useState("");
   const [imageAlt, setImageAlt] = useState("");
   const [imageCaption, setImageCaption] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState("");
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
 
+  // Media Library in Image modal
+  const [libraryItems, setLibraryItems] = useState<MediaAsset[]>([]);
+  const [loadingLibrary, setLoadingLibrary] = useState(false);
+
+  const imageFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Table modal
   const [showTableModal, setShowTableModal] = useState(false);
   const [tableRows, setTableRows] = useState(3);
   const [tableCols, setTableCols] = useState(3);
 
+  // Callout modal
   const [showCalloutModal, setShowCalloutModal] = useState(false);
   const [calloutType, setCalloutType] = useState<CalloutType>("takeaway");
   const [calloutTitle, setCalloutTitle] = useState("");
@@ -85,7 +111,6 @@ export function RichTextEditor({
   const visualEditorRef = useRef<HTMLDivElement>(null);
   const isInternalUpdateRef = useRef(false);
 
-  // Save selection before modal opens
   const saveSelection = () => {
     const sel = window.getSelection();
     if (sel && sel.rangeCount > 0) {
@@ -93,7 +118,6 @@ export function RichTextEditor({
     }
   };
 
-  // Restore selection when inserting from modal
   const restoreSelection = () => {
     const sel = window.getSelection();
     if (sel && savedRangeRef.current) {
@@ -112,7 +136,6 @@ export function RichTextEditor({
     isInternalUpdateRef.current = false;
   }, [value]);
 
-  // Handle content changes from visual editor
   const handleVisualInput = useCallback(() => {
     if (visualEditorRef.current) {
       isInternalUpdateRef.current = true;
@@ -121,7 +144,6 @@ export function RichTextEditor({
     }
   }, [onChange]);
 
-  // Execute standard document command
   const execCmd = (command: string, arg: string | undefined = undefined) => {
     if (mode === "code") return;
     visualEditorRef.current?.focus();
@@ -129,7 +151,6 @@ export function RichTextEditor({
     handleVisualInput();
   };
 
-  // Custom insertion at cursor
   const insertHtmlAtCursor = (html: string) => {
     if (mode === "code") {
       onChange(value + "\n" + html);
@@ -164,7 +185,58 @@ export function RichTextEditor({
     handleVisualInput();
   };
 
-  // Modal Submit Handlers
+  // Upload direct file from device
+  const handleDirectImageUpload = async (file: File) => {
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    setImageUploadError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "ailatestnews");
+
+      const res = await fetch("/api/admin/media/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to upload image.");
+      }
+
+      setImageUrl(data.url);
+      if (!imageAlt) {
+        const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+        setImageAlt(cleanName);
+      }
+    } catch (err: any) {
+      console.error("[Image Upload Error]:", err);
+      setImageUploadError(err.message || "Failed to upload file.");
+    } finally {
+      setIsUploadingImage(false);
+      if (imageFileInputRef.current) imageFileInputRef.current.value = "";
+    }
+  };
+
+  // Fetch library items when opening library tab
+  const loadMediaLibrary = async () => {
+    setLoadingLibrary(true);
+    try {
+      const res = await fetch("/api/admin/media?limit=24");
+      const data = await res.json();
+      if (data.success && data.items) {
+        setLibraryItems(data.items);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setLoadingLibrary(false);
+    }
+  };
+
   const handleInsertLink = (e: React.FormEvent) => {
     e.preventDefault();
     if (!linkUrl.trim()) return;
@@ -194,6 +266,7 @@ export function RichTextEditor({
     setImageUrl("");
     setImageAlt("");
     setImageCaption("");
+    setImageUploadError("");
   };
 
   const handleInsertTable = (e: React.FormEvent) => {
@@ -247,7 +320,6 @@ export function RichTextEditor({
     setCalloutBody("");
   };
 
-  // Keyboard shortcut listener
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.ctrlKey || e.metaKey) {
       if (e.key === "b" || e.key === "B") {
@@ -267,7 +339,6 @@ export function RichTextEditor({
     }
   };
 
-  // Word & character stats
   const cleanText = (value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   const wordCount = cleanText ? cleanText.split(/\s+/).length : 0;
   const charCount = cleanText.length;
@@ -281,12 +352,11 @@ export function RichTextEditor({
     >
       {/* ── Top Header & Mode Bar ── */}
       <div className="flex flex-wrap items-center justify-between border-b border-slate-200 bg-slate-50/80 px-4 py-2.5 gap-2">
-        {/* Left: Mode Switcher */}
         <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5 shadow-2xs">
           <button
             type="button"
             onClick={() => setMode("visual")}
-            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${
               mode === "visual"
                 ? "bg-slate-900 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
@@ -299,7 +369,7 @@ export function RichTextEditor({
           <button
             type="button"
             onClick={() => setMode("code")}
-            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${
               mode === "code"
                 ? "bg-slate-900 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
@@ -312,7 +382,7 @@ export function RichTextEditor({
           <button
             type="button"
             onClick={() => setMode("split")}
-            className={`hidden sm:flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors ${
+            className={`hidden sm:flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${
               mode === "split"
                 ? "bg-slate-900 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
@@ -323,7 +393,6 @@ export function RichTextEditor({
           </button>
         </div>
 
-        {/* Right: Fullscreen & Live Stats */}
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-slate-500">
             <span><strong>{wordCount}</strong> words</span>
@@ -334,7 +403,7 @@ export function RichTextEditor({
           <button
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+            className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors cursor-pointer"
             title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Mode"}
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -350,7 +419,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("undo")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Undo (Ctrl+Z)"
             >
               <Undo2 className="h-4 w-4" />
@@ -358,7 +427,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("redo")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Redo (Ctrl+Y)"
             >
               <Redo2 className="h-4 w-4" />
@@ -377,11 +446,9 @@ export function RichTextEditor({
               }
             }}
             defaultValue=""
-            className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 outline-none hover:border-slate-300"
+            className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 outline-none hover:border-slate-300 cursor-pointer"
           >
-            <option value="" disabled>
-              Heading Style
-            </option>
+            <option value="" disabled>Heading Style</option>
             <option value="p">Paragraph / Normal</option>
             <option value="h2">Heading 2 (Main Section)</option>
             <option value="h3">Heading 3 (Subsection)</option>
@@ -397,7 +464,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("bold")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Bold (Ctrl+B)"
             >
               <Bold className="h-4 w-4" />
@@ -405,7 +472,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("italic")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Italic (Ctrl+I)"
             >
               <Italic className="h-4 w-4" />
@@ -413,7 +480,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("underline")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Underline (Ctrl+U)"
             >
               <Underline className="h-4 w-4" />
@@ -421,7 +488,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("strikeThrough")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Strikethrough"
             >
               <Strikethrough className="h-4 w-4" />
@@ -436,7 +503,7 @@ export function RichTextEditor({
                   insertHtmlAtCursor(`<code>code</code>`);
                 }
               }}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Inline Code"
             >
               <Code className="h-4 w-4" />
@@ -450,7 +517,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("insertUnorderedList")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Bullet List"
             >
               <List className="h-4 w-4" />
@@ -458,7 +525,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("insertOrderedList")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Numbered List"
             >
               <ListOrdered className="h-4 w-4" />
@@ -466,7 +533,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("formatBlock", "<blockquote>")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Blockquote"
             >
               <Quote className="h-4 w-4" />
@@ -474,7 +541,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => insertHtmlAtCursor("<hr /><p></p>")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Divider Line"
             >
               <Minus className="h-4 w-4" />
@@ -488,7 +555,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("justifyLeft")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Align Left"
             >
               <AlignLeft className="h-4 w-4" />
@@ -496,7 +563,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("justifyCenter")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Align Center"
             >
               <AlignCenter className="h-4 w-4" />
@@ -504,7 +571,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("justifyRight")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               title="Align Right"
             >
               <AlignRight className="h-4 w-4" />
@@ -521,24 +588,26 @@ export function RichTextEditor({
                 saveSelection();
                 setShowLinkModal(true);
               }}
-              className="flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors"
+              className="flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
               title="Insert Hyperlink (Ctrl+K)"
             >
               <LinkIcon className="h-3.5 w-3.5 text-indigo-600" />
               <span>Link</span>
             </button>
 
+            {/* DIRECT IMAGE CHOOSER / MODAL */}
             <button
               type="button"
               onClick={() => {
                 saveSelection();
                 setShowImageModal(true);
+                setImageTab("upload");
               }}
-              className="flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors"
-              title="Insert Editorial Image"
+              className="flex items-center gap-1 rounded-md bg-indigo-50/80 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors cursor-pointer shadow-2xs"
+              title="Upload or Choose Image"
             >
               <ImageIcon className="h-3.5 w-3.5 text-indigo-600" />
-              <span>Image</span>
+              <span>+ Image</span>
             </button>
 
             <button
@@ -547,8 +616,8 @@ export function RichTextEditor({
                 saveSelection();
                 setShowTableModal(true);
               }}
-              className="flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors"
-              title="Insert Benchmark Table"
+              className="flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+              title="Insert Comparison Table"
             >
               <TableIcon className="h-3.5 w-3.5 text-indigo-600" />
               <span>Table</span>
@@ -560,10 +629,10 @@ export function RichTextEditor({
                 saveSelection();
                 setShowCalloutModal(true);
               }}
-              className="flex items-center gap-1 rounded-md bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors"
+              className="flex items-center gap-1 rounded-md bg-purple-50 px-2.5 py-1 text-xs font-bold text-purple-700 hover:bg-purple-100 border border-purple-200 transition-colors cursor-pointer"
               title="Insert Styled Callout Box"
             >
-              <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
+              <Sparkles className="h-3.5 w-3.5 text-purple-600" />
               <span>+ Callout</span>
             </button>
           </div>
@@ -647,7 +716,7 @@ export function RichTextEditor({
               <button
                 type="button"
                 onClick={() => setShowLinkModal(false)}
-                className="text-slate-400 hover:text-slate-700"
+                className="text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -695,13 +764,13 @@ export function RichTextEditor({
                 <button
                   type="button"
                   onClick={() => setShowLinkModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800"
+                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
                 >
                   Insert Link
                 </button>
@@ -711,10 +780,11 @@ export function RichTextEditor({
         </div>
       )}
 
-      {/* ── 2. Insert Image Modal ── */}
+      {/* ── 2. ADVANCED IMAGE CHOOSER / UPLOADER MODAL ── */}
       {showImageModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-200 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 animate-in fade-in">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
               <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <ImageIcon className="h-4 w-4 text-indigo-600" />
@@ -722,44 +792,208 @@ export function RichTextEditor({
               </h4>
               <button
                 type="button"
-                onClick={() => setShowImageModal(false)}
-                className="text-slate-400 hover:text-slate-700"
+                onClick={() => {
+                  setShowImageModal(false);
+                  setImageUploadError("");
+                }}
+                className="text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <form onSubmit={handleInsertImage} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Image URL (Cloudinary / Unsplash / Web) *
-                </label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://images.unsplash.com/..."
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
-                />
-              </div>
+            {/* Mode Tabs: Direct Upload vs Library vs URL */}
+            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl mb-4 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setImageTab("upload")}
+                className={`flex-1 py-1.5 rounded-lg text-center transition-all cursor-pointer ${
+                  imageTab === "upload"
+                    ? "bg-white text-slate-900 shadow-2xs font-bold"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Choose File from Device
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setImageTab("library");
+                  loadMediaLibrary();
+                }}
+                className={`flex-1 py-1.5 rounded-lg text-center transition-all cursor-pointer ${
+                  imageTab === "library"
+                    ? "bg-white text-slate-900 shadow-2xs font-bold"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Media Library
+              </button>
+              <button
+                type="button"
+                onClick={() => setImageTab("url")}
+                className={`flex-1 py-1.5 rounded-lg text-center transition-all cursor-pointer ${
+                  imageTab === "url"
+                    ? "bg-white text-slate-900 shadow-2xs font-bold"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Paste Image URL
+              </button>
+            </div>
 
+            <form onSubmit={handleInsertImage} className="space-y-4">
+              {/* TAB 1: Direct File Upload */}
+              {imageTab === "upload" && (
+                <div className="space-y-3">
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDraggingImage(true);
+                    }}
+                    onDragLeave={() => setIsDraggingImage(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDraggingImage(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        handleDirectImageUpload(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    onClick={() => imageFileInputRef.current?.click()}
+                    className={`rounded-xl border-2 border-dashed p-6 text-center transition-all cursor-pointer ${
+                      isDraggingImage
+                        ? "border-indigo-600 bg-indigo-50/50"
+                        : "border-slate-300 bg-slate-50/50 hover:bg-slate-100 hover:border-slate-400"
+                    }`}
+                  >
+                    <input
+                      ref={imageFileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleDirectImageUpload(file);
+                      }}
+                      className="hidden"
+                    />
+
+                    <div className="space-y-2">
+                      <div className="mx-auto h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                        {isUploadingImage ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <Upload className="h-5 w-5" />
+                        )}
+                      </div>
+                      <p className="text-xs font-bold text-slate-800">
+                        {isUploadingImage
+                          ? "Uploading to Cloudinary CDN..."
+                          : "Click to choose image or drag & drop here"}
+                      </p>
+                      <p className="text-[10px] text-slate-500">
+                        PNG, JPG, WebP, GIF, SVG up to 10MB
+                      </p>
+                    </div>
+                  </div>
+
+                  {imageUploadError && (
+                    <p className="text-xs text-rose-600 font-semibold">{imageUploadError}</p>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 2: Media Library Picker */}
+              {imageTab === "library" && (
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-slate-600">Select previously uploaded asset:</p>
+                  {loadingLibrary ? (
+                    <div className="flex items-center justify-center py-10 text-slate-400">
+                      <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                    </div>
+                  ) : libraryItems.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1 border border-slate-200 rounded-xl">
+                      {libraryItems.map((item) => (
+                        <button
+                          key={item._id}
+                          type="button"
+                          onClick={() => {
+                            setImageUrl(item.url);
+                            if (item.alt) setImageAlt(item.alt);
+                          }}
+                          className={`relative aspect-video rounded-lg overflow-hidden border p-0.5 text-left cursor-pointer transition-all ${
+                            imageUrl === item.url
+                              ? "border-indigo-600 ring-2 ring-indigo-600/30"
+                              : "border-slate-200 hover:border-slate-400"
+                          }`}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.url}
+                            alt={item.alt || item.filename}
+                            className="w-full h-full object-cover rounded"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-xs text-slate-400 border border-dashed rounded-xl">
+                      No assets found. Use &ldquo;Choose File from Device&rdquo; tab to upload.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 3: Paste External URL */}
+              {imageTab === "url" && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Direct Image URL
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://images.unsplash.com/..."
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                  />
+                </div>
+              )}
+
+              {/* Live Preview of Selected Image */}
+              {imageUrl && (
+                <div className="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200 flex items-center gap-3">
+                  <div className="h-14 w-20 rounded-lg overflow-hidden border border-emerald-300 bg-white shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imageUrl} alt="Preview" className="h-full w-full object-cover" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-800">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                      <span>Ready to Insert</span>
+                    </div>
+                    <p className="font-mono text-[10px] text-slate-600 truncate mt-0.5">{imageUrl}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Alt Text (SEO Essential) */}
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Descriptive Alt Text (for SEO & Accessibility)
+                  Image Alt Text <span className="text-slate-400 font-normal">(for SEO &amp; screen readers)</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. DeepSeek V3 Multi-Head Latent Attention Architecture diagram"
+                  placeholder="e.g. DeepSeek-R1 Architecture benchmark chart"
                   value={imageAlt}
                   onChange={(e) => setImageAlt(e.target.value)}
                   className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
                 />
               </div>
 
+              {/* Caption */}
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Editorial Caption (Optional)
+                  Editorial Caption <span className="text-slate-400 font-normal">(Optional)</span>
                 </label>
                 <input
                   type="text"
@@ -770,19 +1004,21 @@ export function RichTextEditor({
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
+              {/* Modal Actions */}
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowImageModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800"
+                  disabled={!imageUrl || isUploadingImage}
+                  className="rounded-xl bg-slate-900 px-5 py-2 text-xs font-bold text-white hover:bg-slate-800 disabled:opacity-50 transition-colors cursor-pointer shadow-xs"
                 >
-                  Insert Image
+                  Insert Image into Article
                 </button>
               </div>
             </form>
@@ -802,7 +1038,7 @@ export function RichTextEditor({
               <button
                 type="button"
                 onClick={() => setShowTableModal(false)}
-                className="text-slate-400 hover:text-slate-700"
+                className="text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -842,13 +1078,13 @@ export function RichTextEditor({
                 <button
                   type="button"
                   onClick={() => setShowTableModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800"
+                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
                 >
                   Insert Table
                 </button>
@@ -870,7 +1106,7 @@ export function RichTextEditor({
               <button
                 type="button"
                 onClick={() => setShowCalloutModal(false)}
-                className="text-slate-400 hover:text-slate-700"
+                className="text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -885,7 +1121,7 @@ export function RichTextEditor({
                   <button
                     type="button"
                     onClick={() => setCalloutType("takeaway")}
-                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all ${
+                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
                       calloutType === "takeaway"
                         ? "border-purple-600 bg-purple-50 text-purple-900 shadow-2xs"
                         : "border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -896,7 +1132,7 @@ export function RichTextEditor({
                   <button
                     type="button"
                     onClick={() => setCalloutType("info")}
-                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all ${
+                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
                       calloutType === "info"
                         ? "border-blue-600 bg-blue-50 text-blue-900 shadow-2xs"
                         : "border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -907,7 +1143,7 @@ export function RichTextEditor({
                   <button
                     type="button"
                     onClick={() => setCalloutType("warning")}
-                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all ${
+                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
                       calloutType === "warning"
                         ? "border-amber-600 bg-amber-50 text-amber-900 shadow-2xs"
                         : "border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -918,7 +1154,7 @@ export function RichTextEditor({
                   <button
                     type="button"
                     onClick={() => setCalloutType("success")}
-                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all ${
+                    className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
                       calloutType === "success"
                         ? "border-emerald-600 bg-emerald-50 text-emerald-900 shadow-2xs"
                         : "border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -961,13 +1197,13 @@ export function RichTextEditor({
                 <button
                   type="button"
                   onClick={() => setShowCalloutModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800"
+                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
                 >
                   Insert Callout
                 </button>

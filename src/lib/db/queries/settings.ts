@@ -18,16 +18,7 @@ export const getGlobalSettings = cache(async function getGlobalSettings(): Promi
     return cachedSettings;
   }
 
-  await connectDB();
-  const settings = await Setting.findOne().lean();
-  if (settings) {
-    const parsed = JSON.parse(JSON.stringify(settings));
-    cachedSettings = parsed;
-    cacheExpiresAt = now + 60_000; // 60 seconds
-    return parsed;
-  }
-
-  // Fallback defaults if no record exists yet
+  // Fallback defaults if no record exists yet or connection unavailable
   const fallback: Partial<IGlobalSettings> = {
     siteName: "AI Latest News",
     tagline: "AI news, tools and guides, explained for India",
@@ -80,6 +71,19 @@ export const getGlobalSettings = cache(async function getGlobalSettings(): Promi
       ],
     },
   };
+
+  try {
+    await connectDB();
+    const settings = await Setting.findOne().lean();
+    if (settings) {
+      const parsed = JSON.parse(JSON.stringify(settings));
+      cachedSettings = parsed;
+      cacheExpiresAt = now + 60_000; // 60 seconds
+      return parsed;
+    }
+  } catch (err) {
+    console.warn("[getGlobalSettings] MongoDB connection failed, using fallback settings:", err);
+  }
 
   cachedSettings = fallback;
   cacheExpiresAt = now + 60_000;

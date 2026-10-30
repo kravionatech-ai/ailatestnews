@@ -11,8 +11,14 @@ import { getGlobalSettings } from "@/lib/db/queries/settings";
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  await connectDB();
-  const page = await Page.findOne({ slug: "archive" }).lean();
+  let page: any = null;
+  try {
+    await connectDB();
+    page = await Page.findOne({ slug: "archive" }).lean();
+  } catch (err) {
+    // Graceful fallback
+  }
+
   return buildEntityMetadata({
     entityType: "page",
     entitySeo: page?.seo,
@@ -23,16 +29,24 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ArchivePage() {
-  await connectDB();
+  let postsRaw: any[] = [];
+  let settings: any = {};
 
-  const [postsRaw, settings] = await Promise.all([
-    Post.find({ status: "published" })
-      .sort({ publishedAt: -1 })
-      .select("title slug publishedAt readingTime category")
-      .populate("category", "name slug")
-      .lean(),
-    getGlobalSettings(),
-  ]);
+  try {
+    await connectDB();
+    const [p, s] = await Promise.all([
+      Post.find({ status: "published" })
+        .sort({ publishedAt: -1 })
+        .select("title slug publishedAt readingTime category")
+        .populate("category", "name slug")
+        .lean(),
+      getGlobalSettings(),
+    ]);
+    postsRaw = p;
+    settings = s;
+  } catch (err) {
+    settings = await getGlobalSettings();
+  }
 
   const posts = JSON.parse(JSON.stringify(postsRaw));
 
