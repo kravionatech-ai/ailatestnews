@@ -245,6 +245,10 @@ export default async function SinglePostPage({ params }: PostPageProps) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3 mt-1 text-[11px] text-slate-500">
+                  <span className="inline-flex items-center gap-1 font-mono text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                    <ShieldCheck className="h-3 w-3 text-emerald-600" />
+                    Fact-Checked
+                  </span>
                   <span className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
                     Published {formatDate(publishDate)}
@@ -311,26 +315,13 @@ export default async function SinglePostPage({ params }: PostPageProps) {
               </figure>
             )}
 
-            {/* 60-Second Executive Briefing */}
+            {/* Executive Summary Deck */}
             <KeyTakeawaysBox
               title={post.title}
               excerpt={post.excerpt}
             />
 
-            {/* Editorial Trust & Primary Source Verification Banner */}
-            <div className="mb-8 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700 flex items-start gap-3 shadow-2xs">
-              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <p className="font-bold text-slate-900 flex items-center gap-1.5">
-                  Primary Source Verified &amp; Fact-Checked
-                </p>
-                <p className="text-slate-600 leading-relaxed text-[11px]">
-                  All claims, architectural disclosures, benchmark numbers, and policy statements cited in this dispatch are corroborated with primary documentation (official whitepapers, GitHub source weights, or Indian government gazettes).
-                </p>
-              </div>
-            </div>
-
-            {/* Prose Body */}
+            {/* Prose Body (Starts immediately without obstruction) */}
             <div
               className="prose-article prose-slate max-w-none text-slate-800 leading-relaxed"
               dangerouslySetInnerHTML={{ __html: post.contentHtml || "<p>Dispatch details coming soon.</p>" }}

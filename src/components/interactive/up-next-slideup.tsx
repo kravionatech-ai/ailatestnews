@@ -49,7 +49,7 @@ export function UpNextSlideup({ currentSlug, nextPost }: UpNextProps) {
   return (
     <aside
       aria-label="Next recommended article"
-      className="fixed bottom-6 right-6 z-40 max-w-sm w-full animate-in slide-in-from-bottom-6 duration-300 shadow-xl rounded-2xl border-2 border-slate-900 bg-white p-4"
+      className="hidden sm:block fixed bottom-20 right-5 z-40 max-w-sm w-full animate-in slide-in-from-bottom-6 duration-300 shadow-xl rounded-2xl border-2 border-slate-900 bg-white p-4"
     >
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
         <span className="flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-indigo-600">

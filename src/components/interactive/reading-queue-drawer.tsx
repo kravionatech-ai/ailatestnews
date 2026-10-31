@@ -25,8 +25,13 @@ export function ReadingQueueDrawer() {
 
   useEffect(() => {
     loadQueue();
+    const handleOpen = () => setIsOpen(true);
     window.addEventListener("readingQueueUpdated", loadQueue);
-    return () => window.removeEventListener("readingQueueUpdated", loadQueue);
+    window.addEventListener("openReadingQueue", handleOpen);
+    return () => {
+      window.removeEventListener("readingQueueUpdated", loadQueue);
+      window.removeEventListener("openReadingQueue", handleOpen);
+    };
   }, []);
 
   const removeItem = (slug: string, e: React.MouseEvent) => {
@@ -41,27 +46,10 @@ export function ReadingQueueDrawer() {
 
   const totalReadingTime = queue.reduce((acc, item) => acc + (item.readingTime || 5), 0);
 
-  if (queue.length === 0) return null;
+  if (!isOpen) return null;
 
   return (
     <>
-      {/* Floating Pill Trigger (Bottom Left) */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 z-40 flex items-center gap-2 rounded-full border-2 border-slate-900 bg-white px-4 py-2.5 shadow-xl hover:bg-slate-50 transition-all cursor-pointer group"
-        aria-label="Open saved reading list"
-      >
-        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-900 text-white font-mono text-[10px] font-bold">
-          {queue.length}
-        </span>
-        <span className="font-mono text-xs font-bold text-slate-900">
-          Reading Queue
-        </span>
-        <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">
-          ({totalReadingTime}m left)
-        </span>
-      </button>
-
       {/* Drawer Overlay & Panel */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex justify-start bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">

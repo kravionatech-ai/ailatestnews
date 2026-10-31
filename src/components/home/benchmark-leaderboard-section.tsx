@@ -256,6 +256,16 @@ const BENCHMARKS: Record<
   },
 };
 
+const VALID_SLUGS = new Set([
+  "india-10000-gpus-national-ai-mission-tender",
+  "deepseek-v3-architecture-deep-dive-mla-dualpipe",
+  "best-free-ai-tools-for-students-2026",
+  "sarvam-ai-sarvam-1-2b-parameter-model-indic-nlp",
+  "chatgpt-vs-claude-vs-gemini-best-in-india",
+  "enterprise-ai-adoption-india-bfsi-it-private-llms",
+  "openai-ai-discoveries",
+]);
+
 export function BenchmarkLeaderboardSection() {
   const [activeCategory, setActiveCategory] = useState<BenchmarkCategory>("reasoning");
   const currentBenchmark = BENCHMARKS[activeCategory];
@@ -383,7 +393,11 @@ export function BenchmarkLeaderboardSection() {
               </div>
 
               <Link
-                href={`/blog/${model.slug}`}
+                href={
+                  VALID_SLUGS.has(model.slug)
+                    ? `/blog/${model.slug}`
+                    : `/search?q=${encodeURIComponent(model.name)}`
+                }
                 className="flex items-center gap-1 font-mono text-xs font-bold text-indigo-600 hover:text-indigo-800 underline shrink-0"
               >
                 <span>Read Analysis</span>

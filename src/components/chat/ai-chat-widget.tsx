@@ -221,14 +221,14 @@ export function AIChatWidget() {
 
   return (
     <>
-      {/* Human Editorial Floating Launcher Button */}
+      {/* Human Editorial Floating Launcher Button (Desktop only to prevent mobile screen obstruction) */}
       {!isOpen && (
         <button
           onClick={() => {
             setIsOpen(true);
             setTimeout(() => inputRef.current?.focus(), 150);
           }}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white pl-3.5 pr-4 py-2 text-xs font-mono font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-102 active:scale-98 transition-all border border-slate-700 cursor-pointer"
+          className="hidden md:flex fixed bottom-5 right-5 z-30 items-center gap-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white pl-3.5 pr-4 py-2 text-xs font-mono font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-102 active:scale-98 transition-all border border-slate-700 cursor-pointer"
           aria-label="Open Newsroom Research Desk"
         >
           <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-800 text-rose-400">

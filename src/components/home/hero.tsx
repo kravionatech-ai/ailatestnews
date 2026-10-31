@@ -30,11 +30,11 @@ export function Hero({
 
   const trendingTopics = [
     { label: "IndiaAI 10k GPUs", href: "/blog/india-10000-gpus-national-ai-mission-tender" },
-    { label: "DeepSeek-R1", href: "/blog/deepseek-r1-disrupts-global-ai-economics-silicon-valley-india" },
-    { label: "Claude 5.5", href: "/blog/anthropic-claude-opus-5-5-sonnet-5-5-release" },
-    { label: "Gemini 4 Argon", href: "/blog/google-deepmind-gemini-4-argon-1-million-output-tokens" },
-    { label: "Sarvam Defence MoU", href: "/blog/sarvam-ai-five-year-defence-pact-indian-armed-forces" },
-    { label: "L&T Vyoma Datacenter", href: "/blog/l-and-t-breaks-ground-52mw-ai-datacenter-chennai-vyoma" },
+    { label: "DeepSeek-V3", href: "/blog/deepseek-v3-architecture-deep-dive-mla-dualpipe" },
+    { label: "ChatGPT vs Claude vs Gemini", href: "/blog/chatgpt-vs-claude-vs-gemini-best-in-india" },
+    { label: "Sarvam-1 Indic 2B", href: "/blog/sarvam-ai-sarvam-1-2b-parameter-model-indic-nlp" },
+    { label: "Enterprise AI India", href: "/blog/enterprise-ai-adoption-india-bfsi-it-private-llms" },
+    { label: "Free AI Tools", href: "/blog/best-free-ai-tools-for-students-2026" },
   ];
 
   return (

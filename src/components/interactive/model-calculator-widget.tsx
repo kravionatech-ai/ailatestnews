@@ -17,10 +17,20 @@ interface ModelSpec {
   articleUrl?: string;
 }
 
+const VALID_SLUGS = new Set([
+  "india-10000-gpus-national-ai-mission-tender",
+  "deepseek-v3-architecture-deep-dive-mla-dualpipe",
+  "best-free-ai-tools-for-students-2026",
+  "sarvam-ai-sarvam-1-2b-parameter-model-indic-nlp",
+  "chatgpt-vs-claude-vs-gemini-best-in-india",
+  "enterprise-ai-adoption-india-bfsi-it-private-llms",
+  "openai-ai-discoveries",
+]);
+
 const MODELS: ModelSpec[] = [
   {
     id: "deepseek-r1",
-    name: "DeepSeek-R1 (Open-Weights)",
+    name: "DeepSeek-V3 / R1 (Open-Weights)",
     provider: "DeepSeek AI",
     inputPer1M: 0.55,
     outputPer1M: 2.19,
@@ -28,7 +38,7 @@ const MODELS: ModelSpec[] = [
     reasoningScore: 90.8,
     latencyMs: 820,
     isOpenWeights: true,
-    articleUrl: "/blog/deepseek-r1-disrupts-global-ai-economics-silicon-valley-india",
+    articleUrl: "/blog/deepseek-v3-architecture-deep-dive-mla-dualpipe",
   },
   {
     id: "claude-sonnet-35",
@@ -40,7 +50,7 @@ const MODELS: ModelSpec[] = [
     reasoningScore: 88.4,
     latencyMs: 740,
     isOpenWeights: false,
-    articleUrl: "/blog/anthropic-claude-opus-5-5-sonnet-5-5-release",
+    articleUrl: "/blog/chatgpt-vs-claude-vs-gemini-best-in-india",
   },
   {
     id: "gpt-4o",
@@ -76,7 +86,7 @@ const MODELS: ModelSpec[] = [
     reasoningScore: 87.0,
     latencyMs: 890,
     isOpenWeights: false,
-    articleUrl: "/blog/google-deepmind-gemini-4-argon-1-million-output-tokens",
+    articleUrl: "/blog/chatgpt-vs-claude-vs-gemini-best-in-india",
   },
   {
     id: "llama-33-70b",
@@ -88,7 +98,7 @@ const MODELS: ModelSpec[] = [
     reasoningScore: 82.0,
     latencyMs: 510,
     isOpenWeights: true,
-    articleUrl: "/blog/llama-3-3-70b-benchmark-matches-llama-3-1-405b",
+    articleUrl: "/blog/deepseek-v3-architecture-deep-dive-mla-dualpipe",
   },
 ];
 
@@ -365,7 +375,11 @@ export function ModelCalculatorWidget() {
             <strong>{selectedModel.name}</strong>?
           </span>
           <Link
-            href={selectedModel.articleUrl}
+            href={
+              VALID_SLUGS.has(selectedModel.articleUrl.replace("/blog/", ""))
+                ? selectedModel.articleUrl
+                : `/search?q=${encodeURIComponent(selectedModel.name)}`
+            }
             className="inline-flex items-center gap-1.5 font-bold text-indigo-600 hover:text-indigo-700 underline font-mono"
           >
             <span>Read Complete Benchmark Report</span>

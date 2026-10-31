@@ -13,7 +13,6 @@ import { FaqSection } from "@/components/home/faq-section";
 import { NewsletterBox } from "@/components/home/newsletter-box";
 import { BenchmarkLeaderboardSection } from "@/components/home/benchmark-leaderboard-section";
 import { ModelCalculatorWidget } from "@/components/interactive/model-calculator-widget";
-import { CommunityPollWidget } from "@/components/interactive/community-poll-widget";
 import { connectDB } from "@/lib/db/connection";
 import { Post, Page } from "@/lib/db/models";
 import { buildEntityMetadata } from "@/lib/seo/fallback";
@@ -193,9 +192,6 @@ export default async function HomePage() {
           <ModelLaunchesSection posts={modelLaunchesPosts} />
         )}
 
-        {/* c2) Frontier AI Models Benchmark Arena (Interactive) */}
-        <BenchmarkLeaderboardSection />
-
         {/* d) Sovereign Compute & India AI Desk */}
         {indiaAiPosts.length > 0 && (
           <IndiaAiSection posts={indiaAiPosts} />
@@ -211,16 +207,10 @@ export default async function HomePage() {
           <GuidesSection posts={guidesPosts} />
         )}
 
-        {/* f2) Interactive Compute & Token Cost Sandbox */}
-        <ModelCalculatorWidget />
-
         {/* g) Enterprise AI Architecture Desk */}
         {enterpriseAiPosts.length > 0 && (
           <EnterpriseAiSection posts={enterpriseAiPosts} />
         )}
-
-        {/* g2) Newsroom Community Pulse Poll */}
-        <CommunityPollWidget />
 
         {/* h) The Most Read Wire & Latest Chronological Stream */}
         <TrendingLatestSection
@@ -228,13 +218,34 @@ export default async function HomePage() {
           trendingPosts={trendingPosts}
         />
 
-        {/* i) The Daily Intelligence Dispatch (Newsletter) */}
+        {/* i) Interactive Benchmarks & Compute Economics Sandbox */}
+        <section className="py-10 sm:py-14 border-b border-slate-200" aria-label="Interactive Systems Lab">
+          <div className="mb-8 pb-4 border-b border-slate-900">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+              Systems Lab // Primary Evaluation
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+              Frontier Model Benchmarks &amp; Inference Economics
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+              Cross-reference verified evaluation benchmarks (AIME, Indic MMLU, SWE-bench) and estimate production token costs.
+            </p>
+          </div>
+
+          <BenchmarkLeaderboardSection />
+
+          <div className="mt-12">
+            <ModelCalculatorWidget />
+          </div>
+        </section>
+
+        {/* j) The Daily Intelligence Dispatch (Newsletter) */}
         <NewsletterBox />
 
-        {/* j) Newsroom Mission & Editorial Standards */}
+        {/* k) Newsroom Mission & Editorial Standards */}
         <SiteIntroSection {...introProps} />
 
-        {/* k) Editorial FAQ with FAQPage Schema */}
+        {/* l) Editorial FAQ with FAQPage Schema */}
         <FaqSection {...faqProps} />
       </div>
     </PublicShell>
