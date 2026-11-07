@@ -12,6 +12,7 @@
     "type-check": "tsc --noEmit",
     "seed:local": "tsx scripts/seed.ts",
     "seed:prod": "tsx scripts/seed-prod.ts",
+    "daily-news:auto": "tsx --env-file=.env.local scripts/daily-news-automation.ts",
     "test": "vitest",
     "test:e2e": "playwright test",
     "test:coverage": "vitest --coverage",
@@ -19,6 +20,7 @@
     "postinstall": "echo postinstall done"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^6.0.0",
     "@radix-ui/react-avatar": "^1.3.1",
     "@radix-ui/react-dialog": "^1.3.1",
@@ -34,6 +36,7 @@
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "dotenv": "^18.0.9",
     "framer-motion": "^14.6.0",
     "gsap": "^3.15.0",
     "lenis": "^1.3.27",
