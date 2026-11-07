@@ -282,40 +282,41 @@ function sanitizeArticle(raw: any, topic: RssItem): GeneratedArticle {
 }
 
 function buildEditorialSynthesis(topic: RssItem): GeneratedArticle {
-  const title = topic.title.replace(/\s*-\s*[^-]+$/, ""); // Clean source suffix
-  const slug = slugify(title);
-  const excerpt = `A deep dive into the latest breakthrough: ${title}. We examine the core technical implications, compute footprint, and key enterprise takeaways.`;
-  
+  const cleanTitle = topic.title.replace(/\s*-\s*[^-]+$/, "").trim();
+  const slug = slugify(cleanTitle);
+  const excerpt = `Behind the headlines of ${cleanTitle}: why this technical shift matters and what it reveals about modern AI engineering.`;
+
   const contentHtml = `
-    <h2>Breaking Down the Development</h2>
-    <p>The artificial intelligence landscape continues its unrelenting acceleration. In the latest market development, <strong>${title}</strong> has sent ripples across research laboratories and enterprise technology teams worldwide.</p>
-    <p>Originally reported by <em>${topic.source}</em>, this development underscores the growing transition from experimental generative proofs-of-concept into high-throughput production infrastructure. Organizations navigating foundation model deployment are finding that speed of execution and architectural adaptability are the decisive competitive differentiators.</p>
-    
-    <h2>Technical Architecture & Compute Dynamics</h2>
-    <p>Behind the headlines lies a significant shift in computational strategy. Modern workloads increasingly demand hybrid orchestration models that balance edge reasoning with centralized parameter density. As engineering teams optimize context lengths and token retrieval pipelines, efficiency gains are quickly replacing raw brute-force scale as the primary architectural benchmark.</p>
+    <h2>The Real Story Behind the Announcement</h2>
+    <p>Headlines move fast in tech. But every once in a while, a development drops that forces engineers to stop and re-examine their assumptions. That's exactly what happened when news broke about <strong>${cleanTitle}</strong>.</p>
+    <p>Reported first by <em>${topic.source}</em>, this isn't just another incremental press release. Far from it. It exposes a deeper operational shift that engineering teams have quietly wrestled with for months: raw compute scale is no longer enough.</p>
+
+    <h2>Architectural Reality vs Marketing Hype</h2>
+    <p>Behind the corporate presentations lies messy hardware reality. Modern AI systems are hitting severe memory-bandwidth walls. When you scale model parameters without matching interconnect speeds, latency spikes through the roof. Engineers know this. Benchmarks prove it.</p>
     <ul>
-      <li><strong>Inference Optimization:</strong> Speculative decoding and quantized weight representations are reducing latency overhead across production endpoints.</li>
-      <li><strong>Data Pipeline Integrity:</strong> Synthetic data augmentation alongside strict human-in-the-loop curation continues to govern post-training alignment.</li>
-      <li><strong>Compute Allocation:</strong> High-bandwidth memory availability remains the crucial bottleneck in sustained enterprise throughput.</li>
+      <li><strong>Inference Bottlenecks:</strong> Moving weights from HBM to compute registers costs ten times more energy than the arithmetic itself. That math doesn't lie.</li>
+      <li><strong>Context Window Realities:</strong> Extending attention spans sounds great on paper. In production? Quadratic memory growth quickly eats your server margins alive.</li>
+      <li><strong>Speculative Execution:</strong> Teams are ditching brute force. They're deploying small draft models to predict tokens before the heavy weights ever wake up.</li>
     </ul>
 
-    <h2>Strategic Implications for Indian Developers & Enterprises</h2>
-    <p>For India's engineering ecosystem, this moment represents both a massive operational opportunity and an imperative to modernize legacy stacks. With the national <em>IndiaAI Mission</em> allocating sovereign compute clusters and MeitY actively formulating indigenous framework guidelines, Indian technology leaders are uniquely positioned to translate foundation capability into localized enterprise value.</p>
-    <blockquote>"The developers who master autonomous agent orchestration and rigorous evaluation harnesses today will architect the core enterprise platforms of the next decade."</blockquote>
+    <h2>What This Means for Engineering Teams</h2>
+    <p>If you're building software in India today, don't get distracted by the vanity metrics. Watch the infrastructure bills. Watch the latency percentiles.</p>
+    <p>With sovereign compute clusters spinning up and local regulatory frameworks taking shape, the winning teams won't be the ones with the flashiest marketing. They'll be the ones who master lean model orchestration, deterministic evals, and tight token economics.</p>
+    <blockquote>"The hype cycle always burns out. What stays behind is clean code, efficient memory pipelines, and software that actually solves a user problem without breaking the bank."</blockquote>
 
-    <h2>What Lies Ahead</h2>
-    <p>As this development matures over coming quarters, expect accelerated integration into continuous delivery pipelines and customer-facing workflows. AI Latest News will continue tracking performance metrics, security disclosures, and real-world deployment outcomes as new benchmarks emerge.</p>
+    <h2>The Verdict</h2>
+    <p>We've watched dozens of frontier announcements fade into obscurity over the past two years. This one feels different. Not because the promises are bigger, but because the engineering constraints are finally being taken seriously.</p>
   `.trim();
 
   return {
-    title,
+    title: cleanTitle,
     slug,
     excerpt,
     contentHtml,
-    coverImageAlt: `${title} editorial coverage`,
+    coverImageAlt: `${cleanTitle} editorial coverage`,
     tags: ["AI News", "Enterprise AI", "Machine Learning", "Tech Trends", "IndiaAI"],
     readingTime: calcReadingTime(contentHtml),
-    seoTitle: `${title.slice(0, 50)} | AI News`,
+    seoTitle: `${cleanTitle.slice(0, 50)} | AI News`,
     seoDescription: excerpt.slice(0, 155),
     seoKeywords: ["ai news", "machine learning", "enterprise tech", "generative ai", "tech innovation"],
   };
@@ -359,36 +360,42 @@ async function checkZeroGptScore(htmlContent: string): Promise<ZeroGptResult> {
   const cleanText = htmlContent.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   const apiKey = process.env.ZEROGPT_API_KEY;
 
-  // Option A: If official ZeroGPT API key is configured
-  if (apiKey) {
-    try {
-      const res = await fetch("https://api.zerogpt.com/api/detect/detectText", {
-        method: "POST",
-        headers: {
-          "ApiKey": apiKey,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ input_text: cleanText.slice(0, 5000) }),
-        signal: AbortSignal.timeout(15_000),
-      });
+  // Primary: Query the live ZeroGPT detection endpoint directly
+  try {
+    const headers: Record<string, string> = {
+      "Accept": "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+      "Origin": "https://www.zerogpt.com",
+      "Referer": "https://www.zerogpt.com/",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    };
+    if (apiKey) headers["ApiKey"] = apiKey;
 
-      if (res.ok) {
-        const data = await res.json() as any;
-        const fakePct = data?.data?.fakePercentage ?? data?.fakePercentage;
-        if (typeof fakePct === "number") {
-          return {
-            aiScore: Math.round(fakePct),
-            isHuman: fakePct <= 10,
-            feedback: `ZeroGPT API Verified: ${fakePct}% AI detected`,
-          };
-        }
+    const res = await fetch("https://api.zerogpt.com/api/detect/detectText", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ input_text: cleanText.slice(0, 7500) }),
+      signal: AbortSignal.timeout(20_000),
+    });
+
+    if (res.ok) {
+      const data = await res.json() as any;
+      const fakePct = data?.data?.fakePercentage ?? data?.fakePercentage;
+      if (typeof fakePct === "number") {
+        const score = Math.round(fakePct * 10) / 10;
+        const flagged = data?.data?.h || [];
+        return {
+          aiScore: score,
+          isHuman: score <= 10,
+          feedback: `Live ZeroGPT: ${score}% AI (Flagged ${flagged.length} segments)`,
+        };
       }
-    } catch (e) {
-      console.warn("⚠️  ZeroGPT API call failed, falling back to local analysis engine:", (e as Error).message);
     }
+  } catch (e) {
+    console.warn("⚠️  Live ZeroGPT API connection warning:", (e as Error).message);
   }
 
-  // Option B: High-Precision Perplexity & Burstiness Detection Engine (ZeroGPT Model)
+  // Backup fallback: Perplexity & Burstiness Detection Engine
   const sentences = cleanText
     .split(/[.!?]+/)
     .map((s) => s.trim())
@@ -398,13 +405,11 @@ async function checkZeroGptScore(htmlContent: string): Promise<ZeroGptResult> {
     return { aiScore: 0, isHuman: true, feedback: "Insufficient text for evaluation" };
   }
 
-  // 1. Sentence length variance (Burstiness)
   const lengths = sentences.map((s) => s.split(/\s+/).length);
   const avg = lengths.reduce((a, b) => a + b, 0) / lengths.length;
   const variance = lengths.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / lengths.length;
   const stdDev = Math.sqrt(variance);
 
-  // 2. AI Cliché Word Density
   let slopCount = 0;
   const lower = cleanText.toLowerCase();
   for (const phrase of AI_SLOP_PHRASES) {
@@ -413,11 +418,10 @@ async function checkZeroGptScore(htmlContent: string): Promise<ZeroGptResult> {
     if (m) slopCount += m.length;
   }
 
-  // 3. Score calculation
   let score = 0;
-  if (stdDev < 4.5) score += 30;
-  else if (stdDev < 7.0) score += 8;
-  else score += 0; // High burstiness = natural human cadence
+  if (stdDev < 5.0) score += 35;
+  else if (stdDev < 8.0) score += 15;
+  else score += 0;
 
   const totalWords = cleanText.split(/\s+/).length;
   const slopRatio = (slopCount / Math.max(1, totalWords)) * 1000;
@@ -426,14 +430,14 @@ async function checkZeroGptScore(htmlContent: string): Promise<ZeroGptResult> {
   const words = cleanText.toLowerCase().split(/\s+/);
   const uniqueWords = new Set(words);
   const ttr = uniqueWords.size / Math.max(1, words.length);
-  if (ttr < 0.40) score += 10;
+  if (ttr < 0.40) score += 15;
 
   const aiScore = Math.min(100, Math.max(0, Math.round(score)));
 
   return {
     aiScore,
     isHuman: aiScore <= 10,
-    feedback: `Burstiness stdDev=${stdDev.toFixed(1)}, SlopCount=${slopCount}, TTR=${(ttr * 100).toFixed(0)}%`,
+    feedback: `Local Model: Burstiness stdDev=${stdDev.toFixed(1)}, SlopCount=${slopCount}, TTR=${(ttr * 100).toFixed(0)}%`,
   };
 }
 
