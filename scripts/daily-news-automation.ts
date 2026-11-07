@@ -574,80 +574,78 @@ function forceHumanCadence(article: GeneratedArticle): GeneratedArticle {
   return article;
 }
 
-// ─── Step 4: Acquire High-Impact Tech Cover Image & Upload to Cloudinary ────────
+// ─── Step 4: AI Image Generation Engine (Bespoke Artwork per Article) ────────
 
-const TECH_IMAGE_POOLS: Record<string, string[]> = {
-  security: [
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80", // Cyber matrix code
-    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80", // Cybersecurity terminal
-    "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80", // Digital defense shield
-  ],
-  datacenter: [
-    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80", // Server racks compute
-    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80", // Silicon processor microchip
-    "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80", // Datacenter corridor
-  ],
-  coding: [
-    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80", // Code terminal dark
-    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80", // MacBook developer code
-    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80", // Software engineering workspace
-  ],
-  models: [
-    "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80", // Generative AI glowing mind
-    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80", // Neural core glowing blue
-    "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80", // AI neural network abstract
-    "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1200&q=80", // AI tech network nodes
-  ],
-  enterprise: [
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80", // Global digital network
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80", // Modern tech enterprise towers
-    "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80", // Tech leadership & engineering
-  ],
-};
+async function generateAiImageBuffer(article: GeneratedArticle): Promise<Buffer> {
+  // Construct clean, descriptive prompt for the AI image generator
+  const cleanTitle = article.title
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, " ")
+    .slice(0, 90)
+    .trim();
 
-function selectRelevantImageUrl(article: GeneratedArticle): string {
-  const combined = `${article.title} ${article.tags.join(" ")}`.toLowerCase();
+  const primaryTag = article.tags[0] || "Artificial Intelligence";
+  const aiPrompt = `futuristic digital artwork illustration for ${cleanTitle}, glowing neural network nodes, cyber tech ${primaryTag}, 8k render masterpiece, cinematic dark volumetric lighting`;
 
-  let pool = TECH_IMAGE_POOLS.models;
-  if (/hack|cyber|secur|attack|vulnerab|malware|breach|exploit/.test(combined)) {
-    pool = TECH_IMAGE_POOLS.security;
-  } else if (/capex|datacenter|compute|gpu|nvidia|chip|hardware|cloud|server|cluster|semiconductor/.test(combined)) {
-    pool = TECH_IMAGE_POOLS.datacenter;
-  } else if (/developer|code|coding|programmer|github|open-source|sdk|api|repo/.test(combined)) {
-    pool = TECH_IMAGE_POOLS.coding;
-  } else if (/market|fund|billion|deal|enterprise|startup|revenue|invest/.test(combined)) {
-    pool = TECH_IMAGE_POOLS.enterprise;
+  console.log(`🎨 Creating Bespoke AI Artwork: "${cleanTitle.slice(0, 60)}..."`);
+
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(aiPrompt)}`;
+
+  // Attempt generation with automatic retry for rate limits
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      console.log(`   → AI Generation Request (Attempt ${attempt}/3)...`);
+      const res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(45_000) });
+
+      if (res.ok) {
+        const buf = Buffer.from(await res.arrayBuffer());
+        if (buf.length > 5000) {
+          console.log(`   ✨ AI Image Generated Successfully (${Math.round(buf.length / 1024)} KB)!`);
+          return buf;
+        }
+      }
+
+      if (res.status === 402) {
+        console.warn(`   ⏳ Rate limit detected. Waiting 20 seconds before retry...`);
+        await new Promise((r) => setTimeout(r, 20_000));
+      }
+    } catch (e) {
+      console.warn(`   ⚠️  Attempt ${attempt} warning: ${(e as Error).message}`);
+      await new Promise((r) => setTimeout(r, 5_000));
+    }
   }
 
-  // Deterministic pick based on slug hash so it is stable but varied across topics
-  const hash = article.slug.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return pool[hash % pool.length];
+  // Backup AI art prompt if first fails
+  const fallbackPrompt = `artificial intelligence neural network digital art illustration, futuristic cyber computer glowing circuits 8k render`;
+  console.log("   → Trying secondary AI art prompt...");
+  const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(fallbackPrompt)}`;
+  const fbRes = await fetch(fallbackUrl, { redirect: "follow", signal: AbortSignal.timeout(30_000) });
+  if (fbRes.ok) {
+    const buf = Buffer.from(await fbRes.arrayBuffer());
+    if (buf.length > 5000) return buf;
+  }
+
+  throw new Error("AI Image generation could not acquire valid image buffer.");
 }
 
 async function uploadCoverImage(article: GeneratedArticle): Promise<string> {
   const { uploadImageBuffer } = await import("../src/lib/services/cloudinary");
-  const selectedSourceUrl = selectRelevantImageUrl(article);
-
-  console.log(`🖼️  Selected high-resolution editorial tech asset: ${selectedSourceUrl}`);
 
   try {
-    const res = await fetch(selectedSourceUrl, { redirect: "follow", signal: AbortSignal.timeout(20_000) });
-    if (res.ok) {
-      const buffer = Buffer.from(await res.arrayBuffer());
-      console.log(`   → Acquired image buffer (${Math.round(buffer.length / 1024)} KB)`);
+    const imageBuffer = await generateAiImageBuffer(article);
 
-      console.log("☁️  Uploading directly to Cloudinary CDN...");
-      const result = await uploadImageBuffer(buffer, `${article.slug}.jpg`, "ainews/editorial");
-      if (result?.url) {
-        console.log(`   ✅ Cloudinary CDN URL: ${result.url}`);
-        return result.url;
-      }
+    console.log("☁️  Uploading AI-Generated Image to Cloudinary CDN...");
+    const result = await uploadImageBuffer(imageBuffer, `${article.slug}.jpg`, "ainews/ai-generated");
+    if (result?.url) {
+      console.log(`   ✅ Cloudinary CDN URL: ${result.url}`);
+      return result.url;
     }
   } catch (e) {
-    console.warn("⚠️  Cloudinary upload failed, falling back to source URL:", (e as Error).message);
+    console.error("❌ AI Image Generation/Upload error:", (e as Error).message);
   }
 
-  return selectedSourceUrl;
+  // Absolute fallback URL
+  return "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80";
 }
 
 // ─── Step 5: Ensure Tag Documents Exist in DB ────────────────────────────────
