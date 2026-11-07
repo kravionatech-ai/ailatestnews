@@ -115,7 +115,7 @@ async function fetchRssItems(): Promise<RssItem[]> {
     try {
       console.log(`📡 Fetching RSS: ${feedUrl}`);
       const res = await fetch(feedUrl, {
-        headers: { "User-Agent": "AILatestNews/1.0 (+https://ailatestnews.in)" },
+        headers: { "User-Agent": "AINews/1.0 (+https://ainews.kraviona.com)" },
         signal: AbortSignal.timeout(15_000),
       });
       if (!res.ok) { console.warn(`⚠️  RSS ${res.status}: ${feedUrl}`); continue; }
@@ -165,7 +165,7 @@ async function pickFreshTopic(candidates: RssItem[]): Promise<RssItem> {
 async function generateArticle(topic: RssItem): Promise<GeneratedArticle> {
   const apiKey = process.env.GEMINI_API_KEY;
 
-  const systemPrompt = `You are a chief technology editor and investigative AI journalist at "AI Latest News" (ailatestnews.in), India's premier AI news platform.
+  const systemPrompt = `You are a chief technology editor and investigative AI journalist at "AI News" (ainews.kraviona.com), India's premier AI news platform.
 Your writing style is analytical, authoritative, and engaging. Never robotic, clichéd, or boilerplate.
 Avoid phrases like "In this fast-paced world" or "Delve into". Write with precision, citing concrete architectural implications, compute realities, and strategic impacts for Indian software engineers and enterprise leaders.`;
 
@@ -318,54 +318,80 @@ function buildEditorialSynthesis(topic: RssItem): GeneratedArticle {
   };
 }
 
-// ─── Step 4: Generate Custom Cover Image & Upload to Cloudinary ───────────────
+// ─── Step 4: Acquire High-Impact Tech Cover Image & Upload to Cloudinary ────────
+
+const TECH_IMAGE_POOLS: Record<string, string[]> = {
+  security: [
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80", // Cyber matrix code
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80", // Cybersecurity terminal
+    "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80", // Digital defense shield
+  ],
+  datacenter: [
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80", // Server racks compute
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80", // Silicon processor microchip
+    "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80", // Datacenter corridor
+  ],
+  coding: [
+    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80", // Code terminal dark
+    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80", // MacBook developer code
+    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80", // Software engineering workspace
+  ],
+  models: [
+    "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80", // Generative AI glowing mind
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80", // Neural core glowing blue
+    "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80", // AI neural network abstract
+    "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1200&q=80", // AI tech network nodes
+  ],
+  enterprise: [
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80", // Global digital network
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80", // Modern tech enterprise towers
+    "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80", // Tech leadership & engineering
+  ],
+};
+
+function selectRelevantImageUrl(article: GeneratedArticle): string {
+  const combined = `${article.title} ${article.tags.join(" ")}`.toLowerCase();
+
+  let pool = TECH_IMAGE_POOLS.models;
+  if (/hack|cyber|secur|attack|vulnerab|malware|breach|exploit/.test(combined)) {
+    pool = TECH_IMAGE_POOLS.security;
+  } else if (/capex|datacenter|compute|gpu|nvidia|chip|hardware|cloud|server|cluster|semiconductor/.test(combined)) {
+    pool = TECH_IMAGE_POOLS.datacenter;
+  } else if (/developer|code|coding|programmer|github|open-source|sdk|api|repo/.test(combined)) {
+    pool = TECH_IMAGE_POOLS.coding;
+  } else if (/market|fund|billion|deal|enterprise|startup|revenue|invest/.test(combined)) {
+    pool = TECH_IMAGE_POOLS.enterprise;
+  }
+
+  // Deterministic pick based on slug hash so it is stable but varied across topics
+  const hash = article.slug.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  return pool[hash % pool.length];
+}
 
 async function uploadCoverImage(article: GeneratedArticle): Promise<string> {
   const { uploadImageBuffer } = await import("../src/lib/services/cloudinary");
+  const selectedSourceUrl = selectRelevantImageUrl(article);
 
-  const promptText = encodeURIComponent(
-    `futuristic high tech cyber concept for ${article.title.slice(0, 50)}, neural network, glowing neon circuitry, professional 8k editorial photography, cinematic lighting`
-  );
+  console.log(`🖼️  Selected high-resolution editorial tech asset: ${selectedSourceUrl}`);
 
-  const candidateUrls = [
-    `https://image.pollinations.ai/prompt/${promptText}?width=1200&height=675&nologo=true&seed=${Date.now()}`,
-    `https://picsum.photos/1200/675?blur=1`,
-  ];
+  try {
+    const res = await fetch(selectedSourceUrl, { redirect: "follow", signal: AbortSignal.timeout(20_000) });
+    if (res.ok) {
+      const buffer = Buffer.from(await res.arrayBuffer());
+      console.log(`   → Acquired image buffer (${Math.round(buffer.length / 1024)} KB)`);
 
-  let imageBuffer: Buffer | null = null;
-  let ext = "jpg";
-
-  for (const url of candidateUrls) {
-    try {
-      console.log(`🖼️  Generating bespoke AI cover visual: ${url.slice(0, 80)}...`);
-      const res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(30_000) });
-      if (res.ok) {
-        const ct = res.headers.get("content-type") ?? "image/jpeg";
-        ext = ct.split("/")[1]?.split(";")[0] ?? "jpg";
-        imageBuffer = Buffer.from(await res.arrayBuffer());
-        console.log(`   → Image acquired (${Math.round(imageBuffer.length / 1024)} KB)`);
-        break;
-      }
-    } catch (e) {
-      console.warn(`   ⚠️  Image fetch warning: ${(e as Error).message}`);
-    }
-  }
-
-  if (imageBuffer && imageBuffer.length > 500) {
-    try {
-      console.log("☁️  Uploading to Cloudinary CDN...");
-      const result = await uploadImageBuffer(imageBuffer, `${article.slug}.${ext}`, "ailatestnews/auto");
-      if (result.url) {
+      console.log("☁️  Uploading directly to Cloudinary CDN...");
+      const result = await uploadImageBuffer(buffer, `${article.slug}.jpg`, "ainews/editorial");
+      if (result?.url) {
         console.log(`   ✅ Cloudinary CDN URL: ${result.url}`);
         return result.url;
       }
-    } catch (e) {
-      console.warn("⚠️  Cloudinary upload failed, falling back to local public upload:", (e as Error).message);
     }
+  } catch (e) {
+    console.warn("⚠️  Cloudinary upload failed, falling back to source URL:", (e as Error).message);
   }
 
-  // Safe fallback CDN visual
-  return "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1600&h=900&fit=crop&auto=format";
+  return selectedSourceUrl;
 }
 
 // ─── Step 5: Ensure Tag Documents Exist in DB ────────────────────────────────
@@ -489,7 +515,7 @@ async function main() {
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
     console.log("\n========================================================");
     console.log(`🎉 Pipeline Succeeded in ${elapsed}s!`);
-    console.log(`🔗 Live Article URL: https://ailatestnews.in/blog/${slug}`);
+    console.log(`🔗 Live Article URL: https://ainews.kraviona.com/blog/${slug}`);
     console.log(`📰 Title: "${article.title}"`);
     console.log(`🖼️  Cover: ${coverImage}`);
     console.log(`🏷️  Tags: ${article.tags.join(", ")}`);
