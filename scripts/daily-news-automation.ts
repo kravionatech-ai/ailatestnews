@@ -167,12 +167,15 @@ async function generateArticle(topic: RssItem): Promise<GeneratedArticle> {
 
   const systemPrompt = `You are a chief technology editor and investigative AI journalist at "AI News" (ainews.kraviona.com), India's premier AI news platform.
 Your writing style is analytical, authoritative, and engaging. Never robotic, clichéd, or boilerplate.
-Avoid phrases like "In this fast-paced world" or "Delve into". Write with precision, citing concrete architectural implications, compute realities, and strategic impacts for Indian software engineers and enterprise leaders.`;
+LANGUAGE REQUIREMENT: ALWAYS WRITE IN 100% PURE, PROFESSIONAL ENGLISH ONLY. Never output Hindi, Hinglish, or mixed language.
+Avoid phrases like "In this fast-paced world" or "Delve into". Write with precision, citing concrete architectural implications, compute realities, and strategic impacts for software engineers and enterprise leaders.`;
 
-  const userPrompt = `Write a comprehensive, publication-grade editorial news article about this breaking AI story:
+  const userPrompt = `Write a comprehensive, publication-grade editorial news article about this breaking AI story in 100% English:
 
 HEADLINE IDEA: "${topic.title}"
 SOURCE / WIRE: ${topic.source}
+
+LANGUAGE RULE: The entire output (title, excerpt, contentHtml, tags, alt text, SEO fields) MUST ALWAYS BE IN ENGLISH ONLY.
 
 Return a valid JSON object ONLY (no markdown code blocks, no backticks, no explanatory text outside the JSON) with this exact schema:
 
@@ -452,11 +455,12 @@ Your explicit job is to rewrite this tech article so it scores UNDER 10% on Zero
 CURRENT AI DETECTION SCORE: ${currentAiScore}% (TARGET: <= 10% AI Score)
 
 MANDATORY HUMANIZATION INSTRUCTIONS:
-1. EXTREME BURSTINESS: Alternate radically between ultra-short punchy sentences (2-5 words) and complex, nuanced journalistic analysis (25-35 words). Never write three sentences of similar length in a row.
-2. ZERO AI SLOP WORDS: Never use "moreover", "furthermore", "in conclusion", "testament to", "delve into", "beacon", "tapestry", "game-changer", "revolutionize", "pivotal role", "rapidly evolving landscape", "fostering".
-3. ACTIVE VOICE & FIRST-PERSON JOURNALISM: Write with real journalistic presence (e.g. "We tracked this commit...", "Let that sink in.", "Here is the raw math:", "Nobody saw this coming.").
-4. RETAIN HTML STRUCTURE: Preserve all <h2>, <h3>, <p>, <ul>, <li> tags and technical facts accurately.
-5. NO CODE BLOCKS: Return valid JSON only with keys "contentHtml" and "excerpt".
+1. STRICT ENGLISH LANGUAGE: The article MUST ALWAYS BE REWRITTEN IN 100% FLUENT, GRAMMATICALLY SOUND EDITORIAL ENGLISH ONLY. No Hindi, Hinglish, or mixed words.
+2. EXTREME BURSTINESS: Alternate radically between ultra-short punchy sentences (2-5 words) and complex, nuanced journalistic analysis (25-35 words). Never write three sentences of similar length in a row.
+3. ZERO AI SLOP WORDS: Never use "moreover", "furthermore", "in conclusion", "testament to", "delve into", "beacon", "tapestry", "game-changer", "revolutionize", "pivotal role", "rapidly evolving landscape", "fostering".
+4. ACTIVE VOICE & FIRST-PERSON JOURNALISM: Write with real journalistic presence (e.g. "We tracked this commit...", "Let that sink in.", "Here is the raw math:", "Nobody saw this coming.").
+5. RETAIN HTML STRUCTURE: Preserve all <h2>, <h3>, <p>, <ul>, <li> tags and technical facts accurately.
+6. NO CODE BLOCKS: Return valid JSON only with keys "contentHtml" and "excerpt".
 
 ARTICLE TITLE: "${article.title}"
 ARTICLE CONTENT TO HUMANIZE:
