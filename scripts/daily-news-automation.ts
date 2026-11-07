@@ -580,37 +580,70 @@ function forceHumanCadence(article: GeneratedArticle): GeneratedArticle {
 
 // ─── Step 4: AI Image Generation Engine (Bespoke Artwork per Article) ────────
 
+function synthesizeVisualScenePrompt(title: string, tags: string[]): string {
+  const t = title.toLowerCase();
+
+  // 1. Cybersecurity, Hacking, Linux, Kernel, Exploits, Vulnerabilities
+  if (/hack|cyber|exploit|linux|kernel|vulnerab|breach|malware|zero-day|attack|security/.test(t)) {
+    return `cybersecurity command center display showing glowing terminal code, Linux kernel exploit vulnerability detection, digital padlock shield, dark atmospheric lighting, 8k professional tech editorial render`;
+  }
+
+  // 2. Compute, Capex, Billions, Datacenters, Hardware, GPUs, Chips
+  if (/capex|billion|datacenter|compute|gpu|nvidia|blackwell|tpu|chip|semiconductor|server/.test(t)) {
+    return `vast hyper-scale cloud AI datacenter with endless rows of glowing liquid-cooled server racks, high-speed optical fiber interconnects, high-end clean architectural tech photography, 8k`;
+  }
+
+  // 3. Autonomous Agents, Robotics, Self-Replication
+  if (/robot|self-replicate|agent|autonomous|embodied|humanoid|agentic/.test(t)) {
+    return `futuristic humanoid robotic AI agent analyzing glowing holographic data interfaces in a modern research laboratory, sleek titanium body, dramatic volumetric studio lighting, 8k photorealistic`;
+  }
+
+  // 4. India, MeitY, Indigenous Models, Sovereign AI (Eka, Dhir, Sarvam, Krutrim)
+  if (/india|indigenous|eka|dhir|meity|sarvam|krutrim|sovereign/.test(t)) {
+    return `advanced sovereign semiconductor silicon chip with glowing circuitry and neural network traces, high-tech Indian computing laboratory setting, futuristic clean editorial 3d render, 8k`;
+  }
+
+  // 5. Early AI, History, Vintage, Language tasks, Punch cards
+  if (/early|history|struggle|vintage|1960|1970|punch card|mainframe|winter/.test(t)) {
+    return `vintage 1960s computing laboratory with early mainframe computers, magnetic tape reels, punch card readers, warm nostalgic cinematic lighting, authentic historical editorial visual`;
+  }
+
+  // 6. Foundation Models, OpenAI, Gemini, Claude, DeepSeek, Qwen, LLMs
+  if (/openai|gpt|gemini|claude|deepseek|qwen|meta|llama|model|llm|chatbot|prompt/.test(t)) {
+    const cleanSubject = title.replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").slice(0, 70).trim();
+    return `high-concept digital art representation of foundation model ${cleanSubject}, glowing multidimensional neural attention nodes, floating glass code tokens, sleek modern editorial aesthetic, 8k`;
+  }
+
+  // 7. Concrete Title-Based Scene Synthesis
+  const cleanSubject = title.replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").slice(0, 80).trim();
+  const primaryTag = tags[0] || "Artificial Intelligence";
+  return `conceptual 3d editorial tech artwork illustrating ${cleanSubject}, focused on ${primaryTag}, sleek minimalist glass architecture, glowing fiber optic lines, professional commercial visual, 8k`;
+}
+
 async function generateAiImageBuffer(article: GeneratedArticle): Promise<Buffer> {
-  // Construct clean, descriptive prompt for the AI image generator
-  const cleanTitle = article.title
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, " ")
-    .slice(0, 90)
-    .trim();
+  const visualPrompt = synthesizeVisualScenePrompt(article.title, article.tags);
+  console.log(`🎨 Generating Title-Specific AI Artwork:`);
+  console.log(`   📌 Title: "${article.title}"`);
+  console.log(`   🖌️  Scene Prompt: "${visualPrompt.slice(0, 100)}..."`);
 
-  const primaryTag = article.tags[0] || "Artificial Intelligence";
-  const aiPrompt = `futuristic digital artwork illustration for ${cleanTitle}, glowing neural network nodes, cyber tech ${primaryTag}, 8k render masterpiece, cinematic dark volumetric lighting`;
-
-  console.log(`🎨 Creating Bespoke AI Artwork: "${cleanTitle.slice(0, 60)}..."`);
-
-  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(aiPrompt)}`;
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(visualPrompt)}`;
 
   // Attempt generation with automatic retry for rate limits
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      console.log(`   → AI Generation Request (Attempt ${attempt}/3)...`);
+      console.log(`   → AI Image Generator Request (Attempt ${attempt}/3)...`);
       const res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(45_000) });
 
       if (res.ok) {
         const buf = Buffer.from(await res.arrayBuffer());
         if (buf.length > 5000) {
-          console.log(`   ✨ AI Image Generated Successfully (${Math.round(buf.length / 1024)} KB)!`);
+          console.log(`   ✨ Title-Specific AI Image Generated (${Math.round(buf.length / 1024)} KB)!`);
           return buf;
         }
       }
 
       if (res.status === 402) {
-        console.warn(`   ⏳ Rate limit detected. Waiting 20 seconds before retry...`);
+        console.warn(`   ⏳ Free rate limit. Cooling down 20s before retry...`);
         await new Promise((r) => setTimeout(r, 20_000));
       }
     } catch (e) {
@@ -619,9 +652,10 @@ async function generateAiImageBuffer(article: GeneratedArticle): Promise<Buffer>
     }
   }
 
-  // Backup AI art prompt if first fails
-  const fallbackPrompt = `artificial intelligence neural network digital art illustration, futuristic cyber computer glowing circuits 8k render`;
-  console.log("   → Trying secondary AI art prompt...");
+  // Secondary specific title prompt
+  const cleanTitle = article.title.replace(/[^\w\s]/g, " ").slice(0, 60).trim();
+  const fallbackPrompt = `editorial tech illustration of ${cleanTitle}, glowing digital circuits, 3d render 8k`;
+  console.log(`   → Trying secondary title-specific AI prompt...`);
   const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(fallbackPrompt)}`;
   const fbRes = await fetch(fallbackUrl, { redirect: "follow", signal: AbortSignal.timeout(30_000) });
   if (fbRes.ok) {
