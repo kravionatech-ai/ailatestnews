@@ -555,23 +555,27 @@ function forceHumanCadence(article: GeneratedArticle): GeneratedArticle {
     .replace(/In summary,\s*/gi, "Bottom line: ")
     .replace(/In conclusion,\s*/gi, "Here is what matters: ");
 
-  // 3. Inject short punchy human observations to maximize burstiness variance
+  // 3. Inject short punchy human observations to maximize burstiness variance (without duplicates)
   const humanInterjections = [
-    " Make no mistake.",
     " The numbers tell the real story.",
-    " Why does this matter?",
+    " Why does this matter to developers?",
     " Let that sink in for a moment.",
+    " Make no mistake.",
   ];
 
-  let pIndex = 0;
-  html = html.replace(/<\/p>/gi, (match) => {
-    pIndex++;
-    if (pIndex % 2 === 1 && pIndex <= humanInterjections.length * 2) {
-      const inject = humanInterjections[Math.floor(pIndex / 2)];
-      return `${inject}</p>`;
+  for (const inject of humanInterjections) {
+    if (!html.includes(inject.trim())) {
+      html = html.replace(/<\/p>/i, `${inject}</p>`);
     }
-    return match;
-  });
+  }
+
+  // 4. Clean up any accidental double punctuation or duplicate phrases
+  html = html
+    .replace(/(Make no mistake\.\s*)+/gi, "Make no mistake. ")
+    .replace(/(The numbers tell the real story\.\s*)+/gi, "The numbers tell the real story. ")
+    .replace(/\.\s*\./g, ".")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([,.!?;:])/g, "$1");
 
   article.contentHtml = html;
   article.readingTime = calcReadingTime(html);
@@ -580,58 +584,78 @@ function forceHumanCadence(article: GeneratedArticle): GeneratedArticle {
 
 // ─── Step 4: AI Image Generation Engine (Bespoke Artwork per Article) ────────
 
+function getCategoryMatchedFallbackImage(title: string): string {
+  const t = title.toLowerCase();
+  if (/hack|cyber|exploit|linux|kernel|vulnerab|breach|malware|zero-day|attack|security/.test(t)) {
+    return "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1280&q=80";
+  }
+  if (/capex|billion|datacenter|compute|gpu|nvidia|blackwell|tpu|chip|semiconductor|server|google|alphabet|pichai/.test(t)) {
+    return "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1280&q=80";
+  }
+  if (/robot|self-replicate|agent|autonomous|embodied|humanoid|agentic/.test(t)) {
+    return "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1280&q=80";
+  }
+  if (/early|history|struggle|vintage|1960|1970|punch card|mainframe|winter/.test(t)) {
+    return "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1280&q=80";
+  }
+  if (/india|indigenous|eka|dhir|meity|sarvam|krutrim|sovereign/.test(t)) {
+    return "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1280&q=80";
+  }
+  return "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1280&q=80";
+}
+
 function synthesizeVisualScenePrompt(title: string, tags: string[]): string {
   const t = title.toLowerCase();
 
   // 1. Cybersecurity, Hacking, Linux, Kernel, Exploits, Vulnerabilities
   if (/hack|cyber|exploit|linux|kernel|vulnerab|breach|malware|zero-day|attack|security/.test(t)) {
-    return `cybersecurity command center display showing glowing terminal code, Linux kernel exploit vulnerability detection, digital padlock shield, dark atmospheric lighting, 8k professional tech editorial render`;
+    return `dark moody high-tech cybersecurity operations command room with curved monitors displaying cascades of green terminal code, neural exploit breach simulation, digital translucent holographic shield with intrusion fracture cracks, cinematic volumetric lighting, ultra-detailed 8k photorealistic tech editorial, no text, no watermark`;
   }
 
-  // 2. Compute, Capex, Billions, Datacenters, Hardware, GPUs, Chips
-  if (/capex|billion|datacenter|compute|gpu|nvidia|blackwell|tpu|chip|semiconductor|server/.test(t)) {
-    return `vast hyper-scale cloud AI datacenter with endless rows of glowing liquid-cooled server racks, high-speed optical fiber interconnects, high-end clean architectural tech photography, 8k`;
+  // 2. Compute, Capex, Billions, Datacenters, Hardware, GPUs, Chips, Google TPU
+  if (/capex|billion|datacenter|compute|gpu|nvidia|blackwell|tpu|chip|semiconductor|server|google|alphabet|pichai/.test(t)) {
+    return `ultra-modern hyper-scale cloud AI datacenter with symmetrical infinite rows of glowing liquid-cooled TPU server racks, futuristic architectural overhead neon light pulses, glossy reflective floor, 8k tech journalism photography, no text, no watermark`;
   }
 
   // 3. Autonomous Agents, Robotics, Self-Replication
   if (/robot|self-replicate|agent|autonomous|embodied|humanoid|agentic/.test(t)) {
-    return `futuristic humanoid robotic AI agent analyzing glowing holographic data interfaces in a modern research laboratory, sleek titanium body, dramatic volumetric studio lighting, 8k photorealistic`;
+    return `futuristic humanoid robotic AI agent in high-tech research laboratory, analyzing glowing holographic neural data diagrams, sleek titanium and carbon fiber body, dramatic volumetric studio lighting, 8k photorealistic, no text, no watermark`;
   }
 
   // 4. India, MeitY, Indigenous Models, Sovereign AI (Eka, Dhir, Sarvam, Krutrim)
   if (/india|indigenous|eka|dhir|meity|sarvam|krutrim|sovereign/.test(t)) {
-    return `advanced sovereign semiconductor silicon chip with glowing circuitry and neural network traces, high-tech Indian computing laboratory setting, futuristic clean editorial 3d render, 8k`;
+    return `advanced sovereign semiconductor silicon microchip with glowing microscopic circuitry and neural network pathways, high-tech Indian computing cleanroom facility, futuristic clean editorial 3d render, 8k, no text, no watermark`;
   }
 
   // 5. Early AI, History, Vintage, Language tasks, Punch cards
   if (/early|history|struggle|vintage|1960|1970|punch card|mainframe|winter/.test(t)) {
-    return `vintage 1960s computing laboratory with early mainframe computers, magnetic tape reels, punch card readers, warm nostalgic cinematic lighting, authentic historical editorial visual`;
+    return `vintage 1960s scientific computing research laboratory with early mainframe computers, magnetic tape reels spinning, punch card readers, warm nostalgic cinematic lighting, authentic historical editorial visual, no text, no watermark`;
   }
 
   // 6. Foundation Models, OpenAI, Gemini, Claude, DeepSeek, Qwen, LLMs
   if (/openai|gpt|gemini|claude|deepseek|qwen|meta|llama|model|llm|chatbot|prompt/.test(t)) {
     const cleanSubject = title.replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").slice(0, 70).trim();
-    return `high-concept digital art representation of foundation model ${cleanSubject}, glowing multidimensional neural attention nodes, floating glass code tokens, sleek modern editorial aesthetic, 8k`;
+    return `high-concept digital art representation of foundation model ${cleanSubject}, glowing multidimensional neural attention nodes, floating glass code tokens, sleek modern editorial aesthetic, 8k, no text, no watermark`;
   }
 
   // 7. Concrete Title-Based Scene Synthesis
   const cleanSubject = title.replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").slice(0, 80).trim();
   const primaryTag = tags[0] || "Artificial Intelligence";
-  return `conceptual 3d editorial tech artwork illustrating ${cleanSubject}, focused on ${primaryTag}, sleek minimalist glass architecture, glowing fiber optic lines, professional commercial visual, 8k`;
+  return `editorial tech visual illustrating ${cleanSubject}, focused on ${primaryTag}, sleek minimalist glass architecture, glowing fiber optic lines, professional commercial visual, 8k, no text, no watermark`;
 }
 
 async function generateAiImageBuffer(article: GeneratedArticle): Promise<Buffer> {
   const visualPrompt = synthesizeVisualScenePrompt(article.title, article.tags);
   console.log(`🎨 Generating Title-Specific AI Artwork:`);
   console.log(`   📌 Title: "${article.title}"`);
-  console.log(`   🖌️  Scene Prompt: "${visualPrompt.slice(0, 100)}..."`);
+  console.log(`   🖌️  Scene Prompt: "${visualPrompt.slice(0, 110)}..."`);
 
-  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(visualPrompt)}`;
-
-  // Attempt generation with automatic retry for rate limits
+  // Attempt generation using Flux model with unique seed to guarantee title-specific visual
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      console.log(`   → AI Image Generator Request (Attempt ${attempt}/3)...`);
+      const seed = Math.floor(Math.random() * 10000000);
+      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(visualPrompt)}?width=1280&height=720&model=flux&nologo=true&seed=${seed}`;
+      console.log(`   → AI Image Generator Request (Attempt ${attempt}/3, Seed ${seed})...`);
       const res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(45_000) });
 
       if (res.ok) {
@@ -642,9 +666,9 @@ async function generateAiImageBuffer(article: GeneratedArticle): Promise<Buffer>
         }
       }
 
-      if (res.status === 402) {
-        console.warn(`   ⏳ Free rate limit. Cooling down 20s before retry...`);
-        await new Promise((r) => setTimeout(r, 20_000));
+      if (res.status === 402 || res.status === 429) {
+        console.warn(`   ⏳ Rate limit cooldown 10s before retry...`);
+        await new Promise((r) => setTimeout(r, 10_000));
       }
     } catch (e) {
       console.warn(`   ⚠️  Attempt ${attempt} warning: ${(e as Error).message}`);
@@ -654,13 +678,18 @@ async function generateAiImageBuffer(article: GeneratedArticle): Promise<Buffer>
 
   // Secondary specific title prompt
   const cleanTitle = article.title.replace(/[^\w\s]/g, " ").slice(0, 60).trim();
-  const fallbackPrompt = `editorial tech illustration of ${cleanTitle}, glowing digital circuits, 3d render 8k`;
+  const fallbackPrompt = `editorial tech illustration of ${cleanTitle}, glowing digital circuits, 3d render 8k, no text, no watermark`;
   console.log(`   → Trying secondary title-specific AI prompt...`);
-  const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(fallbackPrompt)}`;
-  const fbRes = await fetch(fallbackUrl, { redirect: "follow", signal: AbortSignal.timeout(30_000) });
-  if (fbRes.ok) {
-    const buf = Buffer.from(await fbRes.arrayBuffer());
-    if (buf.length > 5000) return buf;
+  const seed2 = Math.floor(Math.random() * 10000000);
+  const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(fallbackPrompt)}?width=1280&height=720&model=flux&nologo=true&seed=${seed2}`;
+  try {
+    const fbRes = await fetch(fallbackUrl, { redirect: "follow", signal: AbortSignal.timeout(30_000) });
+    if (fbRes.ok) {
+      const buf = Buffer.from(await fbRes.arrayBuffer());
+      if (buf.length > 5000) return buf;
+    }
+  } catch (e) {
+    console.warn("   ⚠️  Secondary generation attempt failed:", (e as Error).message);
   }
 
   throw new Error("AI Image generation could not acquire valid image buffer.");
@@ -672,8 +701,8 @@ async function uploadCoverImage(article: GeneratedArticle): Promise<string> {
   try {
     const imageBuffer = await generateAiImageBuffer(article);
 
-    console.log("☁️  Uploading AI-Generated Image to Cloudinary CDN...");
-    const result = await uploadImageBuffer(imageBuffer, `${article.slug}.jpg`, "ainews/ai-generated");
+    console.log("☁️  Uploading Title-Matched AI-Generated Image to Cloudinary CDN...");
+    const result = await uploadImageBuffer(imageBuffer, `${article.slug}.jpg`, "ainews/editorial");
     if (result?.url) {
       console.log(`   ✅ Cloudinary CDN URL: ${result.url}`);
       return result.url;
@@ -682,8 +711,10 @@ async function uploadCoverImage(article: GeneratedArticle): Promise<string> {
     console.error("❌ AI Image Generation/Upload error:", (e as Error).message);
   }
 
-  // Absolute fallback URL
-  return "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80";
+  // Title-matched fallback URL (NEVER generic random beach or city)
+  const topicMatchedFallback = getCategoryMatchedFallbackImage(article.title);
+  console.log(`⚠️  Using title-matched editorial fallback visual: ${topicMatchedFallback}`);
+  return topicMatchedFallback;
 }
 
 // ─── Step 5: Ensure Tag Documents Exist in DB ────────────────────────────────
