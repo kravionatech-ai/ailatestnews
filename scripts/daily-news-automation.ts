@@ -617,9 +617,9 @@ function synthesizeVisualScenePrompt(title: string, tags: string[]): string {
     return `ultra-modern hyper-scale cloud AI datacenter with symmetrical infinite rows of glowing liquid-cooled TPU server racks, futuristic architectural overhead neon light pulses, glossy reflective floor, 8k tech journalism photography, no text, no watermark`;
   }
 
-  // 3. Autonomous Agents, Robotics, Self-Replication
-  if (/robot|self-replicate|agent|autonomous|embodied|humanoid|agentic/.test(t)) {
-    return `futuristic humanoid robotic AI agent in high-tech research laboratory, analyzing glowing holographic neural data diagrams, sleek titanium and carbon fiber body, dramatic volumetric studio lighting, 8k photorealistic, no text, no watermark`;
+  // 3. Autonomous Agents, Robotics, Self-Replication, Self-Teaching, Synthetic Data
+  if (/robot|self-replicate|agent|autonomous|embodied|humanoid|agentic|self-teach|self teach|synthetic data/.test(t)) {
+    return `futuristic neural network self-evolving in high-tech research laboratory, glowing autonomous synaptic pathways forming algorithmic intelligence, sleek titanium interfaces, cinematic volumetric studio lighting, 8k photorealistic tech editorial, no text, no watermark`;
   }
 
   // 4. India, MeitY, Indigenous Models, Sovereign AI (Eka, Dhir, Sarvam, Krutrim)
