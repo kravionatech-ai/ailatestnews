@@ -162,18 +162,49 @@ async function pickFreshTopic(candidates: RssItem[]): Promise<RssItem> {
 
 // ─── Step 3: Generate Article Content (Gemini with Pollinations fallback) ─────
 
-async function generateArticle(topic: RssItem): Promise<GeneratedArticle> {
+interface ExistingPostRef {
+  title: string;
+  slug: string;
+}
+
+async function fetchRecentPostsForLinking(): Promise<ExistingPostRef[]> {
+  try {
+    const { default: Post } = await import("../src/lib/db/models/post.model");
+    const posts = await (Post as any).find({ status: "published" }, { title: 1, slug: 1 })
+      .sort({ publishedAt: -1 })
+      .limit(5)
+      .lean();
+    return posts.map((p: any) => ({ title: p.title as string, slug: p.slug as string }));
+  } catch {
+    return [];
+  }
+}
+
+async function generateArticle(topic: RssItem, existingPosts: ExistingPostRef[]): Promise<GeneratedArticle> {
   const apiKey = process.env.GEMINI_API_KEY;
+
+  const internalLinksHint = existingPosts.length > 0
+    ? existingPosts.slice(0, 3).map(p => `- <a href="/blog/${p.slug}">${p.title}</a>`).join("\n")
+    : `- <a href="/category/ai-news">AI News Desk</a>\n- <a href="/tags/machine-learning">Machine Learning Trends</a>`;
 
   const systemPrompt = `You are a chief technology editor and investigative AI journalist at "AI News" (ainews.kraviona.com), India's premier AI news platform.
 Your writing style is analytical, authoritative, and engaging. Never robotic, clichéd, or boilerplate.
 LANGUAGE REQUIREMENT: ALWAYS WRITE IN 100% PURE, PROFESSIONAL ENGLISH ONLY. Never output Hindi, Hinglish, or mixed language.
-Avoid phrases like "In this fast-paced world" or "Delve into". Write with precision, citing concrete architectural implications, compute realities, and strategic impacts for software engineers and enterprise leaders.`;
+Avoid phrases like "In this fast-paced world", "Delve into", or "In conclusion". Write with precision, citing concrete architectural implications, compute realities, and strategic impacts for software engineers and enterprise leaders.`;
 
   const userPrompt = `Write a comprehensive, publication-grade editorial news article about this breaking AI story in 100% English:
 
 HEADLINE IDEA: "${topic.title}"
 SOURCE / WIRE: ${topic.source}
+PRIMARY WIRE URL: ${topic.link}
+
+MANDATORY LINKING REQUIREMENTS:
+1. INTERNAL LINKING: Naturally weave in 2 to 3 contextual links to our existing investigative stories using exact HTML format <a href="/blog/{slug}">anchor text</a>. Available stories:
+${internalLinksHint}
+
+2. EXTERNAL LINKING: Include at least 2 authoritative external source links with target="_blank" rel="noopener noreferrer":
+- The primary source: <a href="${topic.link}" target="_blank" rel="noopener noreferrer">${topic.source}</a>
+- Authoritative tech/research repositories: <a href="https://arxiv.org" target="_blank" rel="noopener noreferrer">ArXiv</a>, <a href="https://huggingface.co" target="_blank" rel="noopener noreferrer">Hugging Face</a>, or <a href="https://indiaai.gov.in" target="_blank" rel="noopener noreferrer">IndiaAI Mission</a>.
 
 LANGUAGE RULE: The entire output (title, excerpt, contentHtml, tags, alt text, SEO fields) MUST ALWAYS BE IN ENGLISH ONLY.
 
@@ -183,7 +214,7 @@ Return a valid JSON object ONLY (no markdown code blocks, no backticks, no expla
   "title": "A captivating, punchy, SEO-optimized title (max 95 chars)",
   "slug": "kebab-case-url-slug-based-on-title",
   "excerpt": "A compelling 1-2 sentence lede that drives high click-through and curiosity (max 180 chars)",
-  "contentHtml": "Full article body formatted in semantic HTML using <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <blockquote>. Minimum 750 words. Structure with: 1) Breaking News Overview & Context, 2) Technical Breakdown & Architecture, 3) Real-world Industry Impact, 4) Strategic Implications for Indian Developers & Enterprises, 5) Roadblocks & Future Outlook, 6) The Editorial Verdict. Use analytical depth and authentic journalism.",
+  "contentHtml": "Full article body formatted in semantic HTML using <h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <a>. Minimum 600 words. Must contain internal and external links naturally integrated into sentences. Conclude with a 'Related Technical Coverage' list linking to our stories.",
   "coverImageAlt": "Clear alt text describing the futuristic tech theme of the article",
   "tags": ["5 to 7 concise topic tags e.g. Generative AI, Cloud Compute, LLMs, Enterprise Tech"],
   "readingTime": 5,
@@ -218,7 +249,8 @@ Return a valid JSON object ONLY (no markdown code blocks, no backticks, no expla
         const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
         if (rawText) {
           const parsed = JSON.parse(rawText.replace(/^```[a-z]*\s*/i, "").replace(/\s*```\s*$/i, "").trim());
-          return sanitizeArticle(parsed, topic);
+          const art = sanitizeArticle(parsed, topic);
+          return ensureLinkingIntegrity(art, topic, existingPosts);
         }
       } else {
         console.warn(`⚠️  Gemini API returned ${res.status}, falling back to secondary engine...`);
@@ -249,15 +281,51 @@ Return a valid JSON object ONLY (no markdown code blocks, no backticks, no expla
       const rawText = await res.text();
       const cleaned = rawText.replace(/^```[a-z]*\s*/i, "").replace(/\s*```\s*$/i, "").trim();
       const parsed = JSON.parse(cleaned);
-      return sanitizeArticle(parsed, topic);
+      const art = sanitizeArticle(parsed, topic);
+      return ensureLinkingIntegrity(art, topic, existingPosts);
     }
   } catch (e) {
     console.warn("⚠️  Secondary AI engine failed:", (e as Error).message);
   }
 
   // Strategy C: High-grade deterministic editorial synthesis builder
-  console.log("📰 Using editorial template synthesis...");
-  return buildEditorialSynthesis(topic);
+  console.log("📰 Using editorial template synthesis with linking...");
+  return buildEditorialSynthesis(topic, existingPosts);
+}
+
+function ensureLinkingIntegrity(
+  article: GeneratedArticle,
+  topic: RssItem,
+  existingPosts: ExistingPostRef[]
+): GeneratedArticle {
+  let html = article.contentHtml;
+
+  // 1. Guarantee External Source Link
+  if (!html.includes('rel="noopener noreferrer"')) {
+    const sourceLink = `<a href="${topic.link || "https://news.google.com"}" target="_blank" rel="noopener noreferrer">${topic.source}</a>`;
+    html = html.replace(/(reported first by|uncovered by|according to|first broken by)/i, `$1 ${sourceLink}`);
+  }
+
+  // 2. Guarantee Internal Cross-Links
+  const internalCount = (html.match(/href="\/blog\/[^"]+"/g) || []).length;
+  if (internalCount < 2 && existingPosts.length > 0) {
+    const relatedLinks = existingPosts.slice(0, 3)
+      .map(p => `<li><a href="/blog/${p.slug}">${p.title}</a></li>`)
+      .join("\n      ");
+
+    if (!html.includes("Related Technical Coverage") && !html.includes("Related Investigative Coverage")) {
+      html += `
+        <h2>Related Technical Coverage</h2>
+        <p>Explore our deep investigative series on frontier systems:</p>
+        <ul>
+          ${relatedLinks}
+        </ul>
+      `.trim();
+    }
+  }
+
+  article.contentHtml = html;
+  return article;
 }
 
 function sanitizeArticle(raw: any, topic: RssItem): GeneratedArticle {
@@ -281,31 +349,37 @@ function sanitizeArticle(raw: any, topic: RssItem): GeneratedArticle {
   };
 }
 
-function buildEditorialSynthesis(topic: RssItem): GeneratedArticle {
+function buildEditorialSynthesis(topic: RssItem, existingPosts: ExistingPostRef[]): GeneratedArticle {
   const cleanTitle = topic.title.replace(/\s*-\s*[^-]+$/, "").trim();
   const slug = slugify(cleanTitle);
   const excerpt = `Behind the headlines of ${cleanTitle}: why this technical shift matters and what it reveals about modern AI engineering.`;
 
+  const relatedLinksHtml = existingPosts.slice(0, 3)
+    .map(p => `<li><a href="/blog/${p.slug}">${p.title}</a></li>`)
+    .join("\n      ");
+
   const contentHtml = `
     <h2>The Real Story Behind the Announcement</h2>
-    <p>Headlines move fast in tech. But every once in a while, a development drops that forces engineers to stop and re-examine their assumptions. That's exactly what happened when news broke about <strong>${cleanTitle}</strong>.</p>
-    <p>Reported first by <em>${topic.source}</em>, this isn't just another incremental press release. Far from it. It exposes a deeper operational shift that engineering teams have quietly wrestled with for months: raw compute scale is no longer enough.</p>
+    <p>Silicon chips do not care about corporate press releases. In the fast-moving AI sector, breakthroughs move from research labs to production pipelines at breakneck speed. That is what happened when news broke regarding <strong>${cleanTitle}</strong>.</p>
+    <p>Reported first by <a href="${topic.link || "https://news.google.com"}" target="_blank" rel="noopener noreferrer"><em>${topic.source}</em></a> and documented across technical archives on the <a href="https://arxiv.org" target="_blank" rel="noopener noreferrer">ArXiv research repository</a>, this exposes a deeper operational reality: raw hardware scale is no longer enough.</p>
 
     <h2>Architectural Reality vs Marketing Hype</h2>
-    <p>Behind the corporate presentations lies messy hardware reality. Modern AI systems are hitting severe memory-bandwidth walls. When you scale model parameters without matching interconnect speeds, latency spikes through the roof. Engineers know this. Benchmarks prove it.</p>
+    <p>Behind the corporate presentations lies messy hardware and algorithmic reality. Modern AI architectures are hitting severe memory-bandwidth walls. When you scale model parameters without matching interconnect speeds, latency spikes through the roof.</p>
     <ul>
-      <li><strong>Inference Bottlenecks:</strong> Moving weights from HBM to compute registers costs ten times more energy than the arithmetic itself. That math doesn't lie.</li>
-      <li><strong>Context Window Realities:</strong> Extending attention spans sounds great on paper. In production? Quadratic memory growth quickly eats your server margins alive.</li>
-      <li><strong>Speculative Execution:</strong> Teams are ditching brute force. They're deploying small draft models to predict tokens before the heavy weights ever wake up.</li>
+      <li><strong>Inference Bottlenecks:</strong> Moving weights from HBM to compute registers costs ten times more energy than the arithmetic itself.</li>
+      <li><strong>Synthetic Verification:</strong> As explored across <a href="https://huggingface.co" target="_blank" rel="noopener noreferrer">Hugging Face open weights</a>, developers are deploying self-correcting feedback loops.</li>
+      <li><strong>Compute Scaling Realities:</strong> Hardware capex must eventually intersect with efficient model orchestration, as seen in recent industry capex surges.</li>
     </ul>
 
-    <h2>What This Means for Engineering Teams</h2>
-    <p>If you're building software in India today, don't get distracted by the vanity metrics. Watch the infrastructure bills. Watch the latency percentiles.</p>
-    <p>With sovereign compute clusters spinning up and local regulatory frameworks taking shape, the winning teams won't be the ones with the flashiest marketing. They'll be the ones who master lean model orchestration, deterministic evals, and tight token economics.</p>
-    <blockquote>"The hype cycle always burns out. What stays behind is clean code, efficient memory pipelines, and software that actually solves a user problem without breaking the bank."</blockquote>
+    <h2>What This Means for Indian Engineering Teams</h2>
+    <p>If you are building software or deploying models in India today, do not get distracted by trillion-parameter vanity numbers. Watch the unit token economics.</p>
+    <p>With sovereign compute clusters expanding under the <a href="https://indiaai.gov.in" target="_blank" rel="noopener noreferrer">IndiaAI Sovereign Compute Mission</a>, the engineering teams that master lean orchestration and deterministic evals will ship products faster than those relying on brute force.</p>
 
-    <h2>The Verdict</h2>
-    <p>We've watched dozens of frontier announcements fade into obscurity over the past two years. This one feels different. Not because the promises are bigger, but because the engineering constraints are finally being taken seriously.</p>
+    <h2>Related Technical Coverage</h2>
+    <p>Explore our deep investigative series on frontier systems:</p>
+    <ul>
+      ${relatedLinksHtml}
+    </ul>
   `.trim();
 
   return {
@@ -822,8 +896,10 @@ async function main() {
     // 2. Deduplicate
     const topic = await pickFreshTopic(items);
 
-    // 3. Generate Article Content
-    let article = await generateArticle(topic);
+    // 3. Generate Article Content with Internal & External Linking
+    const existingPosts = await fetchRecentPostsForLinking();
+    console.log(`🔗 Found ${existingPosts.length} published story references for contextual internal linking.`);
+    let article = await generateArticle(topic, existingPosts);
     console.log(`\n✨ Initial Draft Generated: "${article.title}" (~${article.readingTime} min read)`);
 
     // 4. ZeroGPT AI Detection & Clever AI Humanizer Loop
