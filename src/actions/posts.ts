@@ -358,6 +358,10 @@ export async function quickUpdatePostAction(
 
   revalidatePath("/admin/posts");
   revalidatePath(`/blog/${post.slug}`);
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
+  revalidatePath("/");
+  revalidatePath("/blog");
 
   return { success: true, post: JSON.parse(JSON.stringify(post)) };
 }
@@ -475,6 +479,8 @@ export async function bulkActionPostsAction(
   revalidatePath("/");
   revalidatePath("/blog");
   revalidatePath("/admin/posts");
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
 
   return { success: true };
 }
@@ -562,6 +568,10 @@ export async function restorePostRevisionAction(revisionId: string) {
   revalidatePath("/admin/posts");
   revalidatePath(`/admin/posts/${post._id}/edit`);
   revalidatePath(`/blog/${post.slug}`);
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
+  revalidatePath("/");
+  revalidatePath("/blog");
 
   return { success: true };
 }
@@ -592,6 +602,8 @@ export async function deletePostAction(id: string) {
   revalidatePath("/");
   revalidatePath("/blog");
   revalidatePath("/admin/posts");
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
 
   return { success: true };
 }

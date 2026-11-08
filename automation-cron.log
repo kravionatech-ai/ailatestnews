@@ -1,0 +1,145 @@
+
+> techblog@1.0.0 daily-news:auto
+> tsx --env-file=.env.local scripts/daily-news-automation.ts
+
+
+========================================================
+🚀 Daily AI News Automation — Pipeline Started
+⏰ Time: 8/11/2026, 10:50:12 am IST
+========================================================
+
+🔌 Connecting to MongoDB Atlas...
+✅ MongoDB Atlas connected successfully.
+
+📡 Fetching RSS: https://news.google.com/rss/search?q=artificial+intelligence+OR+LLM+OR+AI+model+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+📡 Fetching RSS: https://news.google.com/rss/search?q=generative+AI+OR+OpenAI+OR+Gemini+OR+Claude+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+📡 Fetching RSS: https://news.google.com/rss/search?q=DeepSeek+OR+Anthropic+OR+Nvidia+AI+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+📡 Fetching RSS: https://news.google.com/rss/search?q=AI+chip+OR+AI+infrastructure+OR+datacenter+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+📡 Fetching RSS: https://news.google.com/rss/search?q=India+AI+OR+IndiaAI+Mission+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+
+📋 49 unique breaking news candidate(s) detected.
+
+✅ Fresh breaking topic selected: "Kookmin University research team develops AI model to predict properties of mixtures - The Korea Times"
+🔗 Found 5 published story references for contextual internal linking.
+🌐 Generating article via secondary AI engine...
+📰 Using editorial template synthesis with linking...
+📏 Word count is currently 296 words. Expanding technical analysis to exceed 800+ words...
+   ✅ Expanded to 466 words (Target: 800+ words).
+
+✨ Initial Draft Generated: "Kookmin University research team develops AI model to predict properties of mixtures" (~3 min read)
+
+========================================================
+🕵️  ZeroGPT AI Detection & Clever AI Humanizer Gate
+========================================================
+📊 Initial ZeroGPT AI Score: 20.1% (Live ZeroGPT: 20.1% AI (Flagged 6 segments))
+⚠️  AI Score (20.1%) is above 10% threshold!
+🔄 Routing to Clever AI Humanizer (Pass 1/3)...
+   → Post-Humanization ZeroGPT AI Score: 13.2% (Live ZeroGPT: 13.2% AI (Flagged 6 segments))
+⚠️  AI Score (13.2%) is above 10% threshold!
+🔄 Routing to Clever AI Humanizer (Pass 2/3)...
+   → Post-Humanization ZeroGPT AI Score: 13.2% (Live ZeroGPT: 13.2% AI (Flagged 6 segments))
+⚠️  AI Score (13.2%) is above 10% threshold!
+🔄 Routing to Clever AI Humanizer (Pass 3/3)...
+   → Post-Humanization ZeroGPT AI Score: 13.2% (Live ZeroGPT: 13.2% AI (Flagged 6 segments))
+
+🔧 Applying final human cadence pass...
+✅ Final ZeroGPT Verified Score: 13.2% AI.
+🎨 Generating Title-Specific AI Artwork:
+   📌 Title: "Kookmin University research team develops AI model to predict properties of mixtures"
+   🖌️  Scene Prompt: "high-concept digital art representation of foundation model Kookmin University research team develops AI model..."
+   → AI Image Generator Request (Attempt 1/3, Seed 9907090)...
+   → AI Image Generator Request (Attempt 2/3, Seed 1953571)...
+   ⏳ Rate limit cooldown 10s before retry...
+   → AI Image Generator Request (Attempt 3/3, Seed 3056517)...
+   ⏳ Rate limit cooldown 10s before retry...
+   → Trying secondary title-specific AI prompt...
+❌ AI Image Generation/Upload error: AI Image generation could not acquire valid image buffer.
+⚠️  Using title-matched editorial fallback visual: https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1280&q=80
+📰 Post published successfully! Document ID: 6af006b8d2ac6ebcd23b77ba
+ℹ️  INDEXNOW_KEY not set; skipped external IndexNow ping.
+
+========================================================
+🎉 Pipeline Succeeded in 44.4s!
+🔗 Live Article URL: https://ainews.kraviona.com/blog/kookmin-university-research-team-develops-ai-model-to-predict-properties-of-mixt
+📰 Title: "Kookmin University research team develops AI model to predict properties of mixtures"
+🖼️  Cover: https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1280&q=80
+🏷️  Tags: AI News, Enterprise AI, Machine Learning, Tech Trends, IndiaAI
+========================================================
+
+🔌 MongoDB disconnected cleanly. Ready for next scheduled run.
+
+> techblog@1.0.0 daily-news:auto
+> tsx --env-file=.env.local scripts/daily-news-automation.ts
+
+
+========================================================
+🚀 Daily AI News Automation — Pipeline Started
+⏰ Time: 8/11/2026, 10:53:57 am IST
+========================================================
+
+🔌 Connecting to MongoDB Atlas...
+✅ MongoDB Atlas connected successfully.
+
+📡 Fetching RSS: https://news.google.com/rss/search?q=artificial+intelligence+OR+LLM+OR+AI+model+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+📡 Fetching RSS: https://news.google.com/rss/search?q=generative+AI+OR+OpenAI+OR+Gemini+OR+Claude+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+📡 Fetching RSS: https://news.google.com/rss/search?q=DeepSeek+OR+Anthropic+OR+Nvidia+AI+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+📡 Fetching RSS: https://news.google.com/rss/search?q=AI+chip+OR+AI+infrastructure+OR+datacenter+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+📡 Fetching RSS: https://news.google.com/rss/search?q=India+AI+OR+IndiaAI+Mission+when:24h&hl=en-IN&gl=IN&ceid=IN:en
+   → Found 10 items
+
+📋 49 unique breaking news candidate(s) detected.
+
+⏭️  Skipping existing topic: "Kookmin University research team develops AI model to predict properties of mixtures - The Korea Times"
+✅ Fresh breaking topic selected: "Fashion's AI era: face swaps and digital clones - Awani International"
+🔗 Found 5 published story references for contextual internal linking.
+🌐 Generating article via secondary AI engine...
+📰 Using editorial template synthesis with linking...
+📏 Word count is currently 293 words. Expanding technical analysis to exceed 800+ words...
+   ✅ Expanded to 463 words (Target: 800+ words).
+
+✨ Initial Draft Generated: "Fashion's AI era: face swaps and digital clones" (~3 min read)
+
+========================================================
+🕵️  ZeroGPT AI Detection & Clever AI Humanizer Gate
+========================================================
+📊 Initial ZeroGPT AI Score: 12.6% (Live ZeroGPT: 12.6% AI (Flagged 4 segments))
+⚠️  AI Score (12.6%) is above 10% threshold!
+🔄 Routing to Clever AI Humanizer (Pass 1/3)...
+   → Post-Humanization ZeroGPT AI Score: 20% (Live ZeroGPT: 20% AI (Flagged 8 segments))
+⚠️  AI Score (20%) is above 10% threshold!
+🔄 Routing to Clever AI Humanizer (Pass 2/3)...
+   → Post-Humanization ZeroGPT AI Score: 20% (Live ZeroGPT: 20% AI (Flagged 8 segments))
+⚠️  AI Score (20%) is above 10% threshold!
+🔄 Routing to Clever AI Humanizer (Pass 3/3)...
+   → Post-Humanization ZeroGPT AI Score: 20% (Live ZeroGPT: 20% AI (Flagged 8 segments))
+
+🔧 Applying final human cadence pass...
+✅ Final ZeroGPT Verified Score: 20% AI.
+🎨 Generating Title-Specific AI Artwork:
+   📌 Title: "Fashion's AI era: face swaps and digital clones"
+   🖌️  Scene Prompt: "editorial tech visual illustrating Fashion s AI era face swaps and digital clones, focused on AI News, sleek m..."
+   → AI Image Generator Request (Attempt 1/3, Seed 2850500)...
+   ✨ Title-Specific AI Image Generated (45 KB)!
+☁️  Uploading Title-Matched AI-Generated Image to Cloudinary CDN...
+   ✅ Cloudinary CDN URL: https://res.cloudinary.com/dcidpgfnd/image/upload/v1794115464/ainews/editorial/e0qvd4cdtv4bsczbbrkc.jpg
+📰 Post published successfully! Document ID: 6af007889c96b6fd31d37ffb
+ℹ️  INDEXNOW_KEY not set; skipped external IndexNow ping.
+
+========================================================
+🎉 Pipeline Succeeded in 27.8s!
+🔗 Live Article URL: https://ainews.kraviona.com/blog/fashions-ai-era-face-swaps-and-digital-clones
+📰 Title: "Fashion's AI era: face swaps and digital clones"
+🖼️  Cover: https://res.cloudinary.com/dcidpgfnd/image/upload/v1794115464/ainews/editorial/e0qvd4cdtv4bsczbbrkc.jpg
+🏷️  Tags: AI News, Enterprise AI, Machine Learning, Tech Trends, IndiaAI
+========================================================
+
+🔌 MongoDB disconnected cleanly. Ready for next scheduled run.

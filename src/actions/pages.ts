@@ -313,6 +313,7 @@ export async function createPageAction(formData: FormData) {
   });
 
   revalidatePath("/admin/pages");
+  revalidatePath("/sitemap.xml");
   revalidatePath(pagePath);
 
   return { success: true, page: JSON.parse(JSON.stringify(page)) };
@@ -394,6 +395,7 @@ export async function updatePageAction(id: string, formData: FormData) {
   });
 
   revalidatePath("/admin/pages");
+  revalidatePath("/sitemap.xml");
   revalidatePath(pagePath);
 
   return { success: true, page: JSON.parse(JSON.stringify(page)) };
@@ -422,6 +424,7 @@ export async function deletePageAction(id: string) {
   });
 
   revalidatePath("/admin/pages");
+  revalidatePath("/sitemap.xml");
   return { success: true };
 }
 
@@ -441,5 +444,6 @@ export async function bulkDeletePagesAction(ids: string[]) {
   });
 
   revalidatePath("/admin/pages");
+  revalidatePath("/sitemap.xml");
   return { success: true };
 }

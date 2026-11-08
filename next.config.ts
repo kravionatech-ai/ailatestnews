@@ -44,9 +44,15 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/(icon.svg|manifest.webmanifest|robots.txt|sitemap.xml)",
+        source: "/(icon.svg|manifest.webmanifest|robots.txt)",
         headers: [
           { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        ],
+      },
+      {
+        source: "/sitemap.xml",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
         ],
       },
       {
