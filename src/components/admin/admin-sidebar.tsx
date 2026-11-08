@@ -15,6 +15,7 @@ import {
   LogOut,
   Cpu,
   Search,
+  Globe,
   Layers,
   ArrowRightLeft,
   FileCode,
@@ -43,7 +44,8 @@ export function AdminSidebar() {
     {
       title: "SEO Engine & Tools",
       links: [
-        { label: "Bulk SEO Editor", href: "/admin/seo", icon: Search },
+        { label: "SEO Control Center", href: "/admin/seo", icon: Globe },
+        { label: "Bulk Meta Editor", href: "/admin/seo?tab=bulk", icon: Search },
         { label: "Redirects & 404s", href: "/admin/seo/redirects", icon: ArrowRightLeft },
       ],
     },

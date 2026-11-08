@@ -104,15 +104,21 @@ export async function triggerSeoRevalidation({
       revalidatedPaths.push(path);
     }
 
-    // 2. Revalidate sitemap and feed
+    // 2. Revalidate sitemap, news sitemap, robots and sub-sitemaps
     revalidatePath("/sitemap.xml");
-    revalidatePath("/feed.xml");
+    revalidatePath("/news-sitemap.xml");
     revalidatePath("/robots.txt");
+    revalidatePath("/sitemap-static.xml");
+    revalidatePath("/sitemap-articles.xml");
+    revalidatePath("/sitemap-categories.xml");
+    revalidatePath("/sitemap-tags.xml");
+    revalidatePath("/sitemap-pages.xml");
+    revalidatePath("/feed.xml");
     revalidatePath("/archive");
     revalidateTag("posts", "default");
     revalidateTag("taxonomies", "default");
     revalidateTag("sitemap", "default");
-    revalidatedPaths.push("/sitemap.xml", "/feed.xml");
+    revalidatedPaths.push("/sitemap.xml", "/news-sitemap.xml", "/robots.txt", "/feed.xml");
 
     // 3. Revalidate home and blog lists
     revalidatePath("/");

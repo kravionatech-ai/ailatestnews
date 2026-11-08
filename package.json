@@ -5,7 +5,7 @@
   "description": "Production-grade SEO-first animated tech blog platform",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

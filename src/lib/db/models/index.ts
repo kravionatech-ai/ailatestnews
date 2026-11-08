@@ -53,3 +53,12 @@ export type { IContactMessage } from "./contact-message.model";
 
 export { default as Setting } from "./setting.model";
 export type { IGlobalSettings, ISeoTemplateConfig } from "./setting.model";
+
+export { default as SeoSettings } from "./seo-settings.model";
+export type {
+  ISeoSettings,
+  ISeoSettingsDoc,
+  ISitemapSettings,
+  IRobotsSettings,
+  IRobotsRule,
+} from "./seo-settings.model";
