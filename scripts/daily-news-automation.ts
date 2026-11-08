@@ -160,7 +160,7 @@ async function pickFreshTopic(candidates: RssItem[]): Promise<RssItem> {
   }
 
   console.warn("⚠️  All candidates have recent coverage — using top breaking item");
-  return candidates[0];
+  return candidates[0]!;
 }
 
 // ─── Step 3: Generate Article Content (Gemini with Pollinations fallback) ─────
