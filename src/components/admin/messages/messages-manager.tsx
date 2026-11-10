@@ -68,13 +68,13 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
     <div className="space-y-6">
       {/* Top Filter Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setFilter("all")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               filter === "all"
-                ? "bg-indigo-600 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-[var(--accent)] text-white"
+                : "bg-[var(--color-secondary-surface)] text-[var(--color-body-text)] hover:text-[var(--color-heading)]"
             }`}
           >
             All Inquiries ({messages.length})
@@ -84,7 +84,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               filter === "unread"
                 ? "bg-amber-600 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                : "bg-[var(--color-secondary-surface)] text-[var(--color-body-text)] hover:text-[var(--color-heading)]"
             }`}
           >
             Unread ({unreadCount})
@@ -94,7 +94,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               filter === "replied"
                 ? "bg-emerald-600 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                : "bg-[var(--color-secondary-surface)] text-[var(--color-body-text)] hover:text-[var(--color-heading)]"
             }`}
           >
             Replied
@@ -103,8 +103,8 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
             onClick={() => setFilter("archived")}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               filter === "archived"
-                ? "bg-slate-700 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-[var(--color-primary-dark,#101820)] text-white"
+                : "bg-[var(--color-secondary-surface)] text-[var(--color-body-text)] hover:text-[var(--color-heading)]"
             }`}
           >
             Archived
@@ -115,7 +115,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
       {/* Two Column Layout: Message List + Detail View */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left List */}
-        <div className="lg:col-span-5 rounded-2xl border border-[var(--border)] bg-white divide-y divide-[var(--border)] overflow-hidden shadow-2xs max-h-[700px] overflow-y-auto">
+        <div className="lg:col-span-5 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] divide-y divide-[var(--border)] overflow-hidden shadow-xs max-h-[700px] overflow-y-auto">
           {filtered.map((msg) => {
             const isSelected = selectedMessage?._id === msg._id;
             return (
@@ -129,34 +129,34 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
                 }}
                 className={`p-4 cursor-pointer transition-colors ${
                   isSelected
-                    ? "bg-indigo-50/70 border-l-4 border-indigo-600"
+                    ? "bg-[var(--accent-light)] border-l-4 border-[var(--accent)]"
                     : msg.status === "unread"
-                    ? "bg-white font-bold"
-                    : "bg-slate-50/30 hover:bg-slate-50"
+                    ? "bg-[var(--color-card-background)] font-bold hover:bg-[var(--color-secondary-surface)]/50"
+                    : "bg-[var(--color-secondary-surface)]/20 hover:bg-[var(--color-secondary-surface)]/50"
                 }`}
               >
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="font-bold text-[var(--foreground)] truncate max-w-[180px]">
+                  <span className="font-bold text-[var(--color-heading)] truncate max-w-[180px]">
                     {msg.name}
                   </span>
-                  <span className="text-[10px] text-[var(--foreground-muted)]">
+                  <span className="text-[10px] text-[var(--color-muted-text)]">
                     {formatDate(msg.createdAt)}
                   </span>
                 </div>
-                <h4 className="text-xs font-semibold text-[var(--foreground)] truncate">
+                <h4 className="text-xs font-semibold text-[var(--color-heading)] truncate">
                   {msg.subject}
                 </h4>
-                <p className="text-[11px] text-[var(--foreground-muted)] line-clamp-2 mt-1">
+                <p className="text-[11px] text-[var(--color-muted-text)] line-clamp-2 mt-1">
                   {msg.message}
                 </p>
                 <div className="mt-2 flex items-center gap-1.5">
                   <span
                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
                       msg.status === "unread"
-                        ? "bg-amber-100 text-amber-800"
+                        ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
                         : msg.status === "replied"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-slate-100 text-slate-700"
+                        ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                        : "bg-[var(--color-secondary-surface)] text-[var(--color-muted-text)]"
                     }`}
                   >
                     {msg.status}
@@ -167,24 +167,24 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
           })}
 
           {filtered.length === 0 && (
-            <div className="p-12 text-center text-xs text-[var(--foreground-muted)]">
+            <div className="p-12 text-center text-xs text-[var(--color-muted-text)]">
               No inquiries match this filter.
             </div>
           )}
         </div>
 
         {/* Right Detail Pane */}
-        <div className="lg:col-span-7 rounded-2xl border border-[var(--border)] bg-white p-6 shadow-2xs">
+        <div className="lg:col-span-7 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs">
           {selectedMessage ? (
             <div className="space-y-6">
               {/* Header */}
               <div className="flex items-start justify-between border-b border-[var(--border)] pb-4">
                 <div>
-                  <h3 className="text-lg font-bold text-[var(--foreground)]">
+                  <h3 className="font-display text-lg font-bold text-[var(--color-heading)]">
                     {selectedMessage.subject}
                   </h3>
-                  <div className="mt-1 flex items-center gap-2 text-xs text-[var(--foreground-muted)]">
-                    <span className="font-semibold text-[var(--foreground)]">
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--color-muted-text)]">
+                    <span className="font-semibold text-[var(--color-heading)]">
                       {selectedMessage.name}
                     </span>
                     <span>&lt;{selectedMessage.email}&gt;</span>
@@ -201,7 +201,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
                         selectedMessage.status === "replied" ? "read" : "replied"
                       )
                     }
-                    className="p-2 rounded-xl border border-[var(--border)] hover:bg-slate-50 text-xs text-emerald-600 transition-colors"
+                    className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--color-secondary-surface)] text-xs text-emerald-600 dark:text-emerald-400 transition-colors cursor-pointer"
                     title="Toggle Replied"
                   >
                     <CheckCircle2 className="h-4 w-4" />
@@ -214,7 +214,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
                         selectedMessage.status === "archived" ? "read" : "archived"
                       )
                     }
-                    className="p-2 rounded-xl border border-[var(--border)] hover:bg-slate-50 text-xs text-slate-600 transition-colors"
+                    className="p-2 rounded-xl border border-[var(--border)] hover:bg-[var(--color-secondary-surface)] text-xs text-[var(--color-body-text)] transition-colors cursor-pointer"
                     title="Archive Message"
                   >
                     <Archive className="h-4 w-4" />
@@ -222,7 +222,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
 
                   <button
                     onClick={() => handleDelete(selectedMessage._id)}
-                    className="p-2 rounded-xl border border-rose-200 hover:bg-rose-50 text-xs text-rose-600 transition-colors"
+                    className="p-2 rounded-xl border border-rose-500/30 hover:bg-rose-500/10 text-xs text-rose-600 dark:text-rose-400 transition-colors cursor-pointer"
                     title="Delete Message"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -231,7 +231,7 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
               </div>
 
               {/* Message Body */}
-              <div className="prose prose-sm text-sm text-[var(--foreground)] leading-relaxed whitespace-pre-wrap bg-[var(--background-secondary)] p-6 rounded-2xl border border-[var(--border)]">
+              <div className="prose prose-sm text-sm text-[var(--color-body-text)] leading-relaxed whitespace-pre-wrap bg-[var(--color-main-background)] p-6 rounded-2xl border border-[var(--border)]">
                 {selectedMessage.message}
               </div>
 
@@ -242,16 +242,16 @@ export function MessagesManager({ initialMessages }: { initialMessages: ContactM
                     selectedMessage.subject
                   )}`}
                   onClick={() => handleStatusChange(selectedMessage._id, "replied")}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors shadow-xs"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent)] text-white text-xs font-bold hover:bg-[var(--accent-hover)] transition-colors shadow-xs"
                 >
                   <Send className="h-3.5 w-3.5" /> Reply via Email Client
                 </a>
               </div>
             </div>
           ) : (
-            <div className="p-16 text-center text-xs text-[var(--foreground-muted)] space-y-2">
-              <MailOpen className="h-10 w-10 text-slate-300 mx-auto" />
-              <p className="font-semibold">No message selected</p>
+            <div className="p-16 text-center text-xs text-[var(--color-muted-text)] space-y-2">
+              <MailOpen className="h-10 w-10 text-[var(--color-muted-text)]/40 mx-auto" />
+              <p className="font-semibold text-[var(--color-heading)]">No message selected</p>
               <p>Select an inquiry from the inbox list to read full context.</p>
             </div>
           )}

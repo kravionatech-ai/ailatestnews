@@ -52,9 +52,9 @@ export function TableOfContents() {
   if (headings.length === 0) return null;
 
   return (
-    <nav className="rounded-xl border border-slate-200 bg-white p-5 text-sm shadow-2xs" aria-label="Table of contents">
-      <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-900 mb-3 pb-2 border-b border-slate-100">
-        <List className="h-3.5 w-3.5 text-rose-600" />
+    <nav className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 text-sm shadow-xs" aria-label="Table of contents">
+      <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-heading)] mb-3 pb-2 border-b border-[var(--border)]">
+        <List className="h-3.5 w-3.5 text-[var(--accent)]" />
         <span>In This Investigation</span>
       </div>
       <ul className="space-y-1.5 text-xs">
@@ -67,8 +67,8 @@ export function TableOfContents() {
               href={`#${h.id}`}
               className={`block py-1 transition-colors leading-snug ${
                 activeId === h.id
-                  ? "font-bold text-indigo-600 border-l-2 border-indigo-600 pl-2 -ml-2"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "font-bold text-[var(--accent)] border-l-2 border-[var(--accent)] pl-2 -ml-2"
+                  : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
               }`}
             >
               {h.text}

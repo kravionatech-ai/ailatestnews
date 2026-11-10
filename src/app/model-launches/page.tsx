@@ -68,17 +68,17 @@ export default async function ModelLaunchesTimelinePage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="mx-auto max-w-[var(--max-content-width,1320px)] px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         {/* Header */}
-        <div className="mb-8 pb-4 border-b border-slate-900 max-w-3xl">
-          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-            <Rocket className="h-3.5 w-3.5 text-slate-900" />
+        <div className="mb-8 pb-5 border-b-2 border-[var(--color-heading)] max-w-3xl">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-2">
+            <Rocket className="h-3.5 w-3.5" />
             <span>Weights Releases // Architecture Timeline</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+          <h1 className="font-editorial text-3xl sm:text-5xl font-bold text-[var(--color-heading)] tracking-tight">
             {page?.title || "Model Launches Timeline 2026"}
           </h1>
-          <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+          <p className="mt-2.5 text-sm sm:text-base text-[var(--color-muted-text)] leading-relaxed">
             {page?.excerpt ||
               "Architecture breakdowns, MMLU benchmarks, quantization footprints, and weights availability for new foundation models."}
           </p>
@@ -86,7 +86,7 @@ export default async function ModelLaunchesTimelinePage() {
 
         {page?.contentHtml && (
           <div
-            className="prose-article text-sm max-w-4xl mx-auto mb-10"
+            className="prose-article text-sm max-w-4xl mx-auto mb-10 text-[var(--color-body-text)]"
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         )}
@@ -99,7 +99,7 @@ export default async function ModelLaunchesTimelinePage() {
         </div>
 
         {posts.length === 0 && (
-          <div className="rounded-3xl border border-dashed border-[var(--border)] p-12 text-center text-xs text-[var(--foreground-muted)]">
+          <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--color-card-background)] p-12 text-center text-xs text-[var(--color-muted-text)]">
             No published model launch analyses yet. Check back shortly.
           </div>
         )}

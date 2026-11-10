@@ -126,11 +126,11 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <ImageIcon className="h-6 w-6 text-indigo-600" />
+          <h1 className="font-display text-2xl font-black text-[var(--color-heading)] tracking-tight flex items-center gap-2">
+            <ImageIcon className="h-6 w-6 text-[var(--accent)]" />
             Media &amp; CDN Asset Library
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-[var(--color-muted-text)] mt-1">
             Upload, manage, and copy CDN URLs for your articles, covers, and author photos.
           </p>
         </div>
@@ -139,7 +139,7 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 disabled:opacity-50 transition-all self-start sm:self-auto cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[var(--accent-hover)] disabled:opacity-50 transition-all self-start sm:self-auto cursor-pointer"
         >
           {isUploading ? (
             <>
@@ -177,53 +177,53 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
           if (e.dataTransfer.files) handleFileUpload(e.dataTransfer.files);
         }}
         onClick={() => fileInputRef.current?.click()}
-        className={`rounded-2xl border-2 border-dashed p-8 text-center transition-all cursor-pointer ${
+        className={`rounded-xl border-2 border-dashed p-8 text-center transition-all cursor-pointer ${
           isDragging
-            ? "border-indigo-600 bg-indigo-50/50"
-            : "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50/50 shadow-2xs"
+            ? "border-[var(--accent)] bg-[var(--accent-light)]"
+            : "border-[var(--border)] bg-[var(--color-card-background)] hover:border-[var(--accent)] hover:bg-[var(--color-secondary-surface)]/50 shadow-2xs"
         }`}
       >
         <div className="max-w-md mx-auto space-y-2">
-          <div className="mx-auto h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+          <div className="mx-auto h-12 w-12 rounded-xl bg-[var(--accent-light)] text-[var(--accent)] flex items-center justify-center">
             {isUploading ? (
               <Loader2 className="h-6 w-6 animate-spin" />
             ) : (
               <Upload className="h-6 w-6" />
             )}
           </div>
-          <p className="text-sm font-bold text-slate-800">
+          <p className="text-sm font-bold text-[var(--color-heading)]">
             {isUploading
               ? "Uploading to Cloudinary CDN..."
               : "Click to choose images or drag & drop here"}
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[var(--color-muted-text)]">
             Supports PNG, JPG, WebP, AVIF, GIF, SVG (up to 10MB each)
           </p>
         </div>
       </div>
 
       {uploadError && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800 flex items-center gap-2">
-          <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+        <div className="rounded-xl border border-rose-500/30 bg-rose-500/15 p-4 text-xs font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0" />
           <span>{uploadError}</span>
         </div>
       )}
 
       {/* ── Search & Filter Bar ── */}
-      <div className="flex items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[var(--color-muted-text)]" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search media by filename or format..."
-            className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 py-2 text-xs outline-none focus:border-indigo-600"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] pl-9 pr-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
           />
         </div>
 
-        <span className="font-mono text-xs text-slate-500">
-          Showing <strong>{filtered.length}</strong> of {items.length} assets
+        <span className="font-mono text-xs text-[var(--color-muted-text)]">
+          Showing <strong className="text-[var(--color-heading)]">{filtered.length}</strong> of {items.length} assets
         </span>
       </div>
 
@@ -232,11 +232,11 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
         {filtered.map((item) => (
           <div
             key={item._id}
-            className="group rounded-2xl border border-slate-200 bg-white p-3 shadow-2xs hover:border-slate-400 transition-all flex flex-col justify-between"
+            className="group rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-3 shadow-2xs hover:border-[var(--accent)]/60 transition-all flex flex-col justify-between"
           >
             <div>
               {/* Thumbnail Container */}
-              <div className="aspect-video w-full rounded-xl bg-slate-100 overflow-hidden relative border border-slate-200 mb-3">
+              <div className="aspect-video w-full rounded-lg bg-[var(--color-secondary-surface)] overflow-hidden relative border border-[var(--border)] mb-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={item.url}
@@ -248,11 +248,11 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
 
               {/* Title & Metadata */}
               <div className="space-y-1">
-                <p className="font-bold text-xs text-slate-900 truncate" title={item.filename}>
+                <p className="font-bold text-xs text-[var(--color-heading)] truncate" title={item.filename}>
                   {item.filename}
                 </p>
-                <div className="flex items-center justify-between text-[10px] font-mono text-slate-500">
-                  <span className="uppercase font-semibold text-slate-700">
+                <div className="flex items-center justify-between text-[10px] font-mono text-[var(--color-muted-text)]">
+                  <span className="uppercase font-semibold text-[var(--color-body-text)]">
                     {item.format || "IMG"}
                   </span>
                   <span>{Math.round((item.size || 0) / 1024)} KB</span>
@@ -261,21 +261,21 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
             </div>
 
             {/* Actions Bar */}
-            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-1">
+            <div className="mt-3 pt-3 border-t border-[var(--border)] flex items-center justify-between gap-1">
               {/* Copy URL */}
               <button
                 type="button"
                 onClick={() => handleCopy(item.url, item._id)}
                 className={`flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-bold transition-colors cursor-pointer ${
                   copiedId === item._id
-                    ? "bg-emerald-100 text-emerald-800"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
+                    : "bg-[var(--color-secondary-surface)] text-[var(--color-heading)] hover:bg-[var(--color-main-background)]"
                 }`}
                 title="Copy CDN URL to Clipboard"
               >
                 {copiedId === item._id ? (
                   <>
-                    <Check className="h-3 w-3 text-emerald-700" />
+                    <Check className="h-3 w-3" />
                     <span>Copied!</span>
                   </>
                 ) : (
@@ -292,7 +292,7 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                  className="rounded-lg p-1.5 text-[var(--color-muted-text)] hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] transition-colors"
                   title="Open original image"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -303,7 +303,7 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
                   type="button"
                   disabled={deletingId === item._id}
                   onClick={() => handleDelete(item._id)}
-                  className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer disabled:opacity-50"
+                  className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-500/15 transition-colors cursor-pointer disabled:opacity-50"
                   title="Delete image"
                 >
                   {deletingId === item._id ? (
@@ -318,10 +318,10 @@ export function MediaManager({ initialItems }: MediaManagerProps) {
         ))}
 
         {filtered.length === 0 && (
-          <div className="col-span-full rounded-2xl border border-dashed border-slate-200 p-12 text-center text-xs text-slate-500 bg-white">
-            <ImageIcon className="h-8 w-8 mx-auto text-slate-300 mb-2" />
-            <p className="font-semibold text-slate-700 mb-1">No media assets found</p>
-            <p className="text-slate-400">
+          <div className="col-span-full rounded-xl border border-dashed border-[var(--border)] p-12 text-center text-xs text-[var(--color-muted-text)] bg-[var(--color-card-background)]">
+            <ImageIcon className="h-8 w-8 mx-auto text-[var(--color-muted-text)]/50 mb-2" />
+            <p className="font-semibold text-[var(--color-heading)] mb-1">No media assets found</p>
+            <p className="text-[var(--color-muted-text)]">
               Upload images using the button or dropzone above to start building your CDN library.
             </p>
           </div>

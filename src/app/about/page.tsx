@@ -21,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
     entityType: "page",
     entitySeo: page?.seo,
     path: "/about",
-    title: page?.seo?.metaTitle || page?.title || "About AI Latest News | Editorial Mission & Standards",
-    excerpt: page?.seo?.metaDescription || page?.excerpt || "Learn about AI Latest News, India's dedicated artificial intelligence editorial platform, model benchmark standards, and technology journalism values.",
+    title: page?.seo?.metaTitle || page?.title || "About Kraviona AI News | Editorial Mission & Standards",
+    excerpt: page?.seo?.metaDescription || page?.excerpt || "Learn about Kraviona AI News — an international artificial intelligence, technology, research, and innovation intelligence publication.",
   });
 }
 
@@ -64,24 +64,26 @@ export default async function AboutPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-          <BookOpen className="h-3.5 w-3.5 text-slate-900" />
-          <span>Editorial Charter // Mission</span>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="border-b-2 border-[var(--color-heading)] pb-6 mb-8">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-3">
+            <BookOpen className="h-3.5 w-3.5" />
+            <span>Kraviona Editorial Charter // Mission</span>
+          </div>
+
+          <h1 className="font-editorial text-3xl sm:text-5xl font-bold tracking-tight text-[var(--color-heading)] leading-[1.1]">
+            {page?.title || "AI, Technology, Research & Innovation Intelligence"}
+          </h1>
+
+          <p className="mt-4 text-base sm:text-lg font-serif text-[var(--color-body-text)] leading-relaxed">
+            {page?.excerpt ||
+              "Kraviona AI News bridges frontier foundation-model research and real-world engineering deployment. We deliver verified reporting, deep technical analysis, and independent benchmarks for builders, researchers, and technology leaders worldwide."}
+          </p>
         </div>
-
-        <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 leading-[1.12]">
-          {page?.title || "An Independent AI Publication Engineered for Builders"}
-        </h1>
-
-        <p className="mt-4 text-lg font-serif text-slate-700 leading-relaxed">
-          {page?.excerpt ||
-            "AI Latest News was founded to bridge the gap between high-level foundation model research and practical deployment for Indian developers, enterprises, and startups. We deliver rigorous, verified benchmarks and independent news dispatches."}
-        </p>
 
         {page?.contentHtml ? (
           <div
-            className="prose-article text-base my-8"
+            className="prose-article text-base my-8 text-[var(--color-body-text)]"
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         ) : (
@@ -92,15 +94,15 @@ export default async function AboutPage() {
                 return (
                   <div
                     key={idx}
-                    className="rounded-xl border border-slate-200 bg-white p-6 shadow-2xs space-y-3"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-3"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-900">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-secondary-surface)] text-[var(--accent)]">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="text-base font-bold text-slate-900">
+                    <h2 className="font-display text-base font-bold text-[var(--color-heading)]">
                       {p.title}
-                    </h3>
-                    <p className="text-xs leading-relaxed text-slate-600">
+                    </h2>
+                    <p className="text-xs leading-relaxed text-[var(--color-muted-text)]">
                       {p.desc}
                     </p>
                   </div>
@@ -108,15 +110,15 @@ export default async function AboutPage() {
               })}
             </div>
 
-            <div className="prose-article text-base text-slate-800 leading-relaxed space-y-4">
+            <div className="prose-article text-base text-[var(--color-body-text)] leading-relaxed space-y-5">
               <h2>Verified Research &amp; Independent Benchmarks</h2>
               <p>
-                Our reporting prioritizes verified reproducibility over press release hype. When new frontier models like DeepSeek-R1, Claude 3.7, or Sarvam-1 launch, our technical editors evaluate context windows, tokenization ratios on Indic scripts (Hindi, Tamil, Telugu), and actual rupee pricing for Indian engineering teams.
+                Our reporting prioritizes verified reproducibility over press release hype. When new frontier models, agentic frameworks, or silicon architectures launch, our technical editors evaluate context windows, latency, inference economics, and production reliability for real engineering teams.
               </p>
 
               <h2>Peer Review &amp; Primary Sources</h2>
               <p>
-                We welcome submissions and tips from AI researchers, founders, and engineers. Every claim is corroborated by primary sources (official weights, arXiv preprints, or government tenders) before publication.
+                We welcome submissions and tips from AI researchers, founders, and systems engineers. Every claim is corroborated by primary sources—official model cards, arXiv preprints, open-weight repositories, or public filings—before publication.
               </p>
             </div>
           </>

@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const title = searchParams.get("title") || "AI Latest News — Breaking AI Dispatches & Models";
+    const title = searchParams.get("title") || "Kraviona AI News — AI, Technology & Research Intelligence";
     const category = searchParams.get("category") || "AI Intelligence";
 
     return new ImageResponse(
@@ -17,43 +17,52 @@ export async function GET(request: Request) {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            backgroundColor: "#FFFFFF",
-            padding: "80px 80px",
-            border: "16px solid #F1F5F9",
+            backgroundColor: "#F5F4EF",
+            padding: "72px 80px",
+            border: "14px solid #101820",
+            borderTop: "20px solid #D94F35",
           }}
         >
           {/* Top Brand Bar */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <div
                 style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "14px",
-                  backgroundColor: "#4F46E5",
+                  width: "52px",
+                  height: "52px",
+                  borderRadius: "10px",
+                  backgroundColor: "#101820",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#FFFFFF",
-                  fontSize: "24px",
-                  fontWeight: "bold",
+                  color: "#F5F4EF",
+                  fontSize: "28px",
+                  fontWeight: 900,
+                  borderBottom: "4px solid #D94F35",
                 }}
               >
-                AI
+                K
               </div>
-              <span style={{ fontSize: "28px", fontWeight: "bold", color: "#0F172A" }}>
-                AI Latest News
-              </span>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ fontSize: "26px", fontWeight: 900, color: "#101820", letterSpacing: "-0.02em" }}>
+                  KRAVIONA AI NEWS
+                </span>
+                <span style={{ fontSize: "12px", fontWeight: 700, color: "#687482", letterSpacing: "0.14em" }}>
+                  INTERNATIONAL INTELLIGENCE DESK
+                </span>
+              </div>
             </div>
 
             <div
               style={{
-                borderRadius: "9999px",
-                backgroundColor: "#E0E7FF",
-                padding: "8px 24px",
-                fontSize: "18px",
-                fontWeight: "600",
-                color: "#4F46E5",
+                borderRadius: "6px",
+                backgroundColor: "#D94F35",
+                padding: "8px 20px",
+                fontSize: "16px",
+                fontWeight: 700,
+                color: "#FFFFFF",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
               }}
             >
               {category}
@@ -65,10 +74,10 @@ export async function GET(request: Request) {
             style={{
               fontSize: "52px",
               fontWeight: 800,
-              color: "#0F172A",
-              lineHeight: 1.25,
+              color: "#101820",
+              lineHeight: 1.2,
               letterSpacing: "-0.03em",
-              maxWidth: "1000px",
+              maxWidth: "1020px",
             }}
           >
             {title}
@@ -80,15 +89,15 @@ export async function GET(request: Request) {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              borderTop: "2px solid #E2E8F0",
-              paddingTop: "32px",
-              color: "#64748B",
-              fontSize: "20px",
-              fontWeight: "500",
+              borderTop: "2px solid #E4E2DC",
+              paddingTop: "28px",
+              color: "#687482",
+              fontSize: "19px",
+              fontWeight: 600,
             }}
           >
-            <span>AI News, Tools &amp; Guides, Explained for India</span>
-            <span style={{ color: "#4F46E5" }}>ainews.kraviona.com</span>
+            <span>AI, Technology, Research &amp; Innovation Intelligence</span>
+            <span style={{ color: "#D94F35", fontWeight: 800 }}>ainews.kraviona.com</span>
           </div>
         </div>
       ),

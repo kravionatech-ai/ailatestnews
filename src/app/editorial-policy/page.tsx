@@ -21,11 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
     entityType: "page",
     entitySeo: page?.seo,
     path: "/editorial-policy",
-    title: page?.seo?.metaTitle || page?.title || "Editorial Policy & Benchmarking Rigor | AI Latest News",
+    title: page?.seo?.metaTitle || page?.title || "Editorial Policy & Verification Standards | Kraviona AI News",
     excerpt:
       page?.seo?.metaDescription ||
       page?.excerpt ||
-      "Read our independent benchmarking standards, conflict-of-interest policies, and fact-checking protocols.",
+      "Read Kraviona AI News's independent benchmarking standards, conflict-of-interest policies, and fact-checking protocols.",
   });
 }
 
@@ -49,31 +49,31 @@ export default async function EditorialPolicyPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-          <Scale className="h-3.5 w-3.5 text-slate-900" />
-          <span>Journalistic Integrity // Standards</span>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-3">
+          <Scale className="h-3.5 w-3.5" />
+          <span>Journalistic Integrity // Kraviona Standards</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 leading-[1.12] mb-4">
+        <h1 className="font-editorial text-3xl sm:text-5xl font-bold tracking-tight text-[var(--color-heading)] leading-[1.1] mb-4">
           {page?.title || "Editorial Policy & Technical Verification Standards"}
         </h1>
 
-        <p className="text-lg font-serif text-slate-700 leading-relaxed mb-8 pb-6 border-b border-slate-200">
+        <p className="text-base sm:text-lg font-serif text-[var(--color-body-text)] leading-relaxed mb-8 pb-6 border-b-2 border-[var(--color-heading)]">
           {page?.excerpt ||
-            "AI Latest News maintains strict journalistic independence from cloud providers, foundation model labs, and venture-backed accelerator programs."}
+            "Kraviona AI News maintains strict journalistic independence from cloud providers, foundation model labs, and venture-backed accelerator programs."}
         </p>
 
         {page?.contentHtml ? (
           <div
-            className="prose-article text-sm leading-relaxed space-y-6"
+            className="prose-article text-base leading-relaxed space-y-6 text-[var(--color-body-text)]"
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         ) : (
-          <div className="prose-article text-base text-slate-800 leading-relaxed space-y-6">
+          <div className="prose-article text-base text-[var(--color-body-text)] leading-relaxed space-y-6">
             <h3>1. Independent Model Benchmarking</h3>
             <p>
-              We evaluate foundation models, multimodal checkpoints, and local quantization runtimes on identical hardware clusters located in Indian datacenters. We never accept sponsored benchmark modifications, curated prompts, or cherry-picked evaluation runs.
+              We evaluate foundation models, multimodal checkpoints, and local quantization runtimes on reproducible hardware baselines. We never accept sponsored benchmark modifications, curated prompts, or cherry-picked evaluation runs.
             </p>
 
             <h3>2. Sponsored Content &amp; Disclosures</h3>
@@ -83,12 +83,12 @@ export default async function EditorialPolicyPage() {
 
             <h3>3. Code &amp; Repositories</h3>
             <p>
-              Tutorials, architectural guides, and implementation snippets must provide verifiable GitHub repositories or Google Colab notebooks that execute cleanly in current Python LTS runtimes without hidden dependencies.
+              Tutorials, architectural guides, and implementation snippets must reference verifiable repositories or reproducible environments without undisclosed dependencies.
             </p>
 
             <h3>4. Corrections &amp; Updates</h3>
             <p>
-              When a factual or technical error is discovered, we correct the article immediately and append an explicit correction notice detailing what was updated and the timestamp of revision.
+              When a factual or technical error is discovered, we correct the article promptly and append an explicit correction notice detailing what was updated and the timestamp of revision.
             </p>
           </div>
         )}

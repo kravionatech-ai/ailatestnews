@@ -297,53 +297,53 @@ export function SeoControlCenter({
   return (
     <div className="space-y-6">
       {/* Top Banner & Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[var(--border)] pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-black tracking-tight text-slate-900">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[var(--color-heading)]">
               SEO Management Center
             </h1>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--accent-light)] text-[var(--accent)] border border-[var(--accent)]/30">
               Production Active
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Dynamic XML Sitemap, Robots.txt, Google News Sync & Indexing Control Hub
+          <p className="text-xs text-[var(--color-muted-text)] mt-1">
+            Dynamic XML Sitemap, Robots.txt, Google News Sync &amp; Indexing Control Hub
           </p>
         </div>
 
         {/* Live Public Links */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <a
             href="/sitemap.xml"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-xs transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-semibold text-[var(--color-body-text)] shadow-xs transition"
           >
-            <Globe className="h-3.5 w-3.5 text-indigo-600" />
+            <Globe className="h-3.5 w-3.5 text-[var(--accent)]" />
             <span>sitemap.xml</span>
-            <ExternalLink className="h-3 w-3 text-slate-400" />
+            <ExternalLink className="h-3 w-3 text-[var(--color-muted-text)]" />
           </a>
           <a
             href="/robots.txt"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-xs transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-semibold text-[var(--color-body-text)] shadow-xs transition"
           >
-            <Bot className="h-3.5 w-3.5 text-slate-600" />
+            <Bot className="h-3.5 w-3.5 text-[var(--color-muted-text)]" />
             <span>robots.txt</span>
-            <ExternalLink className="h-3 w-3 text-slate-400" />
+            <ExternalLink className="h-3 w-3 text-[var(--color-muted-text)]" />
           </a>
           {settings.sitemap.includeNewsSitemap && (
             <a
               href="/news-sitemap.xml"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-xs transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-semibold text-[var(--color-body-text)] shadow-xs transition"
             >
-              <Newspaper className="h-3.5 w-3.5 text-emerald-600" />
+              <Newspaper className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>news-sitemap.xml</span>
-              <ExternalLink className="h-3 w-3 text-slate-400" />
+              <ExternalLink className="h-3 w-3 text-[var(--color-muted-text)]" />
             </a>
           )}
         </div>
@@ -354,10 +354,10 @@ export function SeoControlCenter({
         <div
           className={`p-3.5 rounded-2xl border text-xs font-medium flex items-center justify-between ${
             statusMessage.type === "success"
-              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
               : statusMessage.type === "error"
-              ? "bg-rose-50 border-rose-200 text-rose-800"
-              : "bg-indigo-50 border-indigo-200 text-indigo-800"
+              ? "bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-400"
+              : "bg-[var(--accent-light)] border-[var(--accent)]/30 text-[var(--accent)]"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -368,7 +368,7 @@ export function SeoControlCenter({
           </div>
           <button
             onClick={() => setStatusMessage(null)}
-            className="text-slate-400 hover:text-slate-600 font-bold"
+            className="text-[var(--color-muted-text)] hover:text-[var(--color-heading)] font-bold cursor-pointer"
           >
             ×
           </button>
@@ -376,13 +376,13 @@ export function SeoControlCenter({
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-slate-200 space-x-1 sm:space-x-2 overflow-x-auto pb-px">
+      <div className="flex border-b border-[var(--border)] space-x-1 sm:space-x-2 overflow-x-auto pb-px">
         <button
           onClick={() => setActiveTab("sitemap")}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap ${
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap cursor-pointer ${
             activeTab === "sitemap"
-              ? "border-indigo-600 text-indigo-600 bg-indigo-50/50"
-              : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--accent-light)]"
+              : "border-transparent text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
           }`}
         >
           <Globe className="h-4 w-4" />
@@ -391,10 +391,10 @@ export function SeoControlCenter({
 
         <button
           onClick={() => setActiveTab("robots")}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap ${
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap cursor-pointer ${
             activeTab === "robots"
-              ? "border-indigo-600 text-indigo-600 bg-indigo-50/50"
-              : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--accent-light)]"
+              : "border-transparent text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
           }`}
         >
           <Bot className="h-4 w-4" />
@@ -403,16 +403,16 @@ export function SeoControlCenter({
 
         <button
           onClick={() => setActiveTab("news")}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap ${
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap cursor-pointer ${
             activeTab === "news"
-              ? "border-indigo-600 text-indigo-600 bg-indigo-50/50"
-              : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--accent-light)]"
+              : "border-transparent text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
           }`}
         >
           <Newspaper className="h-4 w-4" />
           <span>Google News Sitemap</span>
           {stats.newsArticlesCount > 0 && (
-            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
               {stats.newsArticlesCount}
             </span>
           )}
@@ -420,10 +420,10 @@ export function SeoControlCenter({
 
         <button
           onClick={() => setActiveTab("indexing")}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap ${
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap cursor-pointer ${
             activeTab === "indexing"
-              ? "border-indigo-600 text-indigo-600 bg-indigo-50/50"
-              : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--accent-light)]"
+              : "border-transparent text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
           }`}
         >
           <ShieldAlert className="h-4 w-4" />
@@ -432,10 +432,10 @@ export function SeoControlCenter({
 
         <button
           onClick={() => setActiveTab("health")}
-          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap ${
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap cursor-pointer ${
             activeTab === "health"
-              ? "border-indigo-600 text-indigo-600 bg-indigo-50/50"
-              : "border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--accent-light)]"
+              : "border-transparent text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
           }`}
         >
           <Activity className="h-4 w-4" />
@@ -450,36 +450,36 @@ export function SeoControlCenter({
         <div className="space-y-6">
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Sitemap Status
               </span>
               <div className="flex items-center gap-1.5 mt-1.5">
                 <span
                   className={`h-2.5 w-2.5 rounded-full ${
-                    settings.sitemap.enabled ? "bg-emerald-500 animate-pulse" : "bg-slate-300"
+                    settings.sitemap.enabled ? "bg-emerald-500 animate-pulse" : "bg-[var(--color-muted-text)]/40"
                   }`}
                 />
-                <span className="text-sm font-black text-slate-800">
+                <span className="text-sm font-black text-[var(--color-heading)]">
                   {settings.sitemap.enabled ? "Live & Dynamic" : "Disabled"}
                 </span>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Total URLs in Sitemap
               </span>
-              <p className="text-xl font-black text-slate-900 mt-1">
+              <p className="text-xl font-black text-[var(--color-heading)] mt-1">
                 {stats.totalUrlsInSitemap}
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Last Generated
               </span>
-              <p className="text-xs font-semibold text-slate-700 mt-1.5">
+              <p className="text-xs font-semibold text-[var(--color-body-text)] mt-1.5">
                 {stats.sitemapLastGenerated
                   ? new Date(stats.sitemapLastGenerated).toLocaleTimeString("en-IN", {
                       hour: "2-digit",
@@ -490,11 +490,11 @@ export function SeoControlCenter({
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Validation Status
               </span>
-              <div className="flex items-center gap-1.5 mt-1.5 text-xs font-bold text-emerald-600">
+              <div className="flex items-center gap-1.5 mt-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Valid W3C XML</span>
               </div>
@@ -502,33 +502,33 @@ export function SeoControlCenter({
           </div>
 
           {/* Configuration Form Card */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
               <div>
-                <h2 className="text-base font-black text-slate-900">
+                <h2 className="font-display text-base font-bold text-[var(--color-heading)]">
                   Sitemap Generation Controls
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[var(--color-muted-text)]">
                   Manage database synchronization, canonical domain and content inclusion
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   disabled={isPending}
                   onClick={handleManualRegenerate}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 shadow-xs transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] shadow-xs transition cursor-pointer"
                 >
                   <RefreshCw className={`h-3.5 w-3.5 ${isPending ? "animate-spin" : ""}`} />
-                  <span>Regenerate & Purge Cache</span>
+                  <span>Regenerate &amp; Purge Cache</span>
                 </button>
 
                 <button
                   type="button"
                   disabled={isPending}
                   onClick={() => handlePreviewSitemap("all")}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 shadow-xs transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] shadow-xs transition cursor-pointer"
                 >
                   <Eye className="h-3.5 w-3.5" />
                   <span>Preview Full XML</span>
@@ -538,7 +538,7 @@ export function SeoControlCenter({
                   type="button"
                   disabled={isPending}
                   onClick={handleSaveSitemap}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-bold shadow-xs transition cursor-pointer"
                 >
                   <Save className="h-3.5 w-3.5" />
                   <span>Save Sitemap Settings</span>
@@ -548,7 +548,7 @@ export function SeoControlCenter({
 
             {/* Base Website URL */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">
+              <label className="text-xs font-bold text-[var(--color-heading)]">
                 Canonical Website URL
               </label>
               <input
@@ -561,20 +561,20 @@ export function SeoControlCenter({
                   })
                 }
                 placeholder="https://ainews.kraviona.com"
-                className="w-full max-w-xl px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="w-full max-w-xl px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-mono text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
               />
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-[var(--color-muted-text)]">
                 Every URL loc in sitemaps will use this base prefix. Trailing slashes are auto-stripped.
               </p>
             </div>
 
             {/* Collection Feature Toggles */}
             <div className="space-y-3 pt-2">
-              <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-[var(--color-heading)] uppercase tracking-wider">
                 Content Inclusion Toggles
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
-                <label className="flex items-center gap-3 p-3 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition">
+                <label className="flex items-center gap-3 p-3 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={settings.sitemap.enabled}
@@ -584,19 +584,19 @@ export function SeoControlCenter({
                         sitemap: { ...settings.sitemap, enabled: e.target.checked },
                       })
                     }
-                    className="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 rounded accent-[var(--accent)]"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">
+                    <span className="text-xs font-bold text-[var(--color-heading)] block">
                       Enable XML Sitemap System
                     </span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-[var(--color-muted-text)]">
                       When off, /sitemap.xml returns an empty urlset
                     </span>
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition">
+                <label className="flex items-center gap-3 p-3 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={settings.sitemap.includeArticles}
@@ -606,19 +606,19 @@ export function SeoControlCenter({
                         sitemap: { ...settings.sitemap, includeArticles: e.target.checked },
                       })
                     }
-                    className="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 rounded accent-[var(--accent)]"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">
+                    <span className="text-xs font-bold text-[var(--color-heading)] block">
                       Include Published Articles
                     </span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-[var(--color-muted-text)]">
                       Syncs all published posts with actual modified dates
                     </span>
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition">
+                <label className="flex items-center gap-3 p-3 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={settings.sitemap.includeCategories}
@@ -628,19 +628,19 @@ export function SeoControlCenter({
                         sitemap: { ...settings.sitemap, includeCategories: e.target.checked },
                       })
                     }
-                    className="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 rounded accent-[var(--accent)]"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">
+                    <span className="text-xs font-bold text-[var(--color-heading)] block">
                       Include Pillar Categories
                     </span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-[var(--color-muted-text)]">
                       Syncs active categories (/category/[slug])
                     </span>
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition">
+                <label className="flex items-center gap-3 p-3 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={settings.sitemap.includePages}
@@ -650,13 +650,13 @@ export function SeoControlCenter({
                         sitemap: { ...settings.sitemap, includePages: e.target.checked },
                       })
                     }
-                    className="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 rounded accent-[var(--accent)]"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">
-                      Include Static Core & Standalone Pages
+                    <span className="text-xs font-bold text-[var(--color-heading)] block">
+                      Include Static Core &amp; Standalone Pages
                     </span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-[var(--color-muted-text)]">
                       Includes /about, /contact, /editorial-policy, /ai-tools
                     </span>
                   </div>
@@ -665,13 +665,13 @@ export function SeoControlCenter({
             </div>
 
             {/* Large Website Sitemap Architecture (Phase 4) */}
-            <div className="space-y-3 pt-3 border-t border-slate-100">
+            <div className="space-y-3 pt-3 border-t border-[var(--border)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xs font-black text-slate-900">
+                  <h3 className="text-xs font-bold text-[var(--color-heading)]">
                     Large Website Architecture (Sitemap Index)
                   </h3>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-[var(--color-muted-text)]">
                     Auto-splits into /sitemap-static.xml, /sitemap-articles.xml, /sitemap-categories.xml
                   </p>
                 </div>
@@ -687,31 +687,31 @@ export function SeoControlCenter({
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                  <div className="w-11 h-6 bg-[var(--color-secondary-surface)] border border-[var(--border)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[var(--border)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent)]"></div>
                 </label>
               </div>
 
               {settings.sitemap.enableSplitSitemaps && (
-                <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 text-xs text-indigo-900 space-y-2">
+                <div className="p-3.5 rounded-2xl bg-[var(--accent-light)] border border-[var(--accent)]/30 text-xs text-[var(--color-heading)] space-y-2">
                   <p className="font-semibold">
                     Sitemap Index is active. Available sub-sitemaps:
                   </p>
-                  <div className="flex flex-wrap gap-2 text-slate-700">
+                  <div className="flex flex-wrap gap-2 text-[var(--color-body-text)]">
                     <button
                       onClick={() => handlePreviewSitemap("articles")}
-                      className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 hover:bg-indigo-50 font-mono text-[11px]"
+                      className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
                     >
                       /sitemap-articles.xml
                     </button>
                     <button
                       onClick={() => handlePreviewSitemap("categories")}
-                      className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 hover:bg-indigo-50 font-mono text-[11px]"
+                      className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
                     >
                       /sitemap-categories.xml
                     </button>
                     <button
                       onClick={() => handlePreviewSitemap("pages")}
-                      className="px-2.5 py-1 rounded-lg bg-white border border-indigo-200 hover:bg-indigo-50 font-mono text-[11px]"
+                      className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
                     >
                       /sitemap-static.xml
                     </button>
@@ -721,12 +721,12 @@ export function SeoControlCenter({
             </div>
 
             {/* Excluded URLs Blacklist */}
-            <div className="space-y-3 pt-3 border-t border-slate-100">
+            <div className="space-y-3 pt-3 border-t border-[var(--border)]">
               <div>
-                <h3 className="text-xs font-black text-slate-900">
-                  Custom Excluded URLs & Path Blacklist
+                <h3 className="text-xs font-bold text-[var(--color-heading)]">
+                  Custom Excluded URLs &amp; Path Blacklist
                 </h3>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-[var(--color-muted-text)]">
                   URLs matching these exact paths or wildcard patterns will never appear in any sitemap.
                 </p>
               </div>
@@ -738,12 +738,12 @@ export function SeoControlCenter({
                   onChange={(e) => setNewExcludedUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddExcludedUrl())}
                   placeholder="e.g. /private-page or /blog/secret-*"
-                  className="flex-1 px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="flex-1 px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-mono text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
                 />
                 <button
                   type="button"
                   onClick={handleAddExcludedUrl}
-                  className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center gap-1 shadow-xs transition"
+                  className="px-3 py-2 rounded-xl bg-[var(--color-primary-dark,#101820)] hover:bg-[var(--accent)] text-white text-xs font-bold flex items-center gap-1 shadow-xs transition cursor-pointer"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Add Rule</span>
@@ -755,13 +755,13 @@ export function SeoControlCenter({
                   {settings.sitemap.excludedUrls.map((url) => (
                     <span
                       key={url}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-slate-100 text-slate-700 border border-slate-200"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-[var(--color-secondary-surface)] text-[var(--color-body-text)] border border-[var(--border)]"
                     >
                       <span>{url}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveExcludedUrl(url)}
-                        className="text-slate-400 hover:text-rose-600 transition"
+                        className="text-[var(--color-muted-text)] hover:text-rose-600 transition cursor-pointer"
                       >
                         <Trash2 className="h-3 w-3" />
                       </button>
@@ -769,7 +769,7 @@ export function SeoControlCenter({
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-slate-400 italic">
+                <p className="text-xs text-[var(--color-muted-text)] italic">
                   No custom excluded URLs configured. (Drafts and noindex pages are auto-excluded).
                 </p>
               )}
@@ -783,13 +783,13 @@ export function SeoControlCenter({
       {/* ───────────────────────────────────────────────────────────── */}
       {activeTab === "robots" && (
         <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[var(--border)] pb-4">
               <div>
-                <h2 className="text-base font-black text-slate-900">
+                <h2 className="font-display text-base font-bold text-[var(--color-heading)]">
                   Robots.txt Rule Manager
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[var(--color-muted-text)]">
                   Control crawler access, Disallow directives, and sitemap citations live
                 </p>
               </div>
@@ -799,7 +799,7 @@ export function SeoControlCenter({
                   type="button"
                   disabled={isPending}
                   onClick={handlePreviewRobots}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 shadow-xs transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] shadow-xs transition cursor-pointer"
                 >
                   <Eye className="h-3.5 w-3.5" />
                   <span>Preview Robots.txt</span>
@@ -809,18 +809,18 @@ export function SeoControlCenter({
                   type="button"
                   disabled={isPending}
                   onClick={() => handleSaveRobots(false)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-bold shadow-xs transition cursor-pointer"
                 >
                   <Save className="h-3.5 w-3.5" />
-                  <span>Save & Publish Changes</span>
+                  <span>Save &amp; Publish Changes</span>
                 </button>
               </div>
             </div>
 
             {/* Mode Selector */}
-            <div className="flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-              <span className="text-xs font-bold text-slate-700">Editor Mode:</span>
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+            <div className="flex items-center gap-4 bg-[var(--color-secondary-surface)] p-3 rounded-2xl border border-[var(--border)]">
+              <span className="text-xs font-bold text-[var(--color-heading)]">Editor Mode:</span>
+              <label className="flex items-center gap-2 text-xs font-semibold text-[var(--color-body-text)] cursor-pointer">
                 <input
                   type="radio"
                   name="robotsMode"
@@ -831,12 +831,12 @@ export function SeoControlCenter({
                       robots: { ...settings.robots, customRawEnabled: false },
                     })
                   }
-                  className="text-indigo-600 focus:ring-indigo-500"
+                  className="accent-[var(--accent)]"
                 />
                 <span>Visual Rule Builder (Recommended)</span>
               </label>
 
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs font-semibold text-[var(--color-body-text)] cursor-pointer">
                 <input
                   type="radio"
                   name="robotsMode"
@@ -847,7 +847,7 @@ export function SeoControlCenter({
                       robots: { ...settings.robots, customRawEnabled: true },
                     })
                   }
-                  className="text-indigo-600 focus:ring-indigo-500"
+                  className="accent-[var(--accent)]"
                 />
                 <span>Raw Text Editor</span>
               </label>
@@ -860,11 +860,11 @@ export function SeoControlCenter({
                   {settings.robots.rules.map((rule, ruleIdx) => (
                     <div
                       key={ruleIdx}
-                      className="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-3"
+                      className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/40 space-y-3"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <label className="text-xs font-bold text-slate-600">User-agent:</label>
+                          <label className="text-xs font-bold text-[var(--color-muted-text)]">User-agent:</label>
                           <input
                             type="text"
                             value={rule.userAgent}
@@ -882,7 +882,7 @@ export function SeoControlCenter({
                                 return { ...prev, robots: { ...prev.robots, rules: newRules } };
                               });
                             }}
-                            className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white font-mono text-xs font-bold text-slate-800"
+                            className="px-2.5 py-1 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] font-mono text-xs font-bold text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                           />
                         </div>
 
@@ -890,7 +890,7 @@ export function SeoControlCenter({
                           <button
                             type="button"
                             onClick={() => handleRemoveRobotsRule(ruleIdx)}
-                            className="text-slate-400 hover:text-rose-600 text-xs font-semibold flex items-center gap-1"
+                            className="text-[var(--color-muted-text)] hover:text-rose-600 text-xs font-semibold flex items-center gap-1 cursor-pointer"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                             <span>Remove Rule</span>
@@ -900,7 +900,7 @@ export function SeoControlCenter({
 
                       {/* Allow Paths */}
                       <div className="space-y-1">
-                        <label className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">
+                        <label className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
                           Allow Directives (comma separated)
                         </label>
                         <input
@@ -921,13 +921,13 @@ export function SeoControlCenter({
                             });
                           }}
                           placeholder="/"
-                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white font-mono text-xs text-slate-800"
+                          className="w-full px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] font-mono text-xs text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                         />
                       </div>
 
                       {/* Disallow Paths */}
                       <div className="space-y-1">
-                        <label className="text-[11px] font-bold text-rose-700 uppercase tracking-wider">
+                        <label className="text-[11px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">
                           Disallow Directives (comma separated)
                         </label>
                         <input
@@ -948,7 +948,7 @@ export function SeoControlCenter({
                             });
                           }}
                           placeholder="/admin/, /api/admin/, /login/"
-                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 bg-white font-mono text-xs text-slate-800"
+                          className="w-full px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] font-mono text-xs text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                         />
                       </div>
                     </div>
@@ -957,7 +957,7 @@ export function SeoControlCenter({
                   <button
                     type="button"
                     onClick={handleAddRobotsRule}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     <span>Add Crawler Rule Group</span>
@@ -965,11 +965,11 @@ export function SeoControlCenter({
                 </div>
 
                 {/* Sitemaps Directives */}
-                <div className="space-y-2 pt-3 border-t border-slate-100">
-                  <label className="text-xs font-bold text-slate-800">
+                <div className="space-y-2 pt-3 border-t border-[var(--border)]">
+                  <label className="text-xs font-bold text-[var(--color-heading)]">
                     Sitemap References to Include in Robots.txt
                   </label>
-                  <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-[var(--color-body-text)] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={settings.robots.includeNewsSitemapInRobots}
@@ -982,11 +982,11 @@ export function SeoControlCenter({
                           },
                         })
                       }
-                      className="rounded text-indigo-600 focus:ring-indigo-500"
+                      className="rounded accent-[var(--accent)]"
                     />
                     <span>
                       Include Google News Sitemap Directive (
-                      <code className="text-indigo-600 font-mono text-[11px]">
+                      <code className="text-[var(--accent)] font-mono text-[11px]">
                         Sitemap: {settings.sitemap.siteUrl}/news-sitemap.xml
                       </code>
                       )
@@ -1007,9 +1007,9 @@ export function SeoControlCenter({
                     })
                   }
                   placeholder={`User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: https://ainews.kraviona.com/sitemap.xml`}
-                  className="w-full p-4 rounded-2xl border border-slate-200 bg-slate-900 font-mono text-xs text-emerald-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 leading-relaxed"
+                  className="w-full p-4 rounded-2xl border border-[var(--border)] bg-[#101820] font-mono text-xs text-emerald-400 focus:outline-none focus:border-[var(--accent)] leading-relaxed"
                 />
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-[var(--color-muted-text)]">
                   Direct raw output mode. Enter valid robots.txt directives. Avoid script tags.
                 </p>
               </div>
@@ -1023,14 +1023,14 @@ export function SeoControlCenter({
       {/* ───────────────────────────────────────────────────────────── */}
       {activeTab === "news" && (
         <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[var(--border)] pb-4">
               <div>
-                <h2 className="text-base font-black text-slate-900">
+                <h2 className="font-display text-base font-bold text-[var(--color-heading)]">
                   Google News Sitemap Configuration
                 </h2>
-                <p className="text-xs text-slate-500">
-                  Dedicated endpoint: <code className="font-mono text-indigo-600">/news-sitemap.xml</code> for articles published within 48 hours
+                <p className="text-xs text-[var(--color-muted-text)]">
+                  Dedicated endpoint: <code className="font-mono text-[var(--accent)]">/news-sitemap.xml</code> for articles published within 48 hours
                 </p>
               </div>
 
@@ -1039,7 +1039,7 @@ export function SeoControlCenter({
                   type="button"
                   disabled={isPending}
                   onClick={() => handlePreviewSitemap("news")}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 shadow-xs transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] shadow-xs transition cursor-pointer"
                 >
                   <Eye className="h-3.5 w-3.5" />
                   <span>Preview News XML ({stats.newsArticlesCount})</span>
@@ -1049,7 +1049,7 @@ export function SeoControlCenter({
                   type="button"
                   disabled={isPending}
                   onClick={handleSaveSitemap}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-bold shadow-xs transition cursor-pointer"
                 >
                   <Save className="h-3.5 w-3.5" />
                   <span>Save News Settings</span>
@@ -1058,7 +1058,7 @@ export function SeoControlCenter({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
-              <label className="flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition">
+              <label className="flex items-center gap-3 p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
                 <input
                   type="checkbox"
                   checked={settings.sitemap.includeNewsSitemap}
@@ -1071,20 +1071,20 @@ export function SeoControlCenter({
                       },
                     })
                   }
-                  className="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500"
+                  className="h-4 w-4 rounded accent-[var(--accent)]"
                 />
                 <div>
-                  <span className="text-xs font-bold text-slate-900 block">
+                  <span className="text-xs font-bold text-[var(--color-heading)] block">
                     Enable Google News Sitemap
                   </span>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-[11px] text-[var(--color-muted-text)]">
                     Serves valid &lt;news:news&gt; tags at /news-sitemap.xml
                   </span>
                 </div>
               </label>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">
+                <label className="text-xs font-bold text-[var(--color-heading)]">
                   Publication Name (&lt;news:name&gt;)
                 </label>
                 <input
@@ -1099,12 +1099,12 @@ export function SeoControlCenter({
                       },
                     })
                   }
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800"
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-semibold text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">
+                <label className="text-xs font-bold text-[var(--color-heading)]">
                   Publication Language (&lt;news:language&gt;)
                 </label>
                 <input
@@ -1119,12 +1119,12 @@ export function SeoControlCenter({
                       },
                     })
                   }
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono text-slate-800"
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-mono text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">
+                <label className="text-xs font-bold text-[var(--color-heading)]">
                   Time Window (Hours)
                 </label>
                 <input
@@ -1141,19 +1141,19 @@ export function SeoControlCenter({
                       },
                     })
                   }
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono text-slate-800"
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-mono text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                 />
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[10px] text-[var(--color-muted-text)]">
                   Google News guidelines recommend 48 hours maximum.
                 </p>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold">Google News Compliance Notice</p>
-                <p className="text-[11px] text-amber-800 mt-0.5">
+                <p className="text-[11px] opacity-90 mt-0.5">
                   Submitting a news sitemap does not guarantee Google News inclusion. It ensures compliant algorithmic discovery for Google Publisher Center and Google Search bots.
                 </p>
               </div>
@@ -1167,13 +1167,13 @@ export function SeoControlCenter({
       {/* ───────────────────────────────────────────────────────────── */}
       {activeTab === "indexing" && (
         <div className="space-y-4">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <h2 className="text-base font-black text-slate-900">
+                <h2 className="font-display text-base font-bold text-[var(--color-heading)]">
                   Direct URL Indexing Matrix
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[var(--color-muted-text)]">
                   Configure Index/Noindex and Follow/Nofollow per article and page. Noindex items are automatically excluded from sitemaps.
                 </p>
               </div>
@@ -1181,20 +1181,20 @@ export function SeoControlCenter({
               {/* Filters */}
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <Search className="h-3.5 w-3.5 absolute left-3 top-2.5 text-slate-400" />
+                  <Search className="h-3.5 w-3.5 absolute left-3 top-2.5 text-[var(--color-muted-text)]" />
                   <input
                     type="text"
                     value={inventorySearch}
                     onChange={(e) => setInventorySearch(e.target.value)}
                     placeholder="Search URL or title..."
-                    className="pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    className="pl-8 pr-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-medium text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
                 <select
                   value={inventoryTypeFilter}
                   onChange={(e) => setInventoryTypeFilter(e.target.value)}
-                  className="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700"
+                  className="px-2.5 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-semibold text-[var(--color-heading)] outline-none"
                 >
                   <option value="all">All Content</option>
                   <option value="post">Articles Only</option>
@@ -1205,9 +1205,9 @@ export function SeoControlCenter({
             </div>
 
             {/* Matrix Table */}
-            <div className="border border-slate-200 rounded-2xl overflow-hidden">
+            <div className="border border-[var(--border)] rounded-2xl overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold text-[10px]">
+                <thead className="bg-[var(--color-secondary-surface)] border-b border-[var(--border)] text-[var(--color-muted-text)] uppercase tracking-wider font-bold text-[10px]">
                   <tr>
                     <th className="py-3 px-4">Title / Route</th>
                     <th className="py-3 px-3">Type</th>
@@ -1216,7 +1216,7 @@ export function SeoControlCenter({
                     <th className="py-3 px-3">Sitemap Presence</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+                <tbody className="divide-y divide-[var(--border)] font-medium">
                   {filteredInventory.slice(0, 30).map((item) => {
                     const currentDirective = item.index
                       ? item.follow
@@ -1227,17 +1227,17 @@ export function SeoControlCenter({
                       : "noindex,nofollow";
 
                     return (
-                      <tr key={item.id} className="hover:bg-slate-50/60 transition">
+                      <tr key={item.id} className="hover:bg-[var(--color-secondary-surface)]/50 transition">
                         <td className="py-2.5 px-4">
-                          <p className="font-bold text-slate-900 truncate max-w-sm">
+                          <p className="font-bold text-[var(--color-heading)] truncate max-w-sm">
                             {item.title}
                           </p>
-                          <code className="text-[11px] text-slate-500 font-mono">
+                          <code className="text-[11px] text-[var(--color-muted-text)] font-mono">
                             {item.route}
                           </code>
                         </td>
                         <td className="py-2.5 px-3">
-                          <span className="capitalize text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
+                          <span className="capitalize text-[11px] px-2 py-0.5 rounded-md bg-[var(--color-secondary-surface)] text-[var(--color-body-text)]">
                             {item.type}
                           </span>
                         </td>
@@ -1245,10 +1245,10 @@ export function SeoControlCenter({
                           <span
                             className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                               item.status === "published"
-                                ? "bg-emerald-50 text-emerald-700"
+                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                                 : item.status === "draft"
-                                ? "bg-amber-50 text-amber-700"
-                                : "bg-slate-100 text-slate-700"
+                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                                : "bg-[var(--color-secondary-surface)] text-[var(--color-body-text)]"
                             }`}
                           >
                             {item.status || "active"}
@@ -1264,14 +1264,14 @@ export function SeoControlCenter({
                               const shouldFollow = val.endsWith("follow");
                               handleUpdateItemIndexing(item.id, item.type, shouldIndex, shouldFollow);
                             }}
-                            className={`text-xs font-bold rounded-lg px-2 py-1 border transition ${
+                            className={`text-xs font-bold rounded-lg px-2 py-1 border transition outline-none ${
                               currentDirective === "index,follow"
-                                ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
                                 : currentDirective === "noindex,follow"
-                                ? "bg-amber-50 text-amber-800 border-amber-300"
+                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
                                 : currentDirective === "index,nofollow"
-                                ? "bg-blue-50 text-blue-800 border-blue-300"
-                                : "bg-rose-50 text-rose-800 border-rose-300"
+                                ? "bg-sky-500/15 text-sky-700 dark:text-sky-400 border-sky-500/30"
+                                : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30"
                             }`}
                           >
                             <option value="index,follow">Index, Follow</option>
@@ -1282,12 +1282,12 @@ export function SeoControlCenter({
                         </td>
                         <td className="py-2.5 px-3">
                           {item.index && item.status !== "draft" ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               <span>Included</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400">
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--color-muted-text)]">
                               <XCircle className="h-3.5 w-3.5" />
                               <span>Excluded</span>
                             </span>
@@ -1300,7 +1300,7 @@ export function SeoControlCenter({
               </table>
             </div>
             {filteredInventory.length > 30 && (
-              <p className="text-[11px] text-slate-400 text-center">
+              <p className="text-[11px] text-[var(--color-muted-text)] text-center">
                 Showing top 30 items. Use search box above to narrow down specific URLs.
               </p>
             )}
@@ -1314,102 +1314,102 @@ export function SeoControlCenter({
       {activeTab === "health" && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Total Published Articles
               </span>
-              <p className="text-xl font-black text-slate-900 mt-1">
+              <p className="text-xl font-black text-[var(--color-heading)] mt-1">
                 {stats.publishedPosts}
               </p>
-              <span className="text-[11px] text-slate-400">out of {stats.totalPosts} total</span>
+              <span className="text-[11px] text-[var(--color-muted-text)]">out of {stats.totalPosts} total</span>
             </div>
 
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Draft Articles
               </span>
-              <p className="text-xl font-black text-amber-600 mt-1">
+              <p className="text-xl font-black text-amber-600 dark:text-amber-400 mt-1">
                 {stats.draftPosts}
               </p>
-              <span className="text-[11px] text-slate-400">Auto-excluded from sitemaps</span>
+              <span className="text-[11px] text-[var(--color-muted-text)]">Auto-excluded from sitemaps</span>
             </div>
 
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Noindex Pages
               </span>
-              <p className="text-xl font-black text-rose-600 mt-1">
+              <p className="text-xl font-black text-rose-600 dark:text-rose-400 mt-1">
                 {stats.noindexPosts + stats.noindexPages}
               </p>
-              <span className="text-[11px] text-slate-400">Respects crawler directives</span>
+              <span className="text-[11px] text-[var(--color-muted-text)]">Respects crawler directives</span>
             </div>
 
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Total URLs in Sitemap
               </span>
-              <p className="text-xl font-black text-indigo-600 mt-1">
+              <p className="text-xl font-black text-[var(--accent)] mt-1">
                 {stats.totalUrlsInSitemap}
               </p>
-              <span className="text-[11px] text-slate-400">Dynamic & Canonical</span>
+              <span className="text-[11px] text-[var(--color-muted-text)]">Dynamic &amp; Canonical</span>
             </div>
 
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Eligible Google News Articles
               </span>
-              <p className="text-xl font-black text-emerald-600 mt-1">
+              <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
                 {stats.newsArticlesCount}
               </p>
-              <span className="text-[11px] text-slate-400">Within last 48 hours</span>
+              <span className="text-[11px] text-[var(--color-muted-text)]">Within last 48 hours</span>
             </div>
 
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
                 Last Generation Error
               </span>
-              <p className="text-xs font-semibold text-slate-700 mt-2">
+              <p className="text-xs font-semibold text-[var(--color-body-text)] mt-2">
                 {stats.lastError ? (
-                  <span className="text-rose-600 font-bold">{stats.lastError}</span>
+                  <span className="text-rose-600 dark:text-rose-400 font-bold">{stats.lastError}</span>
                 ) : (
-                  <span className="text-emerald-600 font-bold">None (Healthy)</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">None (Healthy)</span>
                 )}
               </p>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
-            <h3 className="text-sm font-black text-slate-900">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-4">
+            <h3 className="font-display text-sm font-bold text-[var(--color-heading)]">
               System Verification Checklist
             </h3>
             <div className="space-y-2.5">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 text-xs">
-                <span className="font-semibold text-slate-700">W3C XML Sitemap Validity (/sitemap.xml)</span>
-                <span className="font-bold text-emerald-600 flex items-center gap-1">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
+                <span className="font-semibold text-[var(--color-body-text)]">W3C XML Sitemap Validity (/sitemap.xml)</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <CheckCircle2 className="h-4 w-4" /> Passed
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 text-xs">
-                <span className="font-semibold text-slate-700">Robots.txt Syntax & Directives (/robots.txt)</span>
-                <span className="font-bold text-emerald-600 flex items-center gap-1">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
+                <span className="font-semibold text-[var(--color-body-text)]">Robots.txt Syntax &amp; Directives (/robots.txt)</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <CheckCircle2 className="h-4 w-4" /> Passed
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 text-xs">
-                <span className="font-semibold text-slate-700">Google News Schema (/news-sitemap.xml)</span>
-                <span className="font-bold text-emerald-600 flex items-center gap-1">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
+                <span className="font-semibold text-[var(--color-body-text)]">Google News Schema (/news-sitemap.xml)</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <CheckCircle2 className="h-4 w-4" /> Passed
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 text-xs">
-                <span className="font-semibold text-slate-700">Canonical HTTPS Domain Uniformity</span>
-                <span className="font-bold text-emerald-600 flex items-center gap-1">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
+                <span className="font-semibold text-[var(--color-body-text)]">Canonical HTTPS Domain Uniformity</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <CheckCircle2 className="h-4 w-4" /> https://ainews.kraviona.com
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 text-xs">
-                <span className="font-semibold text-slate-700">Draft & Deleted Articles Isolation</span>
-                <span className="font-bold text-emerald-600 flex items-center gap-1">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
+                <span className="font-semibold text-[var(--color-body-text)]">Draft &amp; Deleted Articles Isolation</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <CheckCircle2 className="h-4 w-4" /> Enforced at DB Layer
                 </span>
               </div>
@@ -1423,9 +1423,9 @@ export function SeoControlCenter({
       {/* ───────────────────────────────────────────────────────────── */}
       {previewModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="w-full max-w-4xl max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
-            <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50">
-              <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+          <div className="w-full max-w-4xl max-h-[85vh] bg-[var(--color-card-background)] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[var(--border)]">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border)] bg-[var(--color-secondary-surface)]">
+              <h3 className="text-xs font-black text-[var(--color-heading)] uppercase tracking-wider">
                 {previewModal.title}
               </h3>
               <div className="flex items-center gap-2">
@@ -1436,22 +1436,22 @@ export function SeoControlCenter({
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition"
+                  className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] flex items-center gap-1.5 transition cursor-pointer"
                 >
-                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                   <span>{copied ? "Copied!" : "Copy"}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewModal({ isOpen: false, title: "", content: "" })}
-                  className="text-slate-400 hover:text-slate-700 p-1 font-bold text-lg leading-none"
+                  className="text-[var(--color-muted-text)] hover:text-[var(--color-heading)] p-1 font-bold text-lg leading-none cursor-pointer"
                 >
                   ×
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 overflow-auto p-4 bg-slate-950">
+            <div className="flex-1 overflow-auto p-4 bg-[#101820]">
               <pre className="font-mono text-xs text-emerald-400 whitespace-pre-wrap break-all leading-relaxed">
                 {previewModal.content}
               </pre>
@@ -1465,21 +1465,21 @@ export function SeoControlCenter({
       {/* ───────────────────────────────────────────────────────────── */}
       {dangerModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 border border-rose-200 space-y-4">
-            <div className="flex items-center gap-3 text-rose-600">
-              <div className="p-3 rounded-full bg-rose-100">
+          <div className="w-full max-w-md bg-[var(--color-card-background)] rounded-2xl shadow-2xl p-6 border border-rose-500/40 space-y-4">
+            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
+              <div className="p-3 rounded-full bg-rose-500/15">
                 <AlertTriangle className="h-6 w-6" />
               </div>
-              <h3 className="text-base font-black text-slate-900">
+              <h3 className="text-base font-black text-[var(--color-heading)]">
                 Critical SEO Warning
               </h3>
             </div>
 
-            <p className="text-xs text-slate-600 leading-relaxed">
-              You are about to publish a <code className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-mono font-bold">Disallow: /</code> rule for all user agents. This instructs Google, Bing, and other search engines to <strong>de-index or completely stop crawling your website</strong>.
+            <p className="text-xs text-[var(--color-body-text)] leading-relaxed">
+              You are about to publish a <code className="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 dark:text-rose-400 font-mono font-bold">Disallow: /</code> rule for all user agents. This instructs Google, Bing, and other search engines to <strong>de-index or completely stop crawling your website</strong>.
             </p>
 
-            <p className="text-xs font-bold text-rose-700">
+            <p className="text-xs font-bold text-rose-600 dark:text-rose-400">
               Are you absolutely certain you want to publish this rule to production?
             </p>
 
@@ -1487,7 +1487,7 @@ export function SeoControlCenter({
               <button
                 type="button"
                 onClick={() => setDangerModal({ isOpen: false })}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+                className="px-4 py-2 rounded-xl border border-[var(--border)] text-xs font-bold text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -1497,9 +1497,9 @@ export function SeoControlCenter({
                   setDangerModal({ isOpen: false });
                   if (dangerModal.pendingAction) dangerModal.pendingAction();
                 }}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition"
+                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition cursor-pointer"
               >
-                Confirm & Publish Disallow
+                Confirm &amp; Publish Disallow
               </button>
             </div>
           </div>

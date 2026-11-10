@@ -20,7 +20,7 @@ export function Reactions({ postId }: { postId: string }) {
         particleCount: 50,
         spread: 60,
         origin: { y: 0.8 },
-        colors: ["#4f46e5", "#38bdf8", "#818cf8", "#f43f5e"],
+        colors: ["#D94F35", "#263B50", "#101820", "#E05A42"],
       });
     } catch {
       // safe fallback
@@ -35,19 +35,19 @@ export function Reactions({ postId }: { postId: string }) {
       <button
         onClick={handleLike}
         disabled={hasLiked}
-        className={`group flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all shadow-sm ${
+        className={`group flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all shadow-xs cursor-pointer ${
           hasLiked
-            ? "bg-rose-50 text-rose-600 border border-rose-200"
-            : "border border-[var(--border)] bg-white text-[var(--foreground)] hover:border-rose-300 hover:text-rose-600 active:scale-95"
+            ? "bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/40"
+            : "border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] hover:border-[var(--accent)] hover:text-[var(--accent)] active:scale-95"
         }`}
       >
         <Heart
           className={`h-4 w-4 transition-transform group-hover:scale-110 ${
-            hasLiked ? "fill-rose-500 text-rose-500" : ""
+            hasLiked ? "fill-[var(--accent)] text-[var(--accent)]" : ""
           }`}
         />
         <span>{likes} Applauds</span>
-        {hasLiked && <Sparkles className="h-3.5 w-3.5 text-rose-400 animate-spin" />}
+        {hasLiked && <Sparkles className="h-3.5 w-3.5 text-[var(--accent)] animate-spin" />}
       </button>
     </div>
   );

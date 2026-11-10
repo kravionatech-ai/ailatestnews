@@ -1,12 +1,28 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Inter, Lora } from "next/font/google";
+import { Inter, Lora, Manrope, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { getActiveDesignTokens } from "@/lib/design-tokens/service";
+import { generateCssVariables } from "@/lib/design-tokens/css-generator";
+import { DEFAULT_DESIGN_TOKENS } from "@/lib/design-tokens/defaults";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-manrope",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair",
 });
 
 const lora = Lora({
@@ -16,29 +32,30 @@ const lora = Lora({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ainews.kraviona.com";
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? "AI Latest News";
+const siteName = "Kraviona AI News";
 const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-RC5GPJKKW2";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${siteName} — Breaking AI News, Model Launches & India AI Guides`,
+    default: `${siteName} — AI, Technology, Research and Innovation Intelligence`,
     template: `%s | ${siteName}`,
   },
   description:
-    "India's premier AI news portal covering generative AI models, LLM launches, comparisons, Indian AI startups (Sarvam, Krutrim, BharatGPT), and hands-on developer guides in clear, comprehensive English.",
+    "Kraviona AI News is an international digital publication delivering authoritative intelligence on artificial intelligence, foundation models, research papers, AI tools, startups, cybersecurity, and emerging technology.",
   keywords: [
-    "AI News India",
-    "AI Latest News",
-    "LLM model launches",
-    "DeepSeek AI",
+    "Kraviona AI News",
+    "Artificial Intelligence News",
+    "AI Models",
+    "AI Research",
+    "AI Agents",
+    "Machine Learning",
+    "DeepSeek",
     "Sarvam AI",
-    "Krutrim AI",
-    "BharatGPT",
-    "Llama 3 India",
-    "AI tool comparisons",
-    "Generative AI India",
-    "Indic AI models",
+    "IndiaAI",
+    "Cybersecurity",
+    "Cloud Computing",
+    "Enterprise AI",
   ],
   authors: [{ name: siteName, url: siteUrl }],
   creator: siteName,
@@ -49,15 +66,15 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_IN",
+    locale: "en_US",
     url: siteUrl,
     siteName,
-    title: `${siteName} — Breaking AI News, Model Launches & India AI Guides`,
+    title: `${siteName} — AI, Technology, Research and Innovation Intelligence`,
     description:
-      "Daily breaking AI news, benchmark comparisons, open-weight model releases, and India's AI revolution covered in depth.",
+      "Authoritative reporting on artificial intelligence models, frontier research, developer tools, startups, cybersecurity, and global computing.",
     images: [
       {
-        url: `${siteUrl}/api/og?title=AI%20Latest%20News%20%7C%20India's%20AI%20Portal`,
+        url: `${siteUrl}/api/og?title=Kraviona%20AI%20News%20%7C%20AI%20%26%20Tech%20Intelligence`,
         width: 1200,
         height: 630,
         alt: siteName,
@@ -66,9 +83,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteName} — Breaking AI News & Model Launches`,
+    title: `${siteName} — AI, Technology, Research and Innovation Intelligence`,
     description:
-      "Daily breaking AI news, benchmark comparisons, and India's AI ecosystem covered in depth.",
+      "Daily intelligence on frontier AI models, research papers, developer tooling, startups, and global technology.",
     creator: "@kraviona",
   },
   robots: {
@@ -93,13 +110,18 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
-  themeColor: "#4F46E5",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-  colorScheme: "light",
-};
+export async function generateViewport(): Promise<Viewport> {
+  return {
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#101820" },
+      { media: "(prefers-color-scheme: dark)", color: "#0D1117" },
+    ],
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    colorScheme: "light dark",
+  };
+}
 
 function JsonLd() {
   const organizationSchema = {
@@ -109,7 +131,7 @@ function JsonLd() {
     url: siteUrl,
     logo: `${siteUrl}/icon.svg`,
     description:
-      "Leading Indian tech publication covering Artificial Intelligence, foundational models, open-weights, and compute policy.",
+      "International AI and technology publication covering artificial intelligence, foundation models, research papers, startups, cybersecurity, and compute infrastructure.",
     sameAs: [
       "https://twitter.com/kraviona",
       "https://linkedin.com/company/kraviona",
@@ -149,18 +171,49 @@ function JsonLd() {
   );
 }
 
-export default function RootLayout({
+const THEME_INIT_SCRIPT = `
+(function() {
+  try {
+    var mode = localStorage.getItem('kraviona-theme');
+    if (mode === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  } catch (e) {}
+})();
+`;
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const tokens = await getActiveDesignTokens();
+  const isLegacyUnmodifiedDefault =
+    tokens.colors.primaryAccent === DEFAULT_DESIGN_TOKENS.colors.primaryAccent &&
+    tokens.colors.mainBackground === DEFAULT_DESIGN_TOKENS.colors.mainBackground;
+
+  const dynamicCss = !isLegacyUnmodifiedDefault
+    ? generateCssVariables(tokens)
+    : "";
+
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${lora.variable}`}
+      className={`${inter.variable} ${manrope.variable} ${playfair.variable} ${lora.variable}`}
       suppressHydrationWarning
     >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {dynamicCss && (
+          <style
+            id="dynamic-design-tokens"
+            dangerouslySetInnerHTML={{ __html: dynamicCss }}
+          />
+        )}
         <JsonLd />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="manifest" href="/manifest.webmanifest" />
@@ -181,8 +234,8 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--foreground)]">
-        {children}
+      <body className="min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--foreground)] selection:bg-[var(--accent)] selection:text-white">
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@
 .pnp.js
 /.codex-preview
 /.gemini
+/.agents
 
 # testing
 /coverage

@@ -20,9 +20,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${settings.siteName} — RSS Feed</title>
+    <title>${settings.siteName === "AI Latest News" ? "Kraviona AI News" : settings.siteName} — RSS Feed</title>
     <link>${siteUrl}</link>
-    <description>${settings.tagline || "Latest AI news, tools and guides, explained for India."}</description>
+    <description>${settings.tagline || "AI, Technology, Research and Innovation Intelligence."}</description>
     <language>en</language>
     <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml" />
     ${posts
@@ -34,7 +34,7 @@ export async function GET() {
       <guid>${siteUrl}/blog/${post.slug}</guid>
       <pubDate>${post.publishedAt ? new Date(post.publishedAt).toUTCString() : new Date().toUTCString()}</pubDate>
       <description><![CDATA[${post.excerpt}]]></description>
-      <author><![CDATA[${(post.author as unknown as { name?: string })?.name || "AI Latest News Editorial Team"}]]></author>
+      <author><![CDATA[${(post.author as unknown as { name?: string })?.name || "Kraviona AI News Editorial Team"}]]></author>
     </item>`
       )
       .join("")}

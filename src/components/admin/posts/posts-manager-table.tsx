@@ -64,12 +64,14 @@ interface PostsManagerTableProps {
   initialPosts: ManagedPost[];
   categories: { _id: string; name: string }[];
   authors: { _id: string; name: string }[];
+  initialSpecialFilter?: "all" | "featured" | "needs-update" | "missing-meta";
 }
 
 export function PostsManagerTable({
   initialPosts,
   categories,
   authors,
+  initialSpecialFilter = "all",
 }: PostsManagerTableProps) {
   const router = useRouter();
 
@@ -78,7 +80,7 @@ export function PostsManagerTable({
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [seoScoreFilter, setSeoScoreFilter] = useState<string>("all");
-  const [specialFilter, setSpecialFilter] = useState<"all" | "featured" | "needs-update" | "missing-meta">("all");
+  const [specialFilter, setSpecialFilter] = useState<"all" | "featured" | "needs-update" | "missing-meta">(initialSpecialFilter);
   const [sortBy, setSortBy] = useState<"date-desc" | "date-asc" | "views-desc" | "seo-desc" | "seo-asc">("date-desc");
 
   // Selection state
@@ -250,7 +252,7 @@ export function PostsManagerTable({
   return (
     <div className="space-y-5">
       {/* Search & Filter Top Bar */}
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-2xs space-y-3.5">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-4 shadow-2xs space-y-3.5">
         {/* Status navigation pills */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] pb-3">
           <div className="flex flex-wrap items-center gap-1.5">
@@ -269,10 +271,10 @@ export function PostsManagerTable({
                     setStatusFilter(tab.key);
                     setCurrentPage(1);
                   }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     active
                       ? "bg-[var(--accent)] text-white shadow-2xs"
-                      : "bg-slate-50 text-[var(--foreground-secondary)] hover:bg-slate-100"
+                      : "bg-[var(--color-secondary-surface)] text-[var(--color-body-text)] hover:text-[var(--color-heading)]"
                   }`}
                 >
                   {tab.label} <span className="opacity-70 ml-1">({tab.count})</span>
@@ -283,7 +285,7 @@ export function PostsManagerTable({
 
           {/* Quick Search */}
           <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--foreground-muted)]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-muted-text)]" />
             <input
               type="text"
               value={searchQuery}
@@ -292,7 +294,7 @@ export function PostsManagerTable({
                 setCurrentPage(1);
               }}
               placeholder="Filter by title, slug, excerpt..."
-              className="w-full rounded-xl border border-[var(--border)] bg-white pl-9 pr-3.5 py-1.5 text-xs outline-none focus:border-[var(--accent)]"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] pl-9 pr-3.5 py-1.5 text-xs outline-none focus:border-[var(--accent)]"
             />
           </div>
         </div>
@@ -301,14 +303,14 @@ export function PostsManagerTable({
         <div className="flex flex-wrap items-center gap-3 text-xs">
           {/* Category Dropdown */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--foreground-muted)] font-medium">Category:</span>
+            <span className="text-[var(--color-muted-text)] font-medium">Category:</span>
             <select
               value={categoryFilter}
               onChange={(e) => {
                 setCategoryFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="rounded-xl border border-[var(--border)] bg-white px-2.5 py-1.5 outline-none focus:border-[var(--accent)]"
+              className="rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-2.5 py-1.5 outline-none focus:border-[var(--accent)]"
             >
               <option value="all">All Categories</option>
               {categories.map((c) => (
@@ -321,14 +323,14 @@ export function PostsManagerTable({
 
           {/* SEO Score Dropdown */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--foreground-muted)] font-medium">SEO Score:</span>
+            <span className="text-[var(--color-muted-text)] font-medium">SEO Score:</span>
             <select
               value={seoScoreFilter}
               onChange={(e) => {
                 setSeoScoreFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="rounded-xl border border-[var(--border)] bg-white px-2.5 py-1.5 outline-none focus:border-[var(--accent)]"
+              className="rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-2.5 py-1.5 outline-none focus:border-[var(--accent)]"
             >
               <option value="all">All Scores</option>
               <option value="high">High (80-100)</option>
@@ -339,14 +341,14 @@ export function PostsManagerTable({
 
           {/* Special Audits Filter */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--foreground-muted)] font-medium">Audit:</span>
+            <span className="text-[var(--color-muted-text)] font-medium">Audit:</span>
             <select
               value={specialFilter}
               onChange={(e) => {
                 setSpecialFilter(e.target.value as "all" | "featured" | "needs-update" | "missing-meta");
                 setCurrentPage(1);
               }}
-              className="rounded-xl border border-[var(--border)] bg-white px-2.5 py-1.5 outline-none focus:border-[var(--accent)]"
+              className="rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-2.5 py-1.5 outline-none focus:border-[var(--accent)]"
             >
               <option value="all">No Special Filter</option>
               <option value="featured">★ Featured Stories Only</option>
@@ -357,11 +359,11 @@ export function PostsManagerTable({
 
           {/* Sort By */}
           <div className="flex items-center gap-1.5 ml-auto">
-            <ArrowUpDown className="h-3.5 w-3.5 text-[var(--foreground-muted)]" />
+            <ArrowUpDown className="h-3.5 w-3.5 text-[var(--color-muted-text)]" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="rounded-xl border border-[var(--border)] bg-white px-2.5 py-1.5 outline-none focus:border-[var(--accent)]"
+              className="rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-2.5 py-1.5 outline-none focus:border-[var(--accent)]"
             >
               <option value="date-desc">Newest First</option>
               <option value="date-asc">Oldest First</option>
@@ -375,17 +377,17 @@ export function PostsManagerTable({
 
       {/* Floating Bulk Action Bar */}
       {selectedIds.length > 0 && (
-        <div className="rounded-2xl border border-indigo-200 bg-indigo-50/90 p-3.5 shadow-sm flex flex-wrap items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2">
+        <div className="rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-light)] p-3.5 shadow-sm flex flex-wrap items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[var(--accent)] text-white text-xs font-bold">
               {selectedIds.length}
             </span>
-            <span className="text-xs font-semibold text-[var(--foreground)]">
+            <span className="text-xs font-semibold text-[var(--color-heading)]">
               Article(s) selected
             </span>
             <button
               onClick={() => setSelectedIds([])}
-              className="text-[11px] text-[var(--accent)] underline ml-2 font-medium"
+              className="text-[11px] text-[var(--accent)] underline ml-2 font-medium cursor-pointer"
             >
               Deselect All
             </button>
@@ -395,7 +397,7 @@ export function PostsManagerTable({
             <button
               disabled={isBulkLoading}
               onClick={() => handleBulkAction("feature")}
-              className="px-2.5 py-1.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-800 font-bold hover:bg-amber-100 transition-colors shadow-2xs disabled:opacity-50"
+              className="px-2.5 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/15 text-amber-800 dark:text-amber-300 font-bold hover:bg-amber-500/25 transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
               title="Feature on Homepage"
             >
               ★ Feature
@@ -403,7 +405,7 @@ export function PostsManagerTable({
             <button
               disabled={isBulkLoading}
               onClick={() => handleBulkAction("unfeature")}
-              className="px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-700 font-semibold hover:bg-slate-50 transition-colors shadow-2xs disabled:opacity-50"
+              className="px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-body-text)] font-semibold hover:bg-[var(--color-secondary-surface)] transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
               title="Remove from Homepage Featured"
             >
               Unfeature
@@ -411,28 +413,28 @@ export function PostsManagerTable({
             <button
               disabled={isBulkLoading}
               onClick={() => handleBulkAction("publish")}
-              className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-colors shadow-2xs disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
             >
               Publish
             </button>
             <button
               disabled={isBulkLoading}
               onClick={() => handleBulkAction("draft")}
-              className="px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-[var(--foreground)] font-semibold hover:bg-slate-50 transition-colors shadow-2xs disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] font-semibold hover:bg-[var(--color-secondary-surface)] transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
             >
               Draft
             </button>
             <button
               disabled={isBulkLoading}
               onClick={() => handleBulkAction("archive")}
-              className="px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-[var(--foreground)] font-semibold hover:bg-slate-50 transition-colors shadow-2xs disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] font-semibold hover:bg-[var(--color-secondary-surface)] transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
             >
               Archive
             </button>
             <button
               disabled={isBulkLoading}
               onClick={() => handleBulkAction("indexnow")}
-              className="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors shadow-2xs flex items-center gap-1 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg bg-[#263B50] text-white font-semibold hover:bg-[#101820] transition-colors shadow-2xs flex items-center gap-1 disabled:opacity-50 cursor-pointer"
               title="Ping Bing/IndexNow API"
             >
               <Zap className="h-3 w-3" /> IndexNow
@@ -440,7 +442,7 @@ export function PostsManagerTable({
             <button
               disabled={isBulkLoading}
               onClick={() => handleBulkAction("noindex")}
-              className="px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-rose-700 font-semibold hover:bg-rose-50 transition-colors shadow-2xs disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400 font-semibold hover:bg-rose-500/20 transition-colors shadow-2xs disabled:opacity-50 cursor-pointer"
             >
               Set Noindex
             </button>
@@ -450,7 +452,7 @@ export function PostsManagerTable({
               <select
                 value={bulkCategoryTarget}
                 onChange={(e) => setBulkCategoryTarget(e.target.value)}
-                className="rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs outline-none"
+                className="rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] px-2 py-1.5 text-xs outline-none"
               >
                 <option value="">Move to Category...</option>
                 {categories.map((c) => (
@@ -465,7 +467,7 @@ export function PostsManagerTable({
                     handleBulkAction("category", bulkCategoryTarget);
                     setBulkCategoryTarget("");
                   }}
-                  className="px-2.5 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold"
+                  className="px-2.5 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs font-semibold cursor-pointer"
                 >
                   Apply
                 </button>
@@ -475,7 +477,7 @@ export function PostsManagerTable({
             <button
               disabled={isBulkLoading}
               onClick={() => handleBulkAction("delete")}
-              className="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-semibold hover:bg-rose-700 transition-colors shadow-2xs flex items-center gap-1 disabled:opacity-50"
+              className="px-3 py-1.5 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition-colors shadow-2xs flex items-center gap-1 disabled:opacity-50 cursor-pointer"
             >
               <Trash2 className="h-3 w-3" /> Delete
             </button>
@@ -484,22 +486,22 @@ export function PostsManagerTable({
       )}
 
       {bulkFeedback && (
-        <div className="p-3 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-medium border border-emerald-200 flex items-center gap-2">
+        <div className="p-3 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-xs font-medium border border-emerald-500/30 flex items-center gap-2">
           <CheckCircle className="h-4 w-4 shrink-0" />
           <span>{bulkFeedback}</span>
         </div>
       )}
 
       {/* Main Table */}
-      <div className="rounded-2xl border border-[var(--border)] bg-white overflow-hidden shadow-2xs">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] overflow-hidden shadow-2xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-[var(--border)] bg-[var(--background-secondary)] text-[var(--foreground-muted)] uppercase tracking-wider font-semibold">
+              <tr className="border-b border-[var(--border)] bg-[var(--color-secondary-surface)] text-[var(--color-muted-text)] uppercase tracking-wider font-mono text-[10px] font-semibold">
                 <th className="p-4 w-10 text-center">
                   <button
                     onClick={toggleSelectAll}
-                    className="cursor-pointer text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                    className="cursor-pointer text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                   >
                     {allCurrentPageSelected ? (
                       <CheckSquare className="h-4 w-4 text-[var(--accent)]" />
@@ -530,15 +532,15 @@ export function PostsManagerTable({
                 return (
                   <tr
                     key={post._id}
-                    className={`hover:bg-[var(--background-secondary)] transition-colors group ${
-                      isSelected ? "bg-indigo-50/40" : ""
+                    className={`hover:bg-[var(--color-secondary-surface)]/70 transition-colors group ${
+                      isSelected ? "bg-[var(--accent-light)]/50" : ""
                     }`}
                   >
                     {/* Checkbox */}
                     <td className="p-4 text-center">
                       <button
                         onClick={() => toggleSelectOne(post._id)}
-                        className="cursor-pointer text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                        className="cursor-pointer text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                       >
                         {isSelected ? (
                           <CheckSquare className="h-4 w-4 text-[var(--accent)]" />
@@ -553,7 +555,7 @@ export function PostsManagerTable({
                       <div className="flex items-center gap-2">
                         {post.featured && (
                           <span
-                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300 shrink-0"
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 shrink-0"
                             title="Homepage Featured Story"
                           >
                             ★ Featured
@@ -561,22 +563,22 @@ export function PostsManagerTable({
                         )}
                         <Link
                           href={`/admin/posts/${post._id}/edit`}
-                          className="font-bold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors truncate block"
+                          className="font-bold text-[var(--color-heading)] hover:text-[var(--accent)] transition-colors truncate block"
                         >
                           {post.title}
                         </Link>
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px] text-[var(--foreground-muted)] font-mono truncate max-w-[200px]">
+                        <span className="text-[10px] text-[var(--color-muted-text)] font-mono truncate max-w-[200px]">
                           /blog/{post.slug}
                         </span>
-                        <span className="text-[10px] text-[var(--foreground-muted)]">• by {authorName}</span>
+                        <span className="text-[10px] text-[var(--color-muted-text)]">• by {authorName}</span>
                       </div>
                     </td>
 
                     {/* Category */}
                     <td className="p-4">
-                      <span className="rounded-lg bg-[var(--background-tertiary)] px-2 py-0.5 text-[10px] font-semibold text-[var(--foreground-secondary)]">
+                      <span className="rounded-md bg-[var(--color-secondary-surface)] px-2 py-0.5 text-[10px] font-semibold text-[var(--color-body-text)]">
                         {categoryName}
                       </span>
                     </td>
@@ -584,14 +586,14 @@ export function PostsManagerTable({
                     {/* Status Pill */}
                     <td className="p-4">
                       <span
-                        className={`inline-block px-2 py-0.5 rounded-full font-semibold text-[10px] capitalize ${
+                        className={`inline-block px-2 py-0.5 rounded-full font-semibold text-[10px] capitalize border ${
                           post.status === "published"
-                            ? "bg-green-50 text-green-700 border border-green-200"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
                             : post.status === "scheduled"
-                            ? "bg-amber-50 text-amber-700 border border-amber-200"
+                            ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
                             : post.status === "archived"
-                            ? "bg-rose-50 text-rose-700 border border-rose-200"
-                            : "bg-slate-100 text-slate-700 border border-slate-200"
+                            ? "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30"
+                            : "bg-[var(--color-secondary-surface)] text-[var(--color-muted-text)] border-[var(--border)]"
                         }`}
                       >
                         {post.status}
@@ -603,10 +605,10 @@ export function PostsManagerTable({
                       <span
                         className={`inline-flex items-center justify-center font-extrabold text-[11px] px-2 py-0.5 rounded-full ${
                           seoScore >= 80
-                            ? "bg-emerald-100 text-emerald-800"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                             : seoScore >= 50
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-rose-100 text-rose-800"
+                            ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                            : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
                         }`}
                       >
                         {seoScore}
@@ -616,27 +618,27 @@ export function PostsManagerTable({
                     {/* Index Status */}
                     <td className="p-4">
                       {isNoindex ? (
-                        <span className="text-[10px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-semibold text-rose-700 dark:text-rose-400 bg-rose-500/15 border border-rose-500/30 px-1.5 py-0.5 rounded">
                           NoIndex
                         </span>
                       ) : isIndexNowSubmitted ? (
-                        <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded flex items-center gap-1 w-fit">
+                        <span className="text-[10px] font-semibold text-[var(--accent)] bg-[var(--accent-light)] border border-[var(--accent)]/30 px-1.5 py-0.5 rounded flex items-center gap-1 w-fit">
                           <Zap className="h-2.5 w-2.5" /> Pinged
                         </span>
                       ) : (
-                        <span className="text-[10px] text-[var(--foreground-muted)]">
+                        <span className="text-[10px] text-[var(--color-muted-text)]">
                           Standard
                         </span>
                       )}
                     </td>
 
                     {/* Reads (Real view count) */}
-                    <td className="p-4 text-[var(--foreground-secondary)] font-medium">
+                    <td className="p-4 text-[var(--color-body-text)] font-mono font-medium">
                       {post.views >= 100 ? post.views.toLocaleString() : "—"}
                     </td>
 
                     {/* Published Date */}
-                    <td className="p-4 text-[var(--foreground-muted)]">
+                    <td className="p-4 text-[var(--color-muted-text)] font-mono">
                       {formatDate(post.publishedAt || post.createdAt)}
                     </td>
 
@@ -647,7 +649,7 @@ export function PostsManagerTable({
                         <button
                           type="button"
                           onClick={() => setQuickEditPost(post)}
-                          className="p-1.5 rounded-lg text-[var(--foreground-muted)] hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                          className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] transition-colors cursor-pointer"
                           title="Quick Edit in drawer"
                         >
                           <Zap className="h-3.5 w-3.5" />
@@ -656,7 +658,7 @@ export function PostsManagerTable({
                         {/* Full Edit */}
                         <Link
                           href={`/admin/posts/${post._id}/edit`}
-                          className="p-1.5 rounded-lg text-[var(--foreground-muted)] hover:text-[var(--accent)] hover:bg-slate-100 transition-colors"
+                          className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:bg-[var(--color-secondary-surface)] transition-colors"
                           title="Full Editor"
                         >
                           <Edit className="h-3.5 w-3.5" />
@@ -667,7 +669,7 @@ export function PostsManagerTable({
                           <Link
                             href={`/blog/${post.slug}`}
                             target="_blank"
-                            className="p-1.5 rounded-lg text-[var(--foreground-muted)] hover:text-sky-600 hover:bg-sky-50 transition-colors"
+                            className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-500/10 transition-colors"
                             title="View Public Post"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
@@ -681,7 +683,7 @@ export function PostsManagerTable({
                             await duplicatePostAction(post._id);
                             router.refresh();
                           }}
-                          className="p-1.5 rounded-lg text-[var(--foreground-muted)] hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                          className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-500/10 transition-colors cursor-pointer"
                           title="Duplicate as draft"
                         >
                           <Copy className="h-3.5 w-3.5" />
@@ -696,7 +698,7 @@ export function PostsManagerTable({
                               router.refresh();
                             }
                           }}
-                          className="p-1.5 rounded-lg text-[var(--foreground-muted)] hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                          className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                           title="Delete article"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -711,7 +713,7 @@ export function PostsManagerTable({
                 <tr>
                   <td
                     colSpan={9}
-                    className="p-12 text-center text-xs text-[var(--foreground-muted)]"
+                    className="p-12 text-center text-xs text-[var(--color-muted-text)]"
                   >
                     No articles found matching the filter criteria.
                   </td>
@@ -722,7 +724,7 @@ export function PostsManagerTable({
         </div>
 
         {/* Pagination Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-[var(--border)] bg-[var(--background-secondary)] text-xs text-[var(--foreground-muted)]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-[var(--border)] bg-[var(--color-secondary-surface)] text-xs text-[var(--color-muted-text)]">
           <div className="flex items-center gap-2">
             <span>Rows per page:</span>
             <select
@@ -731,7 +733,7 @@ export function PostsManagerTable({
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="rounded-lg border border-[var(--border)] bg-white px-2 py-1 outline-none"
+              className="rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] px-2 py-1 outline-none"
             >
               <option value={10}>10</option>
               <option value={25}>25</option>
@@ -747,17 +749,17 @@ export function PostsManagerTable({
             <button
               disabled={currentPage <= 1}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-white font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] font-medium hover:bg-[var(--color-main-background)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               Previous
             </button>
-            <span className="px-2 font-semibold text-[var(--foreground)]">
+            <span className="px-2 font-semibold text-[var(--color-heading)] font-mono">
               {currentPage} / {totalPages}
             </span>
             <button
               disabled={currentPage >= totalPages}
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-white font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] font-medium hover:bg-[var(--color-main-background)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               Next
             </button>

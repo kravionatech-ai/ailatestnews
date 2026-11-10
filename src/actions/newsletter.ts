@@ -37,6 +37,6 @@ export async function subscribeNewsletterAction(formData: FormData) {
 
   return {
     success: true,
-    message: "Thank you for subscribing to AI Latest News updates!",
+    message: "Thank you for subscribing to Kraviona AI News Intelligence!",
   };
 }

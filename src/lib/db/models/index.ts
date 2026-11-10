@@ -62,3 +62,12 @@ export type {
   IRobotsSettings,
   IRobotsRule,
 } from "./seo-settings.model";
+
+export { default as DesignConfig } from "./design-config.model";
+export type {
+  IDesignConfigDocument,
+  IDesignConfigSnapshot,
+  IDesignTokens,
+  IHomepageSectionConfig,
+} from "./design-config.model";
+

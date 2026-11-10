@@ -243,7 +243,7 @@ export function RichTextEditor({
 
     const targetAttr = linkTargetBlank ? ' target="_blank" rel="noopener noreferrer"' : "";
     const textToDisplay = linkText.trim() || linkUrl.trim();
-    const html = `<a href="${linkUrl.trim()}"${targetAttr} class="text-indigo-600 underline">${textToDisplay}</a>`;
+    const html = `<a href="${linkUrl.trim()}"${targetAttr} class="text-[var(--accent)] underline">${textToDisplay}</a>`;
     insertHtmlAtCursor(html);
 
     setShowLinkModal(false);
@@ -255,9 +255,9 @@ export function RichTextEditor({
     e.preventDefault();
     if (!imageUrl.trim()) return;
 
-    let html = `<figure class="my-6 text-center"><img src="${imageUrl.trim()}" alt="${imageAlt.trim()}" class="rounded-xl mx-auto max-w-full shadow-2xs border border-slate-200" />`;
+    let html = `<figure class="my-6 text-center"><img src="${imageUrl.trim()}" alt="${imageAlt.trim()}" class="rounded-xl mx-auto max-w-full shadow-2xs border border-[var(--border)]" />`;
     if (imageCaption.trim()) {
-      html += `<figcaption class="mt-2 text-xs text-slate-500 font-mono italic">${imageCaption.trim()}</figcaption>`;
+      html += `<figcaption class="mt-2 text-xs text-[var(--color-muted-text)] font-mono italic">${imageCaption.trim()}</figcaption>`;
     }
     html += `</figure><p></p>`;
 
@@ -274,16 +274,16 @@ export function RichTextEditor({
     const rows = Math.max(1, Math.min(15, tableRows));
     const cols = Math.max(1, Math.min(10, tableCols));
 
-    let html = `<table class="w-full border-collapse my-6 text-sm border border-slate-200"><thead><tr class="bg-slate-100">`;
+    let html = `<table class="w-full border-collapse my-6 text-sm border border-[var(--border)]"><thead><tr class="bg-[var(--color-secondary-surface)]">`;
     for (let c = 1; c <= cols; c++) {
-      html += `<th class="border border-slate-200 p-2 font-bold text-left text-slate-900">Header ${c}</th>`;
+      html += `<th class="border border-[var(--border)] p-2 font-bold text-left text-[var(--color-heading)]">Header ${c}</th>`;
     }
     html += `</tr></thead><tbody>`;
 
     for (let r = 1; r <= rows; r++) {
-      html += `<tr class="${r % 2 === 0 ? "bg-slate-50/50" : ""}">`;
+      html += `<tr class="${r % 2 === 0 ? "bg-[var(--color-secondary-surface)]/40" : ""}">`;
       for (let c = 1; c <= cols; c++) {
-        html += `<td class="border border-slate-200 p-2 text-slate-700">Data ${r}-${c}</td>`;
+        html += `<td class="border border-[var(--border)] p-2 text-[var(--color-body-text)]">Data ${r}-${c}</td>`;
       }
       html += `</tr>`;
     }
@@ -346,20 +346,20 @@ export function RichTextEditor({
 
   return (
     <div
-      className={`rounded-2xl border border-slate-200 bg-white shadow-2xs transition-all ${
+      className={`rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-2xs transition-all ${
         isFullscreen ? "fixed inset-0 z-50 rounded-none flex flex-col" : "relative"
       }`}
     >
       {/* ── Top Header & Mode Bar ── */}
-      <div className="flex flex-wrap items-center justify-between border-b border-slate-200 bg-slate-50/80 px-4 py-2.5 gap-2">
-        <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between border-b border-[var(--border)] bg-[var(--color-secondary-surface)] px-4 py-2.5 gap-2">
+        <div className="flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] p-0.5 shadow-2xs">
           <button
             type="button"
             onClick={() => setMode("visual")}
             className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${
               mode === "visual"
-                ? "bg-slate-900 text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-[#101820] dark:bg-[var(--accent)] text-white shadow-xs"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
             }`}
           >
             <Pilcrow className="h-3.5 w-3.5" />
@@ -371,8 +371,8 @@ export function RichTextEditor({
             onClick={() => setMode("code")}
             className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${
               mode === "code"
-                ? "bg-slate-900 text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-[#101820] dark:bg-[var(--accent)] text-white shadow-xs"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
             }`}
           >
             <Code2 className="h-3.5 w-3.5" />
@@ -384,8 +384,8 @@ export function RichTextEditor({
             onClick={() => setMode("split")}
             className={`hidden sm:flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer ${
               mode === "split"
-                ? "bg-slate-900 text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-[#101820] dark:bg-[var(--accent)] text-white shadow-xs"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
             }`}
           >
             <Columns2 className="h-3.5 w-3.5" />
@@ -394,16 +394,16 @@ export function RichTextEditor({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-slate-500">
-            <span><strong>{wordCount}</strong> words</span>
+          <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-[var(--color-muted-text)]">
+            <span><strong className="text-[var(--color-heading)]">{wordCount}</strong> words</span>
             <span>·</span>
-            <span><strong>{readingTime}</strong> min read</span>
+            <span><strong className="text-[var(--color-heading)]">{readingTime}</strong> min read</span>
           </div>
 
           <button
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors cursor-pointer"
+            className="rounded-lg p-1.5 text-[var(--color-muted-text)] hover:bg-[var(--color-card-background)] hover:text-[var(--color-heading)] transition-colors cursor-pointer"
             title={isFullscreen ? "Exit Fullscreen (Esc)" : "Fullscreen Mode"}
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -413,13 +413,13 @@ export function RichTextEditor({
 
       {/* ── Formatting Toolbar (Active in Visual & Split modes) ── */}
       {mode !== "code" && (
-        <div className="flex flex-wrap items-center gap-1 border-b border-slate-200 bg-white px-3 py-2 text-slate-700">
+        <div className="flex flex-wrap items-center gap-1 border-b border-[var(--border)] bg-[var(--color-card-background)] px-3 py-2 text-[var(--color-body-text)]">
           {/* History */}
           <div className="flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => execCmd("undo")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Undo (Ctrl+Z)"
             >
               <Undo2 className="h-4 w-4" />
@@ -427,14 +427,14 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("redo")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Redo (Ctrl+Y)"
             >
               <Redo2 className="h-4 w-4" />
             </button>
           </div>
 
-          <span className="h-4 w-px bg-slate-200 mx-1" />
+          <span className="h-4 w-px bg-[var(--border)] mx-1" />
 
           {/* Heading Dropdown */}
           <select
@@ -446,7 +446,7 @@ export function RichTextEditor({
               }
             }}
             defaultValue=""
-            className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 outline-none hover:border-slate-300 cursor-pointer"
+            className="rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-2 py-1 text-xs font-semibold text-[var(--color-heading)] outline-none hover:border-[var(--accent)] cursor-pointer"
           >
             <option value="" disabled>Heading Style</option>
             <option value="p">Paragraph / Normal</option>
@@ -457,14 +457,14 @@ export function RichTextEditor({
             <option value="pre">Code Block</option>
           </select>
 
-          <span className="h-4 w-px bg-slate-200 mx-1" />
+          <span className="h-4 w-px bg-[var(--border)] mx-1" />
 
           {/* Inline Styles */}
           <div className="flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => execCmd("bold")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Bold (Ctrl+B)"
             >
               <Bold className="h-4 w-4" />
@@ -472,7 +472,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("italic")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Italic (Ctrl+I)"
             >
               <Italic className="h-4 w-4" />
@@ -480,7 +480,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("underline")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Underline (Ctrl+U)"
             >
               <Underline className="h-4 w-4" />
@@ -488,7 +488,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("strikeThrough")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Strikethrough"
             >
               <Strikethrough className="h-4 w-4" />
@@ -503,21 +503,21 @@ export function RichTextEditor({
                   insertHtmlAtCursor(`<code>code</code>`);
                 }
               }}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Inline Code"
             >
               <Code className="h-4 w-4" />
             </button>
           </div>
 
-          <span className="h-4 w-px bg-slate-200 mx-1" />
+          <span className="h-4 w-px bg-[var(--border)] mx-1" />
 
           {/* Lists & Quotes */}
           <div className="flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => execCmd("insertUnorderedList")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Bullet List"
             >
               <List className="h-4 w-4" />
@@ -525,7 +525,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("insertOrderedList")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Numbered List"
             >
               <ListOrdered className="h-4 w-4" />
@@ -533,7 +533,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("formatBlock", "<blockquote>")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Blockquote"
             >
               <Quote className="h-4 w-4" />
@@ -541,21 +541,21 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => insertHtmlAtCursor("<hr /><p></p>")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Divider Line"
             >
               <Minus className="h-4 w-4" />
             </button>
           </div>
 
-          <span className="h-4 w-px bg-slate-200 mx-1" />
+          <span className="h-4 w-px bg-[var(--border)] mx-1" />
 
           {/* Alignment */}
           <div className="flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => execCmd("justifyLeft")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Align Left"
             >
               <AlignLeft className="h-4 w-4" />
@@ -563,7 +563,7 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("justifyCenter")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Align Center"
             >
               <AlignCenter className="h-4 w-4" />
@@ -571,14 +571,14 @@ export function RichTextEditor({
             <button
               type="button"
               onClick={() => execCmd("justifyRight")}
-              className="rounded p-1.5 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="rounded p-1.5 hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)] cursor-pointer"
               title="Align Right"
             >
               <AlignRight className="h-4 w-4" />
             </button>
           </div>
 
-          <span className="h-4 w-px bg-slate-200 mx-1" />
+          <span className="h-4 w-px bg-[var(--border)] mx-1" />
 
           {/* Insert Media / Embeds */}
           <div className="flex items-center gap-1">
@@ -588,10 +588,10 @@ export function RichTextEditor({
                 saveSelection();
                 setShowLinkModal(true);
               }}
-              className="flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+              className="flex items-center gap-1 rounded-md bg-[var(--color-secondary-surface)] px-2 py-1 text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-main-background)] border border-[var(--border)] transition-colors cursor-pointer"
               title="Insert Hyperlink (Ctrl+K)"
             >
-              <LinkIcon className="h-3.5 w-3.5 text-indigo-600" />
+              <LinkIcon className="h-3.5 w-3.5 text-[var(--accent)]" />
               <span>Link</span>
             </button>
 
@@ -603,10 +603,10 @@ export function RichTextEditor({
                 setShowImageModal(true);
                 setImageTab("upload");
               }}
-              className="flex items-center gap-1 rounded-md bg-indigo-50/80 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors cursor-pointer shadow-2xs"
+              className="flex items-center gap-1 rounded-md bg-[var(--accent-light)] px-2.5 py-1 text-xs font-bold text-[var(--accent)] hover:opacity-90 border border-[var(--accent)]/30 transition-colors cursor-pointer shadow-2xs"
               title="Upload or Choose Image"
             >
-              <ImageIcon className="h-3.5 w-3.5 text-indigo-600" />
+              <ImageIcon className="h-3.5 w-3.5 text-[var(--accent)]" />
               <span>+ Image</span>
             </button>
 
@@ -616,10 +616,10 @@ export function RichTextEditor({
                 saveSelection();
                 setShowTableModal(true);
               }}
-              className="flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+              className="flex items-center gap-1 rounded-md bg-[var(--color-secondary-surface)] px-2 py-1 text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-main-background)] border border-[var(--border)] transition-colors cursor-pointer"
               title="Insert Comparison Table"
             >
-              <TableIcon className="h-3.5 w-3.5 text-indigo-600" />
+              <TableIcon className="h-3.5 w-3.5 text-[var(--accent)]" />
               <span>Table</span>
             </button>
 
@@ -629,10 +629,10 @@ export function RichTextEditor({
                 saveSelection();
                 setShowCalloutModal(true);
               }}
-              className="flex items-center gap-1 rounded-md bg-purple-50 px-2.5 py-1 text-xs font-bold text-purple-700 hover:bg-purple-100 border border-purple-200 transition-colors cursor-pointer"
+              className="flex items-center gap-1 rounded-md bg-amber-500/15 px-2.5 py-1 text-xs font-bold text-amber-800 dark:text-amber-300 hover:bg-amber-500/25 border border-amber-500/30 transition-colors cursor-pointer"
               title="Insert Styled Callout Box"
             >
-              <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+              <Sparkles className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
               <span>+ Callout</span>
             </button>
           </div>
@@ -650,7 +650,7 @@ export function RichTextEditor({
             onKeyDown={handleKeyDown}
             style={{ minHeight }}
             data-placeholder={placeholder}
-            className="prose-article prose-slate max-w-none p-6 outline-none focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-slate-400 empty:before:pointer-events-none"
+            className="prose-article dark:prose-invert max-w-none p-6 outline-none focus:outline-none text-[var(--color-body-text)] empty:before:content-[attr(data-placeholder)] empty:before:text-[var(--color-muted-text)] empty:before:pointer-events-none"
           />
         )}
 
@@ -661,25 +661,25 @@ export function RichTextEditor({
             onChange={(e) => onChange(e.target.value)}
             style={{ minHeight }}
             placeholder="Write or paste your raw HTML or markdown code here..."
-            className="w-full p-6 font-mono text-xs leading-relaxed text-slate-800 bg-slate-50/50 outline-none resize-y border-none"
+            className="w-full p-6 font-mono text-xs leading-relaxed text-[var(--color-heading)] bg-[var(--color-main-background)] outline-none resize-y border-none"
           />
         )}
 
         {/* Split Preview Mode */}
         {mode === "split" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[var(--border)]">
             <textarea
               value={value}
               onChange={(e) => onChange(e.target.value)}
               style={{ minHeight }}
               placeholder="HTML source code..."
-              className="w-full p-5 font-mono text-xs leading-relaxed text-slate-800 bg-slate-50/50 outline-none resize-none"
+              className="w-full p-5 font-mono text-xs leading-relaxed text-[var(--color-heading)] bg-[var(--color-main-background)] outline-none resize-none"
             />
             <div
               style={{ minHeight }}
-              className="prose-article prose-slate max-w-none p-5 overflow-auto bg-white"
+              className="prose-article dark:prose-invert max-w-none p-5 overflow-auto bg-[var(--color-card-background)] text-[var(--color-body-text)]"
               dangerouslySetInnerHTML={{
-                __html: value || `<p class="text-slate-400 italic">Live preview will appear here...</p>`,
+                __html: value || `<p class="text-[var(--color-muted-text)] italic">Live preview will appear here...</p>`,
               }}
             />
           </div>
@@ -687,18 +687,18 @@ export function RichTextEditor({
       </div>
 
       {/* ── Bottom Editor Status Bar ── */}
-      <div className="flex flex-wrap items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-2 text-xs text-slate-500">
+      <div className="flex flex-wrap items-center justify-between border-t border-[var(--border)] bg-[var(--color-secondary-surface)] px-4 py-2 text-xs text-[var(--color-muted-text)]">
         <div className="flex items-center gap-3">
           <span className="font-mono text-[11px]">
             {wordCount} words · {charCount} chars · ~{readingTime} min read
           </span>
-          <span className="hidden sm:inline text-slate-300">|</span>
-          <span className="hidden sm:inline text-[11px] text-slate-400 font-mono">
+          <span className="hidden sm:inline opacity-40">|</span>
+          <span className="hidden sm:inline text-[11px] font-mono">
             Shortcuts: <strong>Ctrl+B</strong> Bold · <strong>Ctrl+I</strong> Italic · <strong>Ctrl+K</strong> Link
           </span>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-[11px] text-emerald-600 font-semibold">
+        <div className="flex items-center gap-2 font-mono text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">
           <CheckCircle2 className="h-3.5 w-3.5" />
           <span>Editor Active</span>
         </div>
@@ -706,17 +706,17 @@ export function RichTextEditor({
 
       {/* ── 1. Insert Link Modal ── */}
       {showLinkModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-200 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
-              <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <LinkIcon className="h-4 w-4 text-indigo-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md rounded-2xl bg-[var(--color-card-background)] p-6 shadow-xl border border-[var(--border)] animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-[var(--border)]">
+              <h4 className="font-display font-bold text-sm text-[var(--color-heading)] flex items-center gap-2">
+                <LinkIcon className="h-4 w-4 text-[var(--accent)]" />
                 <span>Insert Hyperlink</span>
               </h4>
               <button
                 type="button"
                 onClick={() => setShowLinkModal(false)}
-                className="text-slate-400 hover:text-slate-700 cursor-pointer"
+                className="text-[var(--color-muted-text)] hover:text-[var(--color-heading)] cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -724,7 +724,7 @@ export function RichTextEditor({
 
             <form onSubmit={handleInsertLink} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                   Destination URL *
                 </label>
                 <input
@@ -733,12 +733,12 @@ export function RichTextEditor({
                   placeholder="https://example.com or /blog/post-slug"
                   value={linkUrl}
                   onChange={(e) => setLinkUrl(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                   Anchor Text (Optional)
                 </label>
                 <input
@@ -746,16 +746,16 @@ export function RichTextEditor({
                   placeholder="e.g. Read whitepaper"
                   value={linkText}
                   onChange={(e) => setLinkText(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
-              <label className="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs text-[var(--color-body-text)] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={linkTargetBlank}
                   onChange={(e) => setLinkTargetBlank(e.target.checked)}
-                  className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                  className="rounded border-[var(--border)] text-[var(--accent)] focus:ring-[var(--accent)]"
                 />
                 <span>Open link in new tab (`target=&quot;_blank&quot;`)</span>
               </label>
@@ -764,13 +764,13 @@ export function RichTextEditor({
                 <button
                   type="button"
                   onClick={() => setShowLinkModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  className="rounded-lg px-4 py-2 text-xs font-semibold text-[var(--color-muted-text)] hover:bg-[var(--color-secondary-surface)] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
+                  className="rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-bold text-white hover:bg-[var(--accent-hover)] cursor-pointer"
                 >
                   Insert Link
                 </button>
@@ -782,12 +782,12 @@ export function RichTextEditor({
 
       {/* ── 2. ADVANCED IMAGE CHOOSER / UPLOADER MODAL ── */}
       {showImageModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 animate-in fade-in">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in">
+          <div className="w-full max-w-lg rounded-2xl bg-[var(--color-card-background)] p-6 shadow-2xl border border-[var(--border)] max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
-              <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <ImageIcon className="h-4 w-4 text-indigo-600" />
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-[var(--border)]">
+              <h4 className="font-display font-bold text-sm text-[var(--color-heading)] flex items-center gap-2">
+                <ImageIcon className="h-4 w-4 text-[var(--accent)]" />
                 <span>Insert Editorial Image</span>
               </h4>
               <button
@@ -796,21 +796,21 @@ export function RichTextEditor({
                   setShowImageModal(false);
                   setImageUploadError("");
                 }}
-                className="text-slate-400 hover:text-slate-700 cursor-pointer"
+                className="text-[var(--color-muted-text)] hover:text-[var(--color-heading)] cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Mode Tabs: Direct Upload vs Library vs URL */}
-            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl mb-4 text-xs font-semibold">
+            <div className="flex items-center gap-1 p-1 bg-[var(--color-secondary-surface)] rounded-xl mb-4 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setImageTab("upload")}
                 className={`flex-1 py-1.5 rounded-lg text-center transition-all cursor-pointer ${
                   imageTab === "upload"
-                    ? "bg-white text-slate-900 shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[var(--color-card-background)] text-[var(--color-heading)] shadow-2xs font-bold"
+                    : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                 }`}
               >
                 Choose File from Device
@@ -823,8 +823,8 @@ export function RichTextEditor({
                 }}
                 className={`flex-1 py-1.5 rounded-lg text-center transition-all cursor-pointer ${
                   imageTab === "library"
-                    ? "bg-white text-slate-900 shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[var(--color-card-background)] text-[var(--color-heading)] shadow-2xs font-bold"
+                    : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                 }`}
               >
                 Media Library
@@ -834,8 +834,8 @@ export function RichTextEditor({
                 onClick={() => setImageTab("url")}
                 className={`flex-1 py-1.5 rounded-lg text-center transition-all cursor-pointer ${
                   imageTab === "url"
-                    ? "bg-white text-slate-900 shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[var(--color-card-background)] text-[var(--color-heading)] shadow-2xs font-bold"
+                    : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                 }`}
               >
                 Paste Image URL
@@ -862,8 +862,8 @@ export function RichTextEditor({
                     onClick={() => imageFileInputRef.current?.click()}
                     className={`rounded-xl border-2 border-dashed p-6 text-center transition-all cursor-pointer ${
                       isDraggingImage
-                        ? "border-indigo-600 bg-indigo-50/50"
-                        : "border-slate-300 bg-slate-50/50 hover:bg-slate-100 hover:border-slate-400"
+                        ? "border-[var(--accent)] bg-[var(--accent-light)]"
+                        : "border-[var(--border)] bg-[var(--color-main-background)] hover:border-[var(--accent)]"
                     }`}
                   >
                     <input
@@ -878,26 +878,26 @@ export function RichTextEditor({
                     />
 
                     <div className="space-y-2">
-                      <div className="mx-auto h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                      <div className="mx-auto h-10 w-10 rounded-full bg-[var(--accent-light)] text-[var(--accent)] flex items-center justify-center">
                         {isUploadingImage ? (
                           <Loader2 className="h-5 w-5 animate-spin" />
                         ) : (
                           <Upload className="h-5 w-5" />
                         )}
                       </div>
-                      <p className="text-xs font-bold text-slate-800">
+                      <p className="text-xs font-bold text-[var(--color-heading)]">
                         {isUploadingImage
                           ? "Uploading to Cloudinary CDN..."
                           : "Click to choose image or drag & drop here"}
                       </p>
-                      <p className="text-[10px] text-slate-500">
+                      <p className="text-[10px] text-[var(--color-muted-text)]">
                         PNG, JPG, WebP, GIF, SVG up to 10MB
                       </p>
                     </div>
                   </div>
 
                   {imageUploadError && (
-                    <p className="text-xs text-rose-600 font-semibold">{imageUploadError}</p>
+                    <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">{imageUploadError}</p>
                   )}
                 </div>
               )}
@@ -905,13 +905,13 @@ export function RichTextEditor({
               {/* TAB 2: Media Library Picker */}
               {imageTab === "library" && (
                 <div className="space-y-2">
-                  <p className="text-xs font-semibold text-slate-600">Select previously uploaded asset:</p>
+                  <p className="text-xs font-semibold text-[var(--color-body-text)]">Select previously uploaded asset:</p>
                   {loadingLibrary ? (
-                    <div className="flex items-center justify-center py-10 text-slate-400">
-                      <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                    <div className="flex items-center justify-center py-10 text-[var(--color-muted-text)]">
+                      <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]" />
                     </div>
                   ) : libraryItems.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1 border border-slate-200 rounded-xl">
+                    <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1 border border-[var(--border)] rounded-xl">
                       {libraryItems.map((item) => (
                         <button
                           key={item._id}
@@ -922,8 +922,8 @@ export function RichTextEditor({
                           }}
                           className={`relative aspect-video rounded-lg overflow-hidden border p-0.5 text-left cursor-pointer transition-all ${
                             imageUrl === item.url
-                              ? "border-indigo-600 ring-2 ring-indigo-600/30"
-                              : "border-slate-200 hover:border-slate-400"
+                              ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/30"
+                              : "border-[var(--border)] hover:border-[var(--color-muted-text)]"
                           }`}
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -936,7 +936,7 @@ export function RichTextEditor({
                       ))}
                     </div>
                   ) : (
-                    <div className="p-6 text-center text-xs text-slate-400 border border-dashed rounded-xl">
+                    <div className="p-6 text-center text-xs text-[var(--color-muted-text)] border border-dashed border-[var(--border)] rounded-xl">
                       No assets found. Use &ldquo;Choose File from Device&rdquo; tab to upload.
                     </div>
                   )}
@@ -946,7 +946,7 @@ export function RichTextEditor({
               {/* TAB 3: Paste External URL */}
               {imageTab === "url" && (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                     Direct Image URL
                   </label>
                   <input
@@ -954,69 +954,69 @@ export function RichTextEditor({
                     placeholder="https://images.unsplash.com/..."
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               )}
 
               {/* Live Preview of Selected Image */}
               {imageUrl && (
-                <div className="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200 flex items-center gap-3">
-                  <div className="h-14 w-20 rounded-lg overflow-hidden border border-emerald-300 bg-white shrink-0">
+                <div className="p-3 bg-emerald-500/15 rounded-xl border border-emerald-500/30 flex items-center gap-3">
+                  <div className="h-14 w-20 rounded-lg overflow-hidden border border-emerald-500/40 bg-[var(--color-card-background)] shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={imageUrl} alt="Preview" className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-800">
+                    <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
                       <Check className="h-3 w-3 stroke-[3]" />
                       <span>Ready to Insert</span>
                     </div>
-                    <p className="font-mono text-[10px] text-slate-600 truncate mt-0.5">{imageUrl}</p>
+                    <p className="font-mono text-[10px] text-[var(--color-muted-text)] truncate mt-0.5">{imageUrl}</p>
                   </div>
                 </div>
               )}
 
               {/* Alt Text (SEO Essential) */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Image Alt Text <span className="text-slate-400 font-normal">(for SEO &amp; screen readers)</span>
+                <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
+                  Image Alt Text <span className="text-[var(--color-muted-text)] font-normal">(for SEO &amp; screen readers)</span>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. DeepSeek-R1 Architecture benchmark chart"
                   value={imageAlt}
                   onChange={(e) => setImageAlt(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               {/* Caption */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Editorial Caption <span className="text-slate-400 font-normal">(Optional)</span>
+                <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
+                  Editorial Caption <span className="text-[var(--color-muted-text)] font-normal">(Optional)</span>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. Source: DeepSeek AI Technical Disclosure Paper, Jan 2026."
                   value={imageCaption}
                   onChange={(e) => setImageCaption(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               {/* Modal Actions */}
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setShowImageModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  className="rounded-lg px-4 py-2 text-xs font-semibold text-[var(--color-muted-text)] hover:bg-[var(--color-secondary-surface)] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!imageUrl || isUploadingImage}
-                  className="rounded-xl bg-slate-900 px-5 py-2 text-xs font-bold text-white hover:bg-slate-800 disabled:opacity-50 transition-colors cursor-pointer shadow-xs"
+                  className="rounded-lg bg-[var(--accent)] px-5 py-2 text-xs font-bold text-white hover:bg-[var(--accent-hover)] disabled:opacity-50 transition-colors cursor-pointer shadow-xs"
                 >
                   Insert Image into Article
                 </button>
@@ -1028,17 +1028,17 @@ export function RichTextEditor({
 
       {/* ── 3. Insert Table Modal ── */}
       {showTableModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl border border-slate-200 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
-              <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <TableIcon className="h-4 w-4 text-indigo-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-[var(--color-card-background)] p-6 shadow-xl border border-[var(--border)] animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-[var(--border)]">
+              <h4 className="font-display font-bold text-sm text-[var(--color-heading)] flex items-center gap-2">
+                <TableIcon className="h-4 w-4 text-[var(--accent)]" />
                 <span>Insert Comparison Table</span>
               </h4>
               <button
                 type="button"
                 onClick={() => setShowTableModal(false)}
-                className="text-slate-400 hover:text-slate-700 cursor-pointer"
+                className="text-[var(--color-muted-text)] hover:text-[var(--color-heading)] cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -1047,7 +1047,7 @@ export function RichTextEditor({
             <form onSubmit={handleInsertTable} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                     Rows (1 - 15)
                   </label>
                   <input
@@ -1056,11 +1056,11 @@ export function RichTextEditor({
                     max={15}
                     value={tableRows}
                     onChange={(e) => setTableRows(parseInt(e.target.value, 10) || 3)}
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                     Columns (1 - 10)
                   </label>
                   <input
@@ -1069,7 +1069,7 @@ export function RichTextEditor({
                     max={10}
                     value={tableCols}
                     onChange={(e) => setTableCols(parseInt(e.target.value, 10) || 3)}
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -1078,13 +1078,13 @@ export function RichTextEditor({
                 <button
                   type="button"
                   onClick={() => setShowTableModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  className="rounded-lg px-4 py-2 text-xs font-semibold text-[var(--color-muted-text)] hover:bg-[var(--color-secondary-surface)] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
+                  className="rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-bold text-white hover:bg-[var(--accent-hover)] cursor-pointer"
                 >
                   Insert Table
                 </button>
@@ -1096,17 +1096,17 @@ export function RichTextEditor({
 
       {/* ── 4. Insert Callout Modal ── */}
       {showCalloutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-200 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
-              <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-indigo-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md rounded-2xl bg-[var(--color-card-background)] p-6 shadow-xl border border-[var(--border)] animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-[var(--border)]">
+              <h4 className="font-display font-bold text-sm text-[var(--color-heading)] flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-[var(--accent)]" />
                 <span>Insert Editorial Callout Box</span>
               </h4>
               <button
                 type="button"
                 onClick={() => setShowCalloutModal(false)}
-                className="text-slate-400 hover:text-slate-700 cursor-pointer"
+                className="text-[var(--color-muted-text)] hover:text-[var(--color-heading)] cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -1114,7 +1114,7 @@ export function RichTextEditor({
 
             <form onSubmit={handleInsertCallout} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                   Callout Flavor
                 </label>
                 <div className="grid grid-cols-2 gap-2 text-xs">
@@ -1123,8 +1123,8 @@ export function RichTextEditor({
                     onClick={() => setCalloutType("takeaway")}
                     className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
                       calloutType === "takeaway"
-                        ? "border-purple-600 bg-purple-50 text-purple-900 shadow-2xs"
-                        : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                        ? "border-purple-600 bg-purple-500/15 text-purple-800 dark:text-purple-300 shadow-2xs"
+                        : "border-[var(--border)] text-[var(--color-body-text)] hover:bg-[var(--color-secondary-surface)]"
                     }`}
                   >
                     🚀 Sovereign Takeaway
@@ -1134,8 +1134,8 @@ export function RichTextEditor({
                     onClick={() => setCalloutType("info")}
                     className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
                       calloutType === "info"
-                        ? "border-blue-600 bg-blue-50 text-blue-900 shadow-2xs"
-                        : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                        ? "border-blue-600 bg-blue-500/15 text-blue-800 dark:text-blue-300 shadow-2xs"
+                        : "border-[var(--border)] text-[var(--color-body-text)] hover:bg-[var(--color-secondary-surface)]"
                     }`}
                   >
                     💡 Editorial Note
@@ -1145,8 +1145,8 @@ export function RichTextEditor({
                     onClick={() => setCalloutType("warning")}
                     className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
                       calloutType === "warning"
-                        ? "border-amber-600 bg-amber-50 text-amber-900 shadow-2xs"
-                        : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                        ? "border-amber-600 bg-amber-500/15 text-amber-800 dark:text-amber-300 shadow-2xs"
+                        : "border-[var(--border)] text-[var(--color-body-text)] hover:bg-[var(--color-secondary-surface)]"
                     }`}
                   >
                     ⚠️ Caveat / Warning
@@ -1156,8 +1156,8 @@ export function RichTextEditor({
                     onClick={() => setCalloutType("success")}
                     className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
                       calloutType === "success"
-                        ? "border-emerald-600 bg-emerald-50 text-emerald-900 shadow-2xs"
-                        : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                        ? "border-emerald-600 bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 shadow-2xs"
+                        : "border-[var(--border)] text-[var(--color-body-text)] hover:bg-[var(--color-secondary-surface)]"
                     }`}
                   >
                     ✅ Verified Benchmark
@@ -1166,7 +1166,7 @@ export function RichTextEditor({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                   Headline Title
                 </label>
                 <input
@@ -1175,12 +1175,12 @@ export function RichTextEditor({
                   placeholder="e.g. 10x Lower Token Inference Cost"
                   value={calloutTitle}
                   onChange={(e) => setCalloutTitle(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                   Body Message
                 </label>
                 <textarea
@@ -1189,7 +1189,7 @@ export function RichTextEditor({
                   placeholder="e.g. By utilizing MLA (Multi-Head Latent Attention), the KV-cache footprint is reduced from 120GB to 13GB."
                   value={calloutBody}
                   onChange={(e) => setCalloutBody(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:border-indigo-600"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
@@ -1197,13 +1197,13 @@ export function RichTextEditor({
                 <button
                   type="button"
                   onClick={() => setShowCalloutModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  className="rounded-lg px-4 py-2 text-xs font-semibold text-[var(--color-muted-text)] hover:bg-[var(--color-secondary-surface)] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
+                  className="rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-bold text-white hover:bg-[var(--accent-hover)] cursor-pointer"
                 >
                   Insert Callout
                 </button>

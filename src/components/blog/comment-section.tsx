@@ -86,20 +86,20 @@ export function CommentSection({
     <section className="mt-16 pt-12 border-t border-[var(--border)]">
       <div className="flex items-center gap-2 mb-8">
         <MessageSquare className="h-5 w-5 text-[var(--accent)]" />
-        <h3 className="text-xl font-bold text-[var(--foreground)]">
+        <h3 className="font-editorial text-xl font-bold text-[var(--color-heading)]">
           Discussion ({comments.length})
         </h3>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="mb-10 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+      <form onSubmit={handleSubmit} className="mb-10 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs">
         {replyTo && (
-          <div className="flex items-center justify-between text-xs text-[var(--accent)] bg-[var(--accent-light)] px-3 py-1.5 rounded-lg mb-3">
+          <div className="flex items-center justify-between text-xs text-[var(--accent)] bg-[var(--accent)]/10 border border-[var(--accent)]/20 px-3 py-1.5 rounded-lg mb-3">
             <span>Replying to thread</span>
             <button
               type="button"
               onClick={() => setReplyTo(null)}
-              className="font-bold hover:underline"
+              className="font-bold hover:underline cursor-pointer"
             >
               Cancel
             </button>
@@ -112,7 +112,7 @@ export function CommentSection({
             placeholder="Your Name (optional)"
             value={guestName}
             onChange={(e) => setGuestName(e.target.value)}
-            className="rounded-xl border border-[var(--border)] bg-[var(--background-secondary)] px-3.5 py-2 text-xs outline-none focus:border-[var(--accent)]"
+            className="rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
           />
         </div>
 
@@ -122,15 +122,15 @@ export function CommentSection({
           placeholder="Share your perspective, technical feedback, or questions..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full rounded-xl border border-[var(--border)] bg-[var(--background-secondary)] p-3.5 text-sm outline-none focus:border-[var(--accent)] focus:bg-white transition-all"
+          className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] p-3.5 text-sm text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)] transition-all"
         />
 
         {statusMessage && (
           <div
-            className={`mt-2 flex items-center gap-2 text-xs p-2 rounded-lg ${
+            className={`mt-2 flex items-center gap-2 text-xs p-2.5 rounded-lg ${
               statusMessage.type === "success"
-                ? "bg-green-50 text-green-700"
-                : "bg-red-50 text-red-700"
+                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                : "bg-rose-500/15 text-rose-700 dark:text-rose-300"
             }`}
           >
             {statusMessage.type === "success" ? (
@@ -146,7 +146,7 @@ export function CommentSection({
           <button
             type="submit"
             disabled={loading || !content.trim()}
-            className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50 cursor-pointer"
           >
             <Send className="h-3.5 w-3.5" /> Post Comment
           </button>
@@ -157,27 +157,27 @@ export function CommentSection({
       <div className="space-y-6">
         {comments.map((comment) => (
           <div key={comment._id} className="space-y-4">
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-5">
-              <div className="flex items-center justify-between text-xs text-[var(--foreground-muted)] mb-2">
-                <span className="font-semibold text-[var(--foreground)]">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-5">
+              <div className="flex items-center justify-between text-xs text-[var(--color-muted-text)] mb-2">
+                <span className="font-semibold text-[var(--color-heading)]">
                   {comment.author?.name || comment.guestName || "Reader"}
                 </span>
                 <span>{formatDate(comment.createdAt)}</span>
               </div>
-              <p className="text-sm text-[var(--foreground-secondary)] leading-relaxed">
+              <p className="text-sm text-[var(--color-body-text)] leading-relaxed">
                 {comment.content}
               </p>
               <div className="mt-3 flex items-center gap-4 text-xs">
                 <button
                   onClick={() => handleLike(comment._id)}
-                  className="flex items-center gap-1 text-[var(--foreground-muted)] hover:text-rose-500 transition-colors"
+                  className="flex items-center gap-1 text-[var(--color-muted-text)] hover:text-[var(--accent)] transition-colors cursor-pointer"
                 >
                   <Heart className="h-3.5 w-3.5" />
                   <span>{comment.likes || 0}</span>
                 </button>
                 <button
                   onClick={() => setReplyTo(comment._id)}
-                  className="flex items-center gap-1 text-[var(--foreground-muted)] hover:text-[var(--accent)] transition-colors"
+                  className="flex items-center gap-1 text-[var(--color-muted-text)] hover:text-[var(--accent)] transition-colors cursor-pointer"
                 >
                   <Reply className="h-3.5 w-3.5" />
                   <span>Reply</span>
@@ -191,15 +191,15 @@ export function CommentSection({
                 {comment.replies.map((reply) => (
                   <div
                     key={reply._id}
-                    className="rounded-xl border border-[var(--border)] bg-[var(--background-secondary)] p-4"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--color-secondary-surface)] p-4"
                   >
-                    <div className="flex items-center justify-between text-xs text-[var(--foreground-muted)] mb-1.5">
-                      <span className="font-semibold text-[var(--foreground)]">
+                    <div className="flex items-center justify-between text-xs text-[var(--color-muted-text)] mb-1.5">
+                      <span className="font-semibold text-[var(--color-heading)]">
                         {reply.author?.name || reply.guestName || "Reader"}
                       </span>
                       <span>{formatDate(reply.createdAt)}</span>
                     </div>
-                    <p className="text-xs text-[var(--foreground-secondary)]">
+                    <p className="text-xs text-[var(--color-body-text)]">
                       {reply.content}
                     </p>
                   </div>
@@ -210,7 +210,7 @@ export function CommentSection({
         ))}
 
         {comments.length === 0 && (
-          <p className="text-center text-sm text-[var(--foreground-muted)] py-6">
+          <p className="text-center text-sm text-[var(--color-muted-text)] py-6">
             No comments yet. Start the conversation!
           </p>
         )}

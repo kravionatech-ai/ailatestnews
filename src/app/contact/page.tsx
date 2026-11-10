@@ -22,8 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
     entityType: "page",
     entitySeo: page?.seo,
     path: "/contact",
-    title: page?.seo?.metaTitle || page?.title || "Contact Editorial Desk | AI Latest News",
-    excerpt: page?.seo?.metaDescription || page?.excerpt || "Get in touch with the AI Latest News editorial team, submit AI research tips, or inquire about partnership opportunities.",
+    title: page?.seo?.metaTitle || page?.title || "Contact Editorial Desk | Kraviona AI News",
+    excerpt: page?.seo?.metaDescription || page?.excerpt || "Get in touch with the Kraviona AI News editorial desk, submit AI research tips, or inquire about media and partnership opportunities.",
   });
 }
 
@@ -47,24 +47,24 @@ export default async function ContactPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8 pb-4 border-b border-slate-900">
-          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-            <Mail className="h-3.5 w-3.5 text-slate-900" />
-            <span>Communication Desk // Inquiries &amp; Tips</span>
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="mb-8 pb-5 border-b-2 border-[var(--color-heading)]">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-2">
+            <Mail className="h-3.5 w-3.5" />
+            <span>Kraviona Newsroom // Inquiries &amp; Tips</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
-            {page?.title || "Contact the Newsroom Desk"}
+          <h1 className="font-editorial text-3xl sm:text-4xl font-bold tracking-tight text-[var(--color-heading)]">
+            {page?.title || "Contact the Editorial Desk"}
           </h1>
-          <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+          <p className="mt-2.5 text-sm text-[var(--color-muted-text)] leading-relaxed">
             {page?.excerpt ||
-              "Have a technical correction, research preprint tip, or editorial proposal? Connect directly with our editors."}
+              "Have a technical correction, research preprint tip, or editorial pitch? Connect directly with our editors."}
           </p>
         </div>
 
         {page?.contentHtml && (
           <div
-            className="prose-article text-sm mb-8"
+            className="prose-article text-sm mb-8 text-[var(--color-body-text)]"
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         )}

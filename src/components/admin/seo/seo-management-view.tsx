@@ -52,28 +52,28 @@ export function SeoManagementView({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Dynamic Engine Active
             </span>
-            <span className="text-xs text-[var(--foreground-muted)]">Next.js 16 App Router</span>
+            <span className="text-xs font-mono text-[var(--color-muted-text)]">Next.js 16 App Router</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--foreground)] mt-1">
-            SEO & Search Architecture
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[var(--color-heading)] mt-1">
+            SEO &amp; Search Architecture
           </h1>
-          <p className="text-xs text-[var(--foreground-muted)]">
+          <p className="text-xs text-[var(--color-muted-text)]">
             Configure dynamic XML sitemaps, robots.txt, Google News feed, per-page indexing directives, and crawler discovery.
           </p>
         </div>
 
-        <div className="inline-flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200">
+        <div className="inline-flex items-center rounded-xl bg-[var(--color-secondary-surface)] p-1 border border-[var(--border)]">
           <button
             type="button"
             onClick={() => setActiveView("control-center")}
-            className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all ${
+            className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
               activeView === "control-center"
-                ? "bg-white text-indigo-700 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-[var(--color-card-background)] text-[var(--accent)] shadow-xs"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
           >
             <Globe className="h-4 w-4" />
@@ -82,10 +82,10 @@ export function SeoManagementView({
           <button
             type="button"
             onClick={() => setActiveView("bulk")}
-            className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all ${
+            className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
               activeView === "bulk"
-                ? "bg-white text-indigo-700 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-[var(--color-card-background)] text-[var(--accent)] shadow-xs"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
           >
             <ListOrdered className="h-4 w-4" />

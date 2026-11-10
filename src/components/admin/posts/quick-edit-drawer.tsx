@@ -117,26 +117,26 @@ function QuickEditForm({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/40 backdrop-blur-xs animate-in fade-in">
-      <div className="w-full max-w-md h-full bg-white shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/50 backdrop-blur-xs animate-in fade-in">
+      <div className="w-full max-w-md h-full bg-[var(--color-card-background)] border-l border-[var(--border)] shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-200">
         <div className="p-6 space-y-6">
           <div className="flex items-center justify-between border-b border-[var(--border)] pb-4">
             <div>
-              <h2 className="text-base font-extrabold text-[var(--foreground)]">Quick Edit</h2>
-              <p className="text-[11px] text-[var(--foreground-muted)]">
+              <h2 className="font-display text-base font-extrabold text-[var(--color-heading)]">Quick Edit</h2>
+              <p className="text-[11px] text-[var(--color-muted-text)]">
                 Update core attributes without opening the full rich-text editor.
               </p>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] transition-colors cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-50 text-red-700 text-xs flex items-center gap-2 border border-red-200">
+            <div className="p-3 rounded-xl bg-rose-500/15 text-rose-700 dark:text-rose-400 text-xs flex items-center gap-2 border border-rose-500/30">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -145,7 +145,7 @@ function QuickEditForm({
           <form id="quick-edit-form" onSubmit={handleSave} className="space-y-4 text-xs">
             {/* Title */}
             <div>
-              <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+              <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                 Article Title
               </label>
               <input
@@ -153,23 +153,23 @@ function QuickEditForm({
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] p-2.5 outline-none focus:border-[var(--accent)] font-medium"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 outline-none focus:border-[var(--accent)] font-medium"
               />
             </div>
 
             {/* Slug */}
             <div>
-              <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+              <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                 URL Slug
               </label>
-              <div className="flex items-center rounded-xl border border-[var(--border)] bg-[var(--background-secondary)] px-2.5">
-                <span className="text-[11px] text-[var(--foreground-muted)]">/blog/</span>
+              <div className="flex items-center rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-2.5">
+                <span className="text-[11px] text-[var(--color-muted-text)]">/blog/</span>
                 <input
                   type="text"
                   required
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  className="w-full bg-transparent p-2 text-xs font-mono outline-none"
+                  className="w-full bg-transparent text-[var(--color-heading)] p-2 text-xs font-mono outline-none"
                 />
               </div>
             </div>
@@ -177,13 +177,13 @@ function QuickEditForm({
             {/* Status & Category */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                   Status
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)] bg-white"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none focus:border-[var(--accent)]"
                 >
                   <option value="draft">Draft</option>
                   <option value="published">Published</option>
@@ -193,13 +193,13 @@ function QuickEditForm({
               </div>
 
               <div>
-                <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                   Category
                 </label>
                 <select
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)] bg-white"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none focus:border-[var(--accent)]"
                 >
                   {categories.map((c) => (
                     <option key={c._id} value={c._id}>
@@ -213,13 +213,13 @@ function QuickEditForm({
             {/* Author */}
             {authors.length > 0 && (
               <div>
-                <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                   Author
                 </label>
                 <select
                   value={authorId}
                   onChange={(e) => setAuthorId(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)] bg-white"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none focus:border-[var(--accent)]"
                 >
                   {authors.map((a) => (
                     <option key={a._id} value={a._id}>
@@ -232,20 +232,20 @@ function QuickEditForm({
 
             {/* Published / Scheduled Date */}
             <div>
-              <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+              <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                 Publication Timestamp
               </label>
               <input
                 type="datetime-local"
                 value={publishedAt}
                 onChange={(e) => setPublishedAt(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)] bg-white font-mono text-[11px]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none focus:border-[var(--accent)] font-mono text-[11px]"
               />
             </div>
 
             {/* Canonical URL */}
             <div>
-              <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+              <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                 Custom Canonical URL (optional)
               </label>
               <input
@@ -253,7 +253,7 @@ function QuickEditForm({
                 value={canonicalUrl}
                 onChange={(e) => setCanonicalUrl(e.target.value)}
                 placeholder="https://example.com/original-article"
-                className="w-full rounded-xl border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none focus:border-[var(--accent)]"
               />
             </div>
 
@@ -264,13 +264,13 @@ function QuickEditForm({
                   type="checkbox"
                   checked={featured}
                   onChange={(e) => setFeatured(e.target.checked)}
-                  className="rounded text-amber-500 focus:ring-amber-400"
+                  className="rounded text-[var(--accent)] accent-[var(--accent)] h-4 w-4"
                 />
                 <div>
-                  <span className="text-xs font-bold text-[var(--foreground)] flex items-center gap-1">
+                  <span className="text-xs font-bold text-[var(--color-heading)] flex items-center gap-1">
                     ★ Homepage Featured Story
                   </span>
-                  <p className="text-[10px] text-[var(--foreground-muted)]">
+                  <p className="text-[10px] text-[var(--color-muted-text)]">
                     Promote this published article to the prime editorial slot on the homepage.
                   </p>
                 </div>
@@ -287,10 +287,10 @@ function QuickEditForm({
                   className="rounded text-rose-600 focus:ring-rose-500 h-4 w-4"
                 />
                 <div>
-                  <span className="font-semibold text-[var(--foreground)] block">
+                  <span className="font-semibold text-[var(--color-heading)] block">
                     Set Search Engine NoIndex
                   </span>
-                  <span className="text-[10px] text-[var(--foreground-muted)] block">
+                  <span className="text-[10px] text-[var(--color-muted-text)] block">
                     Blocks Google &amp; Bing crawlers from indexing this post.
                   </span>
                 </div>
@@ -300,11 +300,11 @@ function QuickEditForm({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-[var(--border)] bg-[var(--background-secondary)] flex items-center justify-end gap-2.5">
+        <div className="p-4 border-t border-[var(--border)] bg-[var(--color-main-background)] flex items-center justify-end gap-2.5">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-xs font-semibold text-[var(--foreground)] hover:bg-slate-100 transition-colors"
+            className="px-4 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -312,7 +312,7 @@ function QuickEditForm({
             type="submit"
             form="quick-edit-form"
             disabled={loading}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-xs disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-xs disabled:opacity-50 cursor-pointer"
           >
             <Save className="h-3.5 w-3.5" />
             {loading ? "Saving..." : "Update Post"}

@@ -14,10 +14,10 @@ export function AskAIButton({ title, slug }: { title: string; slug: string }) {
   return (
     <button
       onClick={handleAskAI}
-      className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50/80 px-3.5 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 hover:border-indigo-300 transition-all shadow-2xs group"
+      className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-3.5 py-1.5 text-xs font-semibold text-[var(--accent)] hover:bg-[var(--accent)]/15 hover:border-[var(--accent)] transition-all shadow-xs group cursor-pointer"
       title="Ask the AI research assistant specific questions about this article"
     >
-      <Bot className="h-3.5 w-3.5 text-indigo-600 group-hover:scale-110 transition-transform" />
+      <Bot className="h-3.5 w-3.5 text-[var(--accent)] group-hover:scale-110 transition-transform" />
       <span>Ask AI about this article</span>
     </button>
   );

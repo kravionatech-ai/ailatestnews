@@ -1,16 +1,15 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { Search, ChevronRight, Layers, TrendingUp, Sparkles, Compass } from "lucide-react";
+import { ChevronRight, Layers, Compass, Search as SearchIcon } from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
-import { PostCard } from "@/components/blog/post-card";
+import { NewsCard } from "@/components/blog/cards/news-card";
 import { getPublishedPosts } from "@/lib/db/queries/posts";
 import { getAllCategories } from "@/lib/db/queries/taxonomies";
 import { SearchInputDeck } from "@/components/search/search-input-deck";
 import { SearchFilters } from "@/components/search/search-filters";
 import { SearchEmptyState } from "@/components/search/search-empty-state";
 import { getGlobalSettings } from "@/lib/db/queries/settings";
-
-import { buildEntityMetadata, getSiteUrl } from "@/lib/seo/fallback";
+import { getSiteUrl } from "@/lib/seo/fallback";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -30,19 +29,19 @@ export async function generateMetadata({
   if (q && q.trim()) {
     const cleanQ = q.trim();
     return {
-      title: `Search: "${cleanQ}" | AI Latest News`,
-      description: `Explore published AI dispatches, foundation model launches, and Indian AI benchmarks matching "${cleanQ}".`,
+      title: `Search: "${cleanQ}" | Kraviona AI News`,
+      description: `Explore AI intelligence reports, model evaluations, and technology analysis matching "${cleanQ}" on Kraviona AI News.`,
       alternates: {
         canonical: `${siteUrl}/search?q=${encodeURIComponent(cleanQ)}`,
       },
-      robots: { index: false, follow: true }, // Internal search results best practice
+      robots: { index: false, follow: true },
     };
   }
 
   return {
-    title: "Search AI News, Models, Tools & Benchmarks | AI Latest News",
+    title: "Search Intelligence Archive | Kraviona AI News",
     description:
-      "Search the AI Latest News archive for breaking AI stories, Indian compute mission updates, model releases, and comprehensive technical comparisons.",
+      "Search the Kraviona AI News archive for artificial intelligence coverage, model launches, research papers, startups, cybersecurity, and compute infrastructure.",
     alternates: {
       canonical: `${siteUrl}/search`,
     },
@@ -55,7 +54,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const searchQuery = resolvedParams.q?.trim() || "";
   const activeCategory = resolvedParams.category?.trim() || "";
   const activeSort = resolvedParams.sort || "latest";
-  const currentPage = Math.max(1, parseInt(resolvedParams.page || "1", 10));
+  const currentPage = Math.max(1, parseInt(resolvedParams.page || "1", 10) || 1);
 
   const [categories, settings] = await Promise.all([
     getAllCategories(),
@@ -72,9 +71,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     hasPrev: false,
   };
 
-  if (searchQuery) {
+  if (searchQuery || activeCategory || activeSort !== "latest") {
     const res = await getPublishedPosts({
-      search: searchQuery,
+      search: searchQuery || undefined,
       categorySlug: activeCategory || undefined,
       sort: activeSort,
       page: currentPage,
@@ -83,31 +82,43 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     posts = res.posts;
     pagination = res.pagination;
   } else {
-    // Default discovery state: load latest 6 articles
     const res = await getPublishedPosts({ limit: 6, sort: "latest" });
     posts = res.posts;
   }
 
+  const isFilteredView = Boolean(searchQuery || activeCategory || activeSort !== "latest");
+
   return (
-    <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      {/* Breadcrumbs Navigation */}
-      <div className="border-b border-slate-100 bg-slate-50/60 py-3">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center gap-1.5 text-xs text-[var(--foreground-muted)]" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-indigo-600 transition-colors">
+    <PublicShell
+      navLinks={settings.navigation}
+      footerConfig={settings.footer}
+      headlines={posts}
+    >
+      {/* Breadcrumb Bar */}
+      <div className="border-b border-[var(--border)] bg-[var(--color-card-background)] py-3">
+        <div className="mx-auto max-w-[var(--max-content-width,1320px)] px-4 sm:px-6 lg:px-8">
+          <nav
+            className="flex items-center gap-1.5 font-mono text-xs text-[var(--color-muted-text)]"
+            aria-label="Breadcrumb"
+          >
+            <Link href="/" className="hover:text-[var(--accent)] transition-colors">
               Home
             </Link>
-            <ChevronRight className="h-3 w-3 text-slate-400" />
+            <ChevronRight className="h-3 w-3" />
             <Link
               href="/search"
-              className={searchQuery ? "hover:text-indigo-600 transition-colors" : "font-semibold text-slate-800"}
+              className={
+                searchQuery
+                  ? "hover:text-[var(--accent)] transition-colors"
+                  : "font-bold text-[var(--color-heading)]"
+              }
             >
               Search
             </Link>
             {searchQuery && (
               <>
-                <ChevronRight className="h-3 w-3 text-slate-400" />
-                <span className="font-semibold text-indigo-600 truncate max-w-[200px] sm:max-w-md">
+                <ChevronRight className="h-3 w-3" />
+                <span className="font-bold text-[var(--accent)] truncate max-w-[200px] sm:max-w-md">
                   &ldquo;{searchQuery}&rdquo;
                 </span>
               </>
@@ -116,22 +127,21 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-        {/* Hero Search Section */}
+      <div className="mx-auto max-w-[var(--max-content-width,1320px)] px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        {/* Search Hero Header */}
         <div className="max-w-3xl mx-auto text-center mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50/80 px-3.5 py-1 text-xs font-bold text-indigo-700 mb-4 shadow-2xs">
-            <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
-            <span>AI Knowledge &amp; Dispatch Archive</span>
+          <div className="inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--color-card-background)] px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-4">
+            <SearchIcon className="h-3.5 w-3.5" />
+            <span>Kraviona Archive Discovery</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-[var(--foreground)] leading-tight">
-            Search AI Models, Tools &amp; India Dispatches
+          <h1 className="font-editorial text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[var(--color-heading)] leading-tight">
+            Search AI Intelligence, Models &amp; Research
           </h1>
-          <p className="mt-3 text-sm sm:text-base text-[var(--foreground-secondary)] leading-relaxed max-w-2xl mx-auto">
-            Instant discovery across foundation model launches, Indian compute initiatives, practical implementation guides, and open-source benchmarks.
+          <p className="mt-3 text-sm sm:text-base text-[var(--color-muted-text)] leading-relaxed max-w-2xl mx-auto">
+            Query verified reports across frontier AI models, developer tooling, startups, cybersecurity, and compute infrastructure.
           </p>
 
-          {/* Interactive Search Deck */}
           <div className="mt-8">
             <SearchInputDeck
               initialQuery={searchQuery}
@@ -141,10 +151,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           </div>
         </div>
 
-        {/* -------------------- VIEW 1: SEARCH ACTIVE WITH QUERY -------------------- */}
-        {searchQuery ? (
+        {/* View 1: Active Search / Filter Results */}
+        {isFilteredView ? (
           <div>
-            {/* Filter and Refinement Bar */}
             <SearchFilters
               query={searchQuery}
               activeCategory={activeCategory}
@@ -153,37 +162,54 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               totalResults={pagination.total}
             />
 
-            {/* Results Header Info */}
-            <div className="mb-6 flex items-center justify-between">
-              <p className="text-sm text-[var(--foreground-muted)]">
-                Showing {posts.length > 0 ? (currentPage - 1) * pagination.limit + 1 : 0}–
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm text-[var(--color-muted-text)]">
+                Showing{" "}
+                {posts.length > 0 ? (currentPage - 1) * pagination.limit + 1 : 0}–
                 {Math.min(currentPage * pagination.limit, pagination.total)} of{" "}
-                <span className="font-bold text-[var(--foreground)]">{pagination.total}</span>{" "}
-                {pagination.total === 1 ? "article" : "articles"} for &ldquo;
-                <span className="font-bold text-indigo-600">{searchQuery}</span>&rdquo;
+                <span className="font-bold text-[var(--color-heading)]">
+                  {pagination.total}
+                </span>{" "}
+                {pagination.total === 1 ? "article" : "articles"}
+                {searchQuery && (
+                  <>
+                    {" "}
+                    for &ldquo;
+                    <span className="font-bold text-[var(--accent)]">{searchQuery}</span>
+                    &rdquo;
+                  </>
+                )}
                 {activeCategory && (
-                  <span className="ml-1 text-slate-500">
-                    in <span className="font-semibold text-slate-700 capitalize">{activeCategory.replace(/-/g, " ")}</span>
+                  <span className="ml-1">
+                    in{" "}
+                    <span className="font-semibold text-[var(--color-heading)] capitalize">
+                      {activeCategory.replace(/-/g, " ")}
+                    </span>
                   </span>
                 )}
               </p>
 
               {pagination.pages > 1 && (
-                <span className="text-xs font-semibold text-slate-500">
+                <span className="font-mono text-xs font-semibold text-[var(--color-muted-text)]">
                   Page {currentPage} of {pagination.pages}
                 </span>
               )}
             </div>
 
-            {/* Results Grid */}
             {posts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
                 {posts.map((post) => (
-                  <PostCard key={post._id} post={post} />
+                  <NewsCard
+                    key={post._id}
+                    post={post}
+                    variant="classic-editorial"
+                    showBadges={true}
+                    showExcerpt={true}
+                  />
                 ))}
               </div>
             ) : (
-              <SearchEmptyState query={searchQuery} category={activeCategory} />
+              <SearchEmptyState query={searchQuery || activeCategory} category={activeCategory} />
             )}
 
             {/* Pagination Controls */}
@@ -191,27 +217,34 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               <div className="mt-12 flex items-center justify-center gap-3">
                 {pagination.hasPrev && (
                   <Link
-                    href={`/search?q=${encodeURIComponent(searchQuery)}${
-                      activeCategory ? `&category=${activeCategory}` : ""
-                    }${activeSort !== "latest" ? `&sort=${activeSort}` : ""}&page=${currentPage - 1}`}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
+                    href={`/search?${new URLSearchParams({
+                      ...(searchQuery ? { q: searchQuery } : {}),
+                      ...(activeCategory ? { category: activeCategory } : {}),
+                      ...(activeSort !== "latest" ? { sort: activeSort } : {}),
+                      page: String(currentPage - 1),
+                    }).toString()}`}
+                    className="rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] px-4 py-2 text-xs font-bold text-[var(--color-heading)] hover:border-[var(--accent)] transition-colors"
                   >
-                    Previous Page
+                    Previous
                   </Link>
                 )}
-                <div className="flex items-center gap-1.5">
+
+                <div className="flex items-center gap-1.5 font-mono">
                   {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((p) => {
                     const isCurr = p === currentPage;
                     return (
                       <Link
                         key={p}
-                        href={`/search?q=${encodeURIComponent(searchQuery)}${
-                          activeCategory ? `&category=${activeCategory}` : ""
-                        }${activeSort !== "latest" ? `&sort=${activeSort}` : ""}&page=${p}`}
-                        className={`h-9 w-9 flex items-center justify-center rounded-xl text-xs font-bold transition-all ${
+                        href={`/search?${new URLSearchParams({
+                          ...(searchQuery ? { q: searchQuery } : {}),
+                          ...(activeCategory ? { category: activeCategory } : {}),
+                          ...(activeSort !== "latest" ? { sort: activeSort } : {}),
+                          page: String(p),
+                        }).toString()}`}
+                        className={`h-9 w-9 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
                           isCurr
-                            ? "bg-indigo-600 text-white shadow-xs"
-                            : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                            ? "bg-[var(--accent)] text-white"
+                            : "border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] hover:border-[var(--accent)]"
                         }`}
                       >
                         {p}
@@ -219,60 +252,63 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     );
                   })}
                 </div>
+
                 {pagination.hasNext && (
                   <Link
-                    href={`/search?q=${encodeURIComponent(searchQuery)}${
-                      activeCategory ? `&category=${activeCategory}` : ""
-                    }${activeSort !== "latest" ? `&sort=${activeSort}` : ""}&page=${currentPage + 1}`}
-                    className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
+                    href={`/search?${new URLSearchParams({
+                      ...(searchQuery ? { q: searchQuery } : {}),
+                      ...(activeCategory ? { category: activeCategory } : {}),
+                      ...(activeSort !== "latest" ? { sort: activeSort } : {}),
+                      page: String(currentPage + 1),
+                    }).toString()}`}
+                    className="rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] px-4 py-2 text-xs font-bold text-[var(--color-heading)] hover:border-[var(--accent)] transition-colors"
                   >
-                    Next Page
+                    Next
                   </Link>
                 )}
               </div>
             )}
           </div>
         ) : (
-          /* -------------------- VIEW 2: INITIAL DISCOVERY HUB (EMPTY QUERY) -------------------- */
+          /* View 2: Discovery Hub */
           <div className="space-y-16">
-            {/* Explore by Content Pillar */}
             <div>
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 border-b border-[var(--border)] pb-4">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-black text-[var(--foreground)] tracking-tight flex items-center gap-2">
-                    <Layers className="h-5 w-5 text-indigo-600" />
-                    Explore AI Coverage by Pillar
+                  <h2 className="font-display text-xl sm:text-2xl font-black text-[var(--color-heading)] tracking-tight flex items-center gap-2">
+                    <Layers className="h-5 w-5 text-[var(--accent)]" />
+                    Browse by Category Desk
                   </h2>
-                  <p className="text-xs sm:text-sm text-[var(--foreground-muted)] mt-1">
-                    Dive directly into curated hubs covering foundational models, Indian policy, and practical guides.
+                  <p className="text-xs sm:text-sm text-[var(--color-muted-text)] mt-1">
+                    Explore focused desks covering AI models, research, tooling, and global compute.
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {categories.map((cat: any) => (
                   <Link
                     key={cat.slug}
                     href={`/category/${cat.slug}`}
-                    className="group relative flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-md shadow-2xs"
+                    className="group flex flex-col justify-between rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 transition-all duration-200 hover:border-[var(--accent)] hover:shadow-md"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="inline-block h-2.5 w-2.5 rounded-full bg-indigo-600 group-hover:scale-125 transition-transform" />
-                        <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">
+                        <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--accent)]" />
+                        <span className="font-mono text-[11px] font-bold text-[var(--accent)] bg-[var(--accent)]/10 px-2.5 py-0.5 rounded">
                           {cat.postCount || 0} Articles
                         </span>
                       </div>
-                      <h3 className="text-base font-bold text-[var(--foreground)] group-hover:text-indigo-600 transition-colors">
+                      <h3 className="font-display text-base font-bold text-[var(--color-heading)] group-hover:text-[var(--accent)] transition-colors">
                         {cat.name}
                       </h3>
-                      <p className="text-xs text-[var(--foreground-muted)] line-clamp-2 mt-1.5 leading-relaxed">
-                        {cat.description || `Comprehensive updates, analysis and breakdowns in ${cat.name}.`}
+                      <p className="text-xs text-[var(--color-muted-text)] line-clamp-2 mt-1.5 leading-relaxed">
+                        {cat.description || `Coverage, analysis, and benchmarks in ${cat.name}.`}
                       </p>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-600">
-                      <span>Browse Pillar</span>
+                    <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between font-mono text-xs font-bold text-[var(--accent)]">
+                      <span>Open Desk</span>
                       <ChevronRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
                     </div>
                   </Link>
@@ -280,29 +316,34 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               </div>
             </div>
 
-            {/* Latest Published Dispatches */}
             <div>
-              <div className="flex items-center justify-between mb-6 border-b border-slate-200 pb-4">
+              <div className="flex items-center justify-between mb-6 border-b border-[var(--border)] pb-4">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-black text-[var(--foreground)] tracking-tight flex items-center gap-2">
-                    <Compass className="h-5 w-5 text-emerald-600" />
-                    Latest Published Dispatches
+                  <h2 className="font-display text-xl sm:text-2xl font-black text-[var(--color-heading)] tracking-tight flex items-center gap-2">
+                    <Compass className="h-5 w-5 text-[var(--accent)]" />
+                    Latest Dispatches
                   </h2>
-                  <p className="text-xs sm:text-sm text-[var(--foreground-muted)] mt-1">
-                    Recently verified dispatches across all editorial desks.
+                  <p className="text-xs sm:text-sm text-[var(--color-muted-text)] mt-1">
+                    Recently verified articles across Kraviona AI News.
                   </p>
                 </div>
                 <Link
                   href="/"
-                  className="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1"
+                  className="font-mono text-xs font-bold text-[var(--accent)] hover:underline flex items-center gap-1"
                 >
-                  View Home Feed <ChevronRight className="h-3 w-3" />
+                  Front Page <ChevronRight className="h-3 w-3" />
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
                 {posts.map((post) => (
-                  <PostCard key={post._id} post={post} />
+                  <NewsCard
+                    key={post._id}
+                    post={post}
+                    variant="classic-editorial"
+                    showBadges={true}
+                    showExcerpt={true}
+                  />
                 ))}
               </div>
             </div>

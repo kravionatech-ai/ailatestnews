@@ -28,16 +28,16 @@ export default async function AdminSubscribersPage() {
 
         <a
           href="/api/subscribers/export"
-          className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-4 py-2.5 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--background-secondary)] transition-all shadow-2xs self-start sm:self-auto"
+          className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] px-4 py-2.5 text-xs font-bold text-[var(--color-heading)] hover:border-[var(--accent)] transition-all shadow-xs self-start sm:self-auto"
         >
-          <Download className="h-4 w-4" /> Export CSV
+          <Download className="h-4 w-4 text-[var(--accent)]" /> Export CSV
         </a>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border)] bg-white shadow-2xs overflow-hidden">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="border-b border-[var(--border)] bg-[var(--background-secondary)] text-[var(--foreground-muted)] uppercase tracking-wider font-semibold">
+            <tr className="border-b border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-muted-text)] font-mono uppercase tracking-wider font-bold">
               <th className="p-4">Subscriber</th>
               <th className="p-4">Status</th>
               <th className="p-4">Origin Source</th>
@@ -61,8 +61,8 @@ export default async function AdminSubscribersPage() {
                   <span
                     className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-semibold text-[10px] ${
                       sub.status === "active"
-                        ? "bg-green-50 text-green-700"
-                        : "bg-slate-100 text-slate-700"
+                        ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                        : "bg-[var(--color-secondary-surface)] text-[var(--color-muted-text)] border border-[var(--border)]"
                     }`}
                   >
                     <CheckCircle2 className="h-3 w-3" /> {sub.status}
@@ -80,7 +80,7 @@ export default async function AdminSubscribersPage() {
             {subscribers.length === 0 && (
               <tr>
                 <td colSpan={4} className="p-12 text-center text-xs text-[var(--foreground-muted)]">
-                  <Mail className="h-8 w-8 mx-auto text-slate-300 mb-2" />
+                  <Mail className="h-8 w-8 mx-auto text-[var(--color-muted-text)]/50 mb-2" />
                   No email subscribers registered yet.
                 </td>
               </tr>

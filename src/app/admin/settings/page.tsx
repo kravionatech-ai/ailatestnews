@@ -11,8 +11,8 @@ export default async function AdminSettingsPage() {
   const settings = rawSettings
     ? JSON.parse(JSON.stringify(rawSettings))
     : {
-        siteName: "AI Latest News",
-        tagline: "AI news, tools and guides, explained for India",
+        siteName: "Kraviona AI News",
+        tagline: "AI, Technology, Research and Innovation Intelligence",
         siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com",
         separator: "|",
         defaultOgImage:
@@ -45,9 +45,9 @@ export default async function AdminSettingsPage() {
           },
         },
         organization: {
-          name: "AI Latest News",
+          name: "Kraviona AI News",
           url: "https://ainews.kraviona.com",
-          description: "India's premier artificial intelligence intelligence platform.",
+          description: "Kraviona AI News — Independent AI, technology, and research intelligence publication.",
           email: "kravionatech@gmail.com",
           socialProfiles: [
             "https://twitter.com/kraviona",
@@ -65,10 +65,10 @@ export default async function AdminSettingsPage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       <div>
-        <h1 className="text-2xl font-extrabold text-[var(--foreground)]">
+        <h1 className="font-display text-2xl font-bold text-[var(--color-heading)]">
           Global System &amp; SEO Configuration
         </h1>
-        <p className="text-xs text-[var(--foreground-muted)] mt-1">
+        <p className="text-xs text-[var(--color-muted-text)] mt-1">
           Configure site identity, canonical domains, automated metadata fallback templates, schema metadata, and crawler directives.
         </p>
       </div>

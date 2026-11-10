@@ -35,7 +35,7 @@ export function AIChatWidget() {
       id: "welcome-1",
       role: "assistant",
       content:
-        "Welcome to the **AI Latest Newsroom Desk**. I can help you search our published reporting, cross-reference foundation model benchmarks, explain Indian AI policies (like the ₹10,372 Cr IndiaAI Mission), and break down architectural disclosures.",
+        "Welcome to the **Kraviona Newsroom Research Desk**. I can help you search our published reporting, cross-reference foundation model benchmarks, analyze AI tools, and explain architectural disclosures.",
     },
   ]);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -191,7 +191,7 @@ export function AIChatWidget() {
         <Link
           key={`${url}-${match.index}`}
           href={url}
-          className="inline-flex items-center gap-1 font-semibold text-indigo-600 underline hover:text-indigo-800"
+          className="inline-flex items-center gap-1 font-semibold text-[var(--accent)] underline hover:opacity-80"
           target={url.startsWith("http") ? "_blank" : undefined}
           rel={url.startsWith("http") ? "noreferrer" : undefined}
         >
@@ -214,9 +214,9 @@ export function AIChatWidget() {
   };
 
   const sampleQuestions = [
-    "What are India's ₹10,372 Cr GPU subsidies?",
-    "Explain DeepSeek-R1's architecture",
-    "Sarvam AI defence pact details",
+    "Summarize today's frontier AI model releases",
+    "Explain DeepSeek-R1's reasoning architecture",
+    "Which enterprise AI security risks stand out?",
   ];
 
   return (
@@ -228,42 +228,42 @@ export function AIChatWidget() {
             setIsOpen(true);
             setTimeout(() => inputRef.current?.focus(), 150);
           }}
-          className="hidden md:flex fixed bottom-5 right-5 z-30 items-center gap-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white pl-3.5 pr-4 py-2 text-xs font-mono font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-102 active:scale-98 transition-all border border-slate-700 cursor-pointer"
+          className="hidden md:flex fixed bottom-5 right-5 z-30 items-center gap-2 rounded-full bg-[#101820] hover:bg-[#1A2633] text-[#F5F4EF] pl-3.5 pr-4 py-2 text-xs font-mono font-bold uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-102 active:scale-98 transition-all border border-[#263B50] cursor-pointer"
           aria-label="Open Newsroom Research Desk"
         >
-          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-800 text-rose-400">
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#263B50] text-[#E05A42]">
             <Compass className="h-3.5 w-3.5" />
           </div>
-          <span>Newsroom Desk</span>
-          <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
+          <span>Kraviona Desk</span>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#E05A42] animate-pulse" />
         </button>
       )}
 
       {/* Editorial Drawer / Popover Window */}
       {isOpen && (
         <div
-          className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 z-50 flex flex-col sm:w-[440px] sm:h-[640px] bg-white sm:rounded-2xl border border-slate-300 shadow-2xl overflow-hidden animate-in fade-in sm:zoom-in-95 duration-200"
+          className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 z-50 flex flex-col sm:w-[440px] sm:h-[640px] bg-[var(--color-card-background)] sm:rounded-2xl border border-[var(--border)] shadow-2xl overflow-hidden animate-in fade-in sm:zoom-in-95 duration-200"
           role="dialog"
           aria-modal="true"
           aria-label="Newsroom Research Desk"
         >
           {/* Masthead Header */}
-          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-900 p-4 text-white">
+          <div className="flex items-center justify-between border-b border-[#263B50] bg-[#101820] p-4 text-white">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-800 border border-slate-700 text-rose-400">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#263B50]/60 border border-[#263B50] text-[#E05A42]">
                 <Compass className="h-5 w-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-black tracking-tight text-white leading-none">
-                    NEWSROOM RESEARCH DESK
+                    KRAVIONA RESEARCH DESK
                   </h3>
-                  <span className="font-mono text-[9px] font-bold uppercase tracking-wider bg-rose-600 px-1.5 py-0.5 rounded text-white">
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-wider bg-[var(--accent)] px-1.5 py-0.5 rounded text-white">
                     Live
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Primary source reporting &amp; benchmark database
+                <p className="text-[11px] text-[#9CA3AF] mt-1">
+                  Primary source reporting &amp; benchmark intelligence
                 </p>
               </div>
             </div>
@@ -280,14 +280,14 @@ export function AIChatWidget() {
                   ]);
                   setArticleContext(null);
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 title="Clear Research History"
               >
                 <RotateCcw className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 title="Close Drawer"
               >
                 <X className="h-4 w-4" />
@@ -297,17 +297,17 @@ export function AIChatWidget() {
 
           {/* Active Context Bar */}
           {articleContext && (
-            <div className="flex items-center justify-between bg-slate-100 px-4 py-2 text-xs text-slate-700 border-b border-slate-200">
+            <div className="flex items-center justify-between bg-[var(--color-secondary-surface)] px-4 py-2 text-xs text-[var(--color-body-text)] border-b border-[var(--border)]">
               <span className="truncate flex items-center gap-1.5 font-medium">
-                <BookOpen className="h-3.5 w-3.5 text-slate-500 shrink-0" />
-                <span className="text-slate-500">Context:</span>
-                <span className="font-semibold text-slate-900 truncate">
+                <BookOpen className="h-3.5 w-3.5 text-[var(--accent)] shrink-0" />
+                <span className="text-[var(--color-muted-text)]">Context:</span>
+                <span className="font-semibold text-[var(--color-heading)] truncate">
                   {articleContext.title}
                 </span>
               </span>
               <button
                 onClick={() => setArticleContext(null)}
-                className="text-slate-400 hover:text-slate-600 ml-2 shrink-0 cursor-pointer text-xs"
+                className="text-[var(--color-muted-text)] hover:text-[var(--color-heading)] ml-2 shrink-0 cursor-pointer text-xs"
               >
                 Clear
               </button>
@@ -315,7 +315,7 @@ export function AIChatWidget() {
           )}
 
           {/* Messages Stream */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[var(--color-main-background)]">
             {messages.map((message) => {
               const isUser = message.role === "user";
               return (
@@ -324,16 +324,16 @@ export function AIChatWidget() {
                   className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
                 >
                   <div className="flex items-center gap-1.5 mb-1 px-1">
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                      {isUser ? "You" : "Newsroom Desk"}
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted-text)]">
+                      {isUser ? "You" : "Kraviona Desk"}
                     </span>
                   </div>
 
                   <div
                     className={`max-w-[88%] rounded-xl px-4 py-3 text-xs sm:text-sm leading-relaxed ${
                       isUser
-                        ? "bg-slate-900 text-white rounded-br-xs"
-                        : "bg-white text-slate-800 border border-slate-200 shadow-2xs rounded-bl-xs"
+                        ? "bg-[#101820] text-[#F5F4EF] border border-[#263B50] rounded-br-xs"
+                        : "bg-[var(--color-card-background)] text-[var(--color-body-text)] border border-[var(--border)] shadow-xs rounded-bl-xs"
                     }`}
                   >
                     <div className="whitespace-pre-wrap">
@@ -343,13 +343,13 @@ export function AIChatWidget() {
 
                   {/* Feedback on assistant message */}
                   {!isUser && !isStreaming && (
-                    <div className="mt-1 flex items-center gap-2 px-1 text-[11px] text-slate-400">
+                    <div className="mt-1 flex items-center gap-2 px-1 text-[11px] text-[var(--color-muted-text)]">
                       <span>Helpful?</span>
                       <button
                         onClick={() => handleFeedback(message.id, "up")}
                         disabled={!!message.feedbackGiven}
-                        className={`p-1 rounded hover:bg-slate-200 transition-colors ${
-                          message.feedbackGiven === "up" ? "text-emerald-600 font-bold" : ""
+                        className={`p-1 rounded hover:bg-[var(--color-secondary-surface)] transition-colors ${
+                          message.feedbackGiven === "up" ? "text-emerald-500 font-bold" : ""
                         }`}
                         title="Yes, accurate"
                       >
@@ -358,15 +358,15 @@ export function AIChatWidget() {
                       <button
                         onClick={() => handleFeedback(message.id, "down")}
                         disabled={!!message.feedbackGiven}
-                        className={`p-1 rounded hover:bg-slate-200 transition-colors ${
-                          message.feedbackGiven === "down" ? "text-rose-600 font-bold" : ""
+                        className={`p-1 rounded hover:bg-[var(--color-secondary-surface)] transition-colors ${
+                          message.feedbackGiven === "down" ? "text-[var(--accent)] font-bold" : ""
                         }`}
                         title="No, needs review"
                       >
                         <ThumbsDown className="h-3 w-3" />
                       </button>
                       {message.feedbackGiven && (
-                        <span className="text-[10px] text-emerald-600 flex items-center gap-0.5">
+                        <span className="text-[10px] text-emerald-500 flex items-center gap-0.5">
                           <Check className="h-3 w-3" /> Recorded
                         </span>
                       )}
@@ -377,8 +377,8 @@ export function AIChatWidget() {
             })}
 
             {isStreaming && (
-              <div className="flex items-center gap-2 text-xs font-mono text-slate-500 py-1">
-                <span className="h-2 w-2 rounded-full bg-slate-900 animate-pulse" />
+              <div className="flex items-center gap-2 text-xs font-mono text-[var(--color-muted-text)] py-1">
+                <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse" />
                 <span>Searching editorial database &amp; compiling response...</span>
               </div>
             )}
@@ -388,8 +388,8 @@ export function AIChatWidget() {
 
           {/* Preset Prompts Strip */}
           {messages.length <= 2 && !isStreaming && (
-            <div className="border-t border-slate-200 bg-white px-4 py-2.5">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+            <div className="border-t border-[var(--border)] bg-[var(--color-card-background)] px-4 py-2.5">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] block mb-1.5">
                 Suggested Inquiries:
               </span>
               <div className="flex flex-col gap-1.5">
@@ -397,10 +397,10 @@ export function AIChatWidget() {
                   <button
                     key={q}
                     onClick={() => handleSendMessage(q)}
-                    className="text-left text-xs font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50 p-1.5 rounded-md border border-slate-100 transition-colors flex items-center justify-between cursor-pointer"
+                    className="text-left text-xs font-medium text-[var(--color-heading)] hover:text-[var(--accent)] hover:bg-[var(--color-secondary-surface)] p-1.5 rounded-md border border-[var(--border)] transition-colors flex items-center justify-between cursor-pointer"
                   >
                     <span className="truncate">{q}</span>
-                    <Search className="h-3 w-3 text-slate-400 shrink-0 ml-2" />
+                    <Search className="h-3 w-3 text-[var(--color-muted-text)] shrink-0 ml-2" />
                   </button>
                 ))}
               </div>
@@ -413,21 +413,21 @@ export function AIChatWidget() {
               e.preventDefault();
               handleSendMessage();
             }}
-            className="border-t border-slate-200 bg-white p-3 flex items-center gap-2"
+            className="border-t border-[var(--border)] bg-[var(--color-card-background)] p-3 flex items-center gap-2"
           >
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask the newsroom about models, compute, or research..."
+              placeholder="Ask Kraviona about AI models, research, or tech..."
               disabled={isStreaming}
-              className="flex-1 rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-slate-900 focus:bg-white transition-all disabled:opacity-50"
+              className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2.5 text-xs sm:text-sm text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)] transition-all disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={!input.trim() || isStreaming}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-30 transition-all cursor-pointer shrink-0"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] disabled:opacity-30 transition-all cursor-pointer shrink-0"
               aria-label="Send inquiry"
             >
               <Send className="h-4 w-4" />

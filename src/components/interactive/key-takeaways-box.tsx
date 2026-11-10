@@ -18,14 +18,14 @@ export function KeyTakeawaysBox({ title, excerpt, points }: KeyTakeawaysProps) {
   if (!excerpt && !hasCustomPoints) return null;
 
   return (
-    <div className="my-6 rounded-xl border border-slate-200 bg-slate-50/80 p-4 sm:p-5 shadow-2xs">
+    <div className="my-6 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-4 sm:p-5 shadow-xs border-l-4 border-l-[var(--accent)]">
       {/* Top Header */}
-      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-200">
+      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <span className="flex h-5 w-5 items-center justify-center rounded-md bg-slate-900 text-white font-bold">
+          <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[var(--accent)] text-white font-bold">
             <Sparkles className="h-3 w-3" />
           </span>
-          <span className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900">
+          <span className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--color-heading)]">
             Executive Summary &amp; Core Findings
           </span>
         </div>
@@ -33,7 +33,7 @@ export function KeyTakeawaysBox({ title, excerpt, points }: KeyTakeawaysProps) {
         {hasCustomPoints && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+            className="p-1 text-[var(--color-muted-text)] hover:text-[var(--color-heading)] transition-colors cursor-pointer"
             aria-label="Toggle executive summary"
           >
             <ChevronDown
@@ -44,15 +44,15 @@ export function KeyTakeawaysBox({ title, excerpt, points }: KeyTakeawaysProps) {
       </div>
 
       <div className="pt-3 space-y-2.5">
-        <p className="text-xs sm:text-sm font-medium text-slate-700 leading-relaxed">
+        <p className="text-xs sm:text-sm font-medium text-[var(--color-body-text)] leading-relaxed">
           {excerpt}
         </p>
 
         {hasCustomPoints && isExpanded && (
-          <div className="space-y-2 pt-2 border-t border-slate-200/60">
+          <div className="space-y-2 pt-2 border-t border-[var(--border)]">
             {points.map((point, index) => (
-              <div key={index} className="flex items-start gap-2 text-xs text-slate-800 leading-relaxed">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+              <div key={index} className="flex items-start gap-2 text-xs text-[var(--color-body-text)] leading-relaxed">
+                <CheckCircle2 className="h-3.5 w-3.5 text-[var(--accent)] shrink-0 mt-0.5" />
                 <span>{point}</span>
               </div>
             ))}

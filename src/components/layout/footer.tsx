@@ -21,36 +21,39 @@ export interface FooterProps {
 
 export function Footer({ aboutText, copyrightText, sections }: FooterProps = {}) {
   const defaultAbout =
-    "India's authoritative AI publication tracking foundational model releases, LLM benchmarks, Indian AI breakthroughs (Sarvam, Krutrim, BharatGPT), and hands-on tooling comparisons in clear, in-depth English.";
+    "Kraviona AI News is an independent digital publication covering frontier artificial intelligence, foundation models, research breakthroughs, AI tools, startups, cybersecurity, and global compute infrastructure.";
 
   const defaultSections: FooterSection[] = [
     {
       title: "Categories",
       links: [
         { label: "AI News", href: "/category/ai-news" },
-        { label: "Model Launches", href: "/category/model-launches" },
+        { label: "AI Models", href: "/category/model-launches" },
+        { label: "AI Research", href: "/category/ai-research" },
         { label: "AI Tools", href: "/category/ai-tools" },
-        { label: "India AI", href: "/category/india-ai" },
-        { label: "Guides & Comparisons", href: "/category/guides-and-comparisons" },
-        { label: "Enterprise AI", href: "/category/enterprise-ai" },
+        { label: "Startups & Funding", href: "/category/startups-and-funding" },
+        { label: "Cybersecurity", href: "/category/cybersecurity" },
+        { label: "Technology", href: "/category/technology" },
       ],
     },
     {
-      title: "Directories",
+      title: "Intelligence Desks",
       links: [
-        { label: "AI Tools Directory", href: "/ai-tools" },
-        { label: "Model Launches Timeline", href: "/model-launches" },
-        { label: "India AI Hub", href: "/india-ai" },
+        { label: "Artificial Intelligence", href: "/category/artificial-intelligence" },
+        { label: "AI Agents", href: "/category/ai-agents" },
+        { label: "Machine Learning", href: "/category/machine-learning" },
+        { label: "Cloud & Computing", href: "/category/cloud-and-computing" },
         { label: "Article Archive", href: "/archive" },
         { label: "Search Portal", href: "/search" },
       ],
     },
     {
-      title: "Editorial & Legal",
+      title: "About & Legal",
       links: [
-        { label: "About Us", href: "/about" },
-        { label: "Editorial Policy", href: "/editorial-policy" },
-        { label: "Contact Editorial Desk", href: "/contact" },
+        { label: "About Kraviona", href: "/about" },
+        { label: "Editorial Standards", href: "/editorial-policy" },
+        { label: "Contact", href: "/contact" },
+        { label: "Newsletter", href: "/newsletter" },
         { label: "Privacy Policy", href: "/privacy" },
         { label: "Terms of Service", href: "/terms" },
       ],
@@ -58,35 +61,39 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
   ];
 
   const activeSections = sections && sections.length > 0 ? sections : defaultSections;
+
   return (
-    <footer className="border-t border-slate-200 bg-slate-50 text-sm text-slate-600">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4 lg:grid-cols-5">
-          {/* Brand info */}
-          <div className="md:col-span-2 space-y-4">
-            <Link href="/" className="group inline-flex flex-col">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-xl font-black tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
-                  AI LATEST NEWS
-                </span>
-                <span className="h-2 w-2 rounded-full bg-rose-600 shrink-0" />
+    <footer className="border-t border-[#263B50]/60 bg-[#101820] text-[#E4E2DC]">
+      <div className="mx-auto max-w-[var(--max-content-width,1320px)] px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-4 lg:grid-cols-5">
+          {/* Brand Column */}
+          <div className="md:col-span-2 space-y-5">
+            <Link href="/" className="group inline-flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#D94F35] text-white font-display font-black text-lg tracking-tighter">
+                K<span className="text-[#101820]">.</span>
               </div>
-              <span className="text-[10px] font-mono font-medium uppercase tracking-widest text-slate-500 -mt-0.5">
-                The AI Journal for India
-              </span>
+              <div className="flex flex-col">
+                <span className="font-display text-xl font-black tracking-tight text-white group-hover:text-[#E05A42] transition-colors">
+                  KRAVIONA <span className="text-[#D94F35]">AI NEWS</span>
+                </span>
+                <span className="text-[10px] font-mono font-medium uppercase tracking-[0.16em] text-[#8B949E]">
+                  AI, Technology, Research &amp; Innovation Intelligence
+                </span>
+              </div>
             </Link>
 
-            <p className="text-xs leading-relaxed max-w-sm text-slate-600">
+            <p className="text-xs leading-relaxed max-w-sm text-[#9CA3AF]">
               {aboutText || defaultAbout}
             </p>
 
-            <div className="flex items-center gap-2 pt-2">
+            {/* Social Links */}
+            <div className="flex items-center gap-2.5 pt-1">
               <a
                 href="https://twitter.com/kraviona"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
-                aria-label="Twitter"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-[#182430] text-[#E4E2DC] hover:border-[#D94F35] hover:bg-[#D94F35] hover:text-white transition-all"
+                aria-label="Twitter / X"
               >
                 <TwitterIcon className="h-4 w-4" />
               </a>
@@ -94,7 +101,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
                 href="https://github.com/kravionatech-ai"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-[#182430] text-[#E4E2DC] hover:border-[#D94F35] hover:bg-[#D94F35] hover:text-white transition-all"
                 aria-label="GitHub"
               >
                 <GithubIcon className="h-4 w-4" />
@@ -103,14 +110,14 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
                 href="https://linkedin.com/company/kraviona"
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-all shadow-2xs"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-[#182430] text-[#E4E2DC] hover:border-[#D94F35] hover:bg-[#D94F35] hover:text-white transition-all"
                 aria-label="LinkedIn"
               >
                 <LinkedinIcon className="h-4 w-4" />
               </a>
               <Link
                 href="/feed.xml"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-rose-600 hover:border-rose-500 transition-all shadow-2xs"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-[#182430] text-[#E4E2DC] hover:border-[#D94F35] hover:bg-[#D94F35] hover:text-white transition-all"
                 aria-label="RSS Feed"
               >
                 <Rss className="h-4 w-4" />
@@ -118,20 +125,20 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
             </div>
           </div>
 
-          {/* Dynamic Link Columns */}
+          {/* Link Columns */}
           {activeSections.map((sec, sIdx) => (
             <div key={sIdx}>
-              <h3 className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-900 mb-3">
+              <h3 className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-white mb-4 pb-2 border-b border-white/10">
                 {sec.title}
               </h3>
-              <ul className="space-y-2 text-xs">
+              <ul className="space-y-2.5 text-xs">
                 {sec.links.map((link, lIdx) => (
                   <li key={lIdx}>
                     <Link
                       href={link.href}
                       target={link.isExternal ? "_blank" : undefined}
                       rel={link.isExternal ? "noreferrer" : undefined}
-                      className="text-slate-600 hover:text-slate-900 transition-colors"
+                      className="text-[#9CA3AF] hover:text-[#E05A42] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -142,10 +149,14 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
           ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs gap-4 text-slate-500">
-          <p>© {new Date().getFullYear()} {copyrightText || "AI Latest News. All rights reserved."}</p>
-          <p className="font-mono text-[11px]">
-            Independent AI Journalism · Primary Source Grounded · Published for India
+        {/* Bottom Colophon */}
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs gap-4 text-[#8B949E]">
+          <p>
+            © {new Date().getFullYear()}{" "}
+            {copyrightText || "Kraviona AI News (ainews.kraviona.com). All rights reserved."}
+          </p>
+          <p className="font-mono text-[11px] text-[#8B949E]">
+            AI, Technology, Research &amp; Innovation Intelligence · Verified Sources
           </p>
         </div>
       </div>

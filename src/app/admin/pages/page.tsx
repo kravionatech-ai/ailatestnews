@@ -18,10 +18,10 @@ export default async function AdminPagesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-[var(--foreground)]">
+          <h1 className="font-display text-2xl font-bold text-[var(--color-heading)]">
             Standalone Pages Hub
           </h1>
-          <p className="text-xs text-[var(--foreground-muted)] mt-1">
+          <p className="text-xs text-[var(--color-muted-text)] mt-1">
             Author and govern standalone pages (Home, About, Editorial Policy, Tools, Timeline) with dedicated SEO metadata.
           </p>
         </div>
@@ -35,11 +35,11 @@ export default async function AdminPagesPage() {
       </div>
 
       {/* Pages Table */}
-      <div className="rounded-2xl border border-[var(--border)] bg-white overflow-hidden shadow-2xs">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-[var(--border)] bg-[var(--background-secondary)] text-[var(--foreground-muted)] uppercase tracking-wider font-semibold">
+              <tr className="border-b border-[var(--border)] bg-[var(--color-secondary-surface)] text-[var(--color-muted-text)] uppercase tracking-wider font-semibold">
                 <th className="p-4">Page Title &amp; Slug</th>
                 <th className="p-4">Template</th>
                 <th className="p-4">Status</th>
@@ -62,32 +62,32 @@ export default async function AdminPagesPage() {
                 return (
                   <tr
                     key={p._id.toString()}
-                    className="hover:bg-[var(--background-secondary)] transition-colors group"
+                    className="hover:bg-[var(--color-secondary-surface)]/50 transition-colors group"
                   >
                     <td className="p-4 max-w-sm">
                       <Link
                         href={`/admin/pages/${p._id.toString()}/edit`}
-                        className="font-bold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors block"
+                        className="font-bold text-[var(--color-heading)] hover:text-[var(--accent)] transition-colors block"
                       >
                         {p.title}
                       </Link>
-                      <span className="text-[10px] text-[var(--foreground-muted)] font-mono">
+                      <span className="text-[10px] text-[var(--color-muted-text)] font-mono">
                         {publicUrl}
                       </span>
                     </td>
 
                     <td className="p-4">
-                      <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-700 capitalize">
+                      <span className="rounded-lg bg-[var(--color-secondary-surface)] px-2 py-0.5 text-[10px] font-semibold text-[var(--color-body-text)] capitalize">
                         {p.template}
                       </span>
                     </td>
 
                     <td className="p-4">
                       <span
-                        className={`inline-block px-2 py-0.5 rounded-full font-semibold text-[10px] capitalize ${
+                        className={`inline-block px-2 py-0.5 rounded-full font-semibold text-[10px] capitalize border ${
                           p.status === "published"
-                            ? "bg-green-50 text-green-700 border border-green-200"
-                            : "bg-slate-100 text-slate-700 border border-slate-200"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                            : "bg-[var(--color-secondary-surface)] text-[var(--color-muted-text)] border-[var(--border)]"
                         }`}
                       >
                         {p.status}
@@ -98,21 +98,21 @@ export default async function AdminPagesPage() {
                       <span
                         className={`inline-flex items-center justify-center font-extrabold text-[11px] px-2 py-0.5 rounded-full ${
                           seoScore >= 80
-                            ? "bg-emerald-100 text-emerald-800"
-                            : "bg-amber-100 text-amber-800"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                            : "bg-amber-500/15 text-amber-700 dark:text-amber-400"
                         }`}
                       >
                         {seoScore}
                       </span>
                     </td>
 
-                    <td className="p-4 text-[10px] text-[var(--foreground-muted)]">
-                      {p.showInMenu && <span className="mr-1.5 font-medium text-indigo-600">Header</span>}
-                      {p.showInFooter && <span className="font-medium text-slate-600">Footer</span>}
+                    <td className="p-4 text-[10px] text-[var(--color-muted-text)]">
+                      {p.showInMenu && <span className="mr-1.5 font-medium text-[var(--accent)]">Header</span>}
+                      {p.showInFooter && <span className="font-medium text-[var(--color-body-text)]">Footer</span>}
                       {!p.showInMenu && !p.showInFooter && <span>Unlinked</span>}
                     </td>
 
-                    <td className="p-4 text-[var(--foreground-muted)]">
+                    <td className="p-4 text-[var(--color-muted-text)]">
                       {formatDate(p.updatedAt || p.createdAt)}
                     </td>
 
@@ -122,7 +122,7 @@ export default async function AdminPagesPage() {
                           href={publicUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 transition-colors"
+                          className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-sky-600 hover:bg-sky-500/10 transition-colors"
                           title="View Live Page"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
@@ -130,7 +130,7 @@ export default async function AdminPagesPage() {
 
                         <Link
                           href={`/admin/pages/${p._id.toString()}/edit`}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-[var(--accent)] hover:bg-slate-100 transition-colors"
+                          className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:bg-[var(--color-secondary-surface)] transition-colors"
                           title="Edit Page & SEO"
                         >
                           <Edit3 className="h-3.5 w-3.5" />
@@ -140,7 +140,7 @@ export default async function AdminPagesPage() {
                           <form action={handleDelete}>
                             <button
                               type="submit"
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                              className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer"
                               title="Delete Page"
                             >
                               <Trash2 className="h-3.5 w-3.5" />

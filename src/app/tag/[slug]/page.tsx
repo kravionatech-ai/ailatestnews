@@ -5,14 +5,15 @@ import {
   Hash,
   ChevronRight,
   TrendingUp,
-  Mail,
   ArrowRight,
   Cpu,
 } from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
 import { PostCard } from "@/components/blog/post-card";
+import { KravionaNewsletter } from "@/components/home/kraviona/newsletter-banner";
 import { getTagBySlug, getAllCategories } from "@/lib/db/queries/taxonomies";
 import { getPublishedPosts } from "@/lib/db/queries/posts";
+import { getGlobalSettings } from "@/lib/db/queries/settings";
 import { buildEntityMetadata, getSiteUrl } from "@/lib/seo/fallback";
 
 interface TagPageProps {
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   const { slug } = await params;
   const tag = await getTagBySlug(slug);
 
-  if (!tag) return { title: "Tag Not Found | AI Latest News" };
+  if (!tag) return { title: "Tag Not Found | Kraviona AI News" };
 
   return buildEntityMetadata({
     entityType: "tag",
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
     excerpt:
       tag.seo?.metaDescription ||
       tag.description ||
-      `Browse verified AI articles, benchmarks, and news tagged with #${tag.name} on AI Latest News.`,
+      `Browse verified AI articles, benchmarks, and news tagged with #${tag.name} on Kraviona AI News.`,
   });
 }
 
@@ -45,7 +46,7 @@ export default async function TagPage({ params }: TagPageProps) {
 
   if (!tag) notFound();
 
-  const [{ posts }, { posts: trendingPosts }, allCategories] = await Promise.all([
+  const [{ posts }, { posts: trendingPosts }, allCategories, settings] = await Promise.all([
     getPublishedPosts({
       tagSlug: slug,
       limit: 15,
@@ -56,6 +57,7 @@ export default async function TagPage({ params }: TagPageProps) {
       sort: "popular",
     }),
     getAllCategories(),
+    getGlobalSettings(),
   ]);
 
   const siteUrl = getSiteUrl();
@@ -90,7 +92,7 @@ export default async function TagPage({ params }: TagPageProps) {
       },
       {
         "@type": "CollectionPage",
-        name: `#${tag.name} Dispatches - AI Latest News`,
+        name: `#${tag.name} Dispatches - Kraviona AI News`,
         description: tag.description || `Articles tagged with #${tag.name}`,
         url: `${siteUrl}/tag/${tag.slug}`,
       },
@@ -98,52 +100,52 @@ export default async function TagPage({ params }: TagPageProps) {
   };
 
   return (
-    <PublicShell>
+    <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="mx-auto max-w-[var(--max-content-width,1320px)] px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         {/* Breadcrumbs */}
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-1.5 text-xs text-[var(--foreground-muted)] mb-6"
+          className="flex items-center gap-1.5 text-xs text-[var(--color-muted-text)] mb-6"
         >
-          <Link href="/" className="hover:text-[var(--foreground)] transition-colors">
+          <Link href="/" className="hover:text-[var(--accent)] transition-colors">
             Home
           </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-          <Link href="/blog" className="hover:text-[var(--foreground)] transition-colors">
+          <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+          <Link href="/blog" className="hover:text-[var(--accent)] transition-colors">
             Topics
           </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-          <span className="font-semibold text-[var(--foreground)]">#{tag.name}</span>
+          <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+          <span className="font-semibold text-[var(--color-heading)]">#{tag.name}</span>
         </nav>
 
         {/* Tag Hero Header */}
-        <header className="rounded-2xl border border-slate-900 bg-white p-6 sm:p-10 mb-10 shadow-2xs">
+        <header className="rounded-2xl border border-[var(--border)] border-t-4 border-t-[var(--accent)] bg-[var(--color-card-background)] p-6 sm:p-10 mb-10 shadow-xs">
           <div className="max-w-3xl space-y-3">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-white">
-                <Hash className="h-3 w-3" /> Topic Index
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-[#101820] px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-white">
+                <Hash className="h-3 w-3 text-[#E05A42]" /> Topic Index
               </span>
-              <span className="rounded-md bg-slate-100 border border-slate-200 px-2.5 py-1 font-mono text-[11px] font-semibold text-slate-700">
+              <span className="rounded-md bg-[var(--color-secondary-surface)] border border-[var(--border)] px-2.5 py-1 font-mono text-[11px] font-semibold text-[var(--color-heading)]">
                 {posts.length} Dispatches
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
+            <h1 className="font-editorial text-3xl sm:text-5xl font-bold tracking-tight text-[var(--color-heading)]">
               #{tag.name}
             </h1>
 
             {tag.description ? (
-              <p className="text-base text-slate-700 leading-relaxed">
+              <p className="text-base text-[var(--color-body-text)] leading-relaxed">
                 {tag.description}
               </p>
             ) : (
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Curated technical dispatches, benchmark teardowns, and verified release updates associated with the <strong>#{tag.name}</strong> entity.
+              <p className="text-sm text-[var(--color-muted-text)] leading-relaxed">
+                Curated technical dispatches, benchmark teardowns, and verified release updates associated with <strong className="text-[var(--color-heading)]">#{tag.name}</strong>.
               </p>
             )}
           </div>
@@ -154,8 +156,8 @@ export default async function TagPage({ params }: TagPageProps) {
           <main className="lg:col-span-8 space-y-8">
             {leadPost && (
               <section className="space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-                  <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-rose-600">
+                <div className="flex items-center justify-between border-b-2 border-[var(--color-heading)] pb-2">
+                  <h2 className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">
                     Lead Story in #{tag.name}
                   </h2>
                 </div>
@@ -164,8 +166,8 @@ export default async function TagPage({ params }: TagPageProps) {
             )}
 
             <section className="space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
+                <h2 className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--color-heading)]">
                   All Dispatches ({secondaryPosts.length})
                 </h2>
               </div>
@@ -177,9 +179,9 @@ export default async function TagPage({ params }: TagPageProps) {
                   ))}
                 </div>
               ) : !leadPost ? (
-                <div className="rounded-3xl border border-dashed border-[var(--border)] p-12 text-center space-y-3 bg-white">
-                  <Cpu className="h-10 w-10 text-indigo-600 mx-auto" />
-                  <h3 className="text-base font-bold text-[var(--foreground)]">
+                <div className="rounded-2xl border border-dashed border-[var(--border)] p-12 text-center space-y-3 bg-[var(--color-card-background)]">
+                  <Cpu className="h-10 w-10 text-[var(--accent)] mx-auto" />
+                  <h3 className="text-base font-bold text-[var(--color-heading)]">
                     No articles tagged with #{tag.name} yet
                   </h3>
                   <Link
@@ -195,9 +197,9 @@ export default async function TagPage({ params }: TagPageProps) {
 
           <aside className="lg:col-span-4 space-y-6">
             {/* Trending */}
-            <div className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)] flex items-center gap-1.5 border-b pb-3">
-                <TrendingUp className="h-3.5 w-3.5 text-rose-600" /> Trending Stories
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs space-y-4">
+              <h3 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-heading)] flex items-center gap-1.5 border-b border-[var(--border)] pb-3">
+                <TrendingUp className="h-3.5 w-3.5 text-[var(--accent)]" /> Trending Stories
               </h3>
               <div className="divide-y divide-[var(--border)]">
                 {trendingPosts.map((post: any, idx: number) => (
@@ -206,10 +208,10 @@ export default async function TagPage({ params }: TagPageProps) {
                     href={`/blog/${post.slug}`}
                     className="py-3 flex items-start gap-3 group block"
                   >
-                    <span className="text-base font-black text-slate-300 group-hover:text-indigo-600 font-mono">
+                    <span className="text-base font-black text-[var(--color-muted-text)] group-hover:text-[var(--accent)] font-mono transition-colors">
                       0{idx + 1}
                     </span>
-                    <h4 className="text-xs font-bold text-[var(--foreground)] group-hover:text-indigo-600 line-clamp-2">
+                    <h4 className="text-xs font-bold text-[var(--color-heading)] group-hover:text-[var(--accent)] line-clamp-2 transition-colors">
                       {post.title}
                     </h4>
                   </Link>
@@ -218,44 +220,22 @@ export default async function TagPage({ params }: TagPageProps) {
             </div>
 
             {/* Newsletter */}
-            <div className="rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50/80 via-white to-sky-50/40 p-6 shadow-2xs space-y-3">
-              <Mail className="h-5 w-5 text-indigo-600" />
-              <h3 className="text-sm font-extrabold text-[var(--foreground)]">
-                Weekly AI Intelligence
-              </h3>
-              <p className="text-xs text-[var(--foreground-secondary)]">
-                Essential Indian AI developments, model benchmarks, and open weights releases delivered straight to your inbox.
-              </p>
-              <form action="/newsletter" method="GET" className="space-y-2">
-                <input
-                  type="email"
-                  required
-                  placeholder="name@company.com"
-                  className="w-full rounded-xl border border-slate-300 bg-white p-2 text-xs outline-none focus:border-indigo-600"
-                />
-                <button
-                  type="submit"
-                  className="w-full rounded-xl bg-indigo-600 py-2 text-xs font-bold text-white shadow-xs hover:bg-indigo-700"
-                >
-                  Subscribe
-                </button>
-              </form>
-            </div>
+            <KravionaNewsletter variant="sidebar" source="tag-page" />
 
             {/* Other Categories */}
-            <div className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
-                Browse Pillar Hubs
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs space-y-4">
+              <h3 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-[var(--color-heading)]">
+                Browse Coverage Hubs
               </h3>
               <div className="space-y-2">
                 {allCategories.map((c: { _id: string; slug: string; name: string; postCount?: number }) => (
                   <Link
                     key={c._id}
                     href={`/category/${c.slug}`}
-                    className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/40 transition-colors"
+                    className="flex items-center justify-between p-2.5 rounded-xl border border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--color-secondary-surface)] transition-colors"
                   >
-                    <span className="text-xs font-semibold text-[var(--foreground)]">{c.name}</span>
-                    <span className="text-[11px] font-mono text-[var(--foreground-muted)]">{c.postCount || 0}</span>
+                    <span className="text-xs font-semibold text-[var(--color-heading)]">{c.name}</span>
+                    <span className="text-[11px] font-mono text-[var(--color-muted-text)]">{c.postCount || 0}</span>
                   </Link>
                 ))}
               </div>

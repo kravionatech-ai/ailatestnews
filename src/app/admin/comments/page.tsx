@@ -25,15 +25,15 @@ export default async function AdminCommentsPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div>
-        <h1 className="text-2xl font-extrabold text-[var(--foreground)]">
+        <h1 className="font-display text-2xl font-bold text-[var(--color-heading)]">
           Discussion Moderation
         </h1>
-        <p className="text-xs text-[var(--foreground-muted)] mt-1">
+        <p className="text-xs text-[var(--color-muted-text)] mt-1">
           Review community perspectives, approve pending entries, and eliminate spam.
         </p>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border)] bg-white shadow-2xs divide-y divide-[var(--border)] overflow-hidden">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs divide-y divide-[var(--border)] overflow-hidden">
         {comments.map((comment) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const author = comment.author as any;
@@ -41,23 +41,23 @@ export default async function AdminCommentsPage() {
           const post = comment.post as any;
 
           return (
-            <div key={comment._id.toString()} className="p-5 space-y-3 hover:bg-[var(--background-secondary)] transition-colors">
-              <div className="flex items-center justify-between text-xs">
+            <div key={comment._id.toString()} className="p-5 space-y-3 hover:bg-[var(--color-secondary-surface)]/40 transition-colors">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[var(--foreground)]">
+                  <span className="font-bold text-[var(--color-heading)]">
                     {author?.name || comment.guestName || "Anonymous Reader"}
                   </span>
-                  <span className="text-[var(--foreground-muted)]">•</span>
-                  <span className="text-[var(--foreground-muted)]">
+                  <span className="text-[var(--color-muted-text)]">•</span>
+                  <span className="text-[var(--color-muted-text)]">
                     {formatDate(comment.createdAt)}
                   </span>
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                       comment.status === "approved"
-                        ? "bg-green-50 text-green-700"
+                        ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                         : comment.status === "pending"
-                        ? "bg-amber-50 text-amber-700"
-                        : "bg-red-50 text-red-700"
+                        ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                        : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
                     }`}
                   >
                     {comment.status}
@@ -71,7 +71,7 @@ export default async function AdminCommentsPage() {
                       <input type="hidden" name="status" value="approved" />
                       <button
                         type="submit"
-                        className="inline-flex items-center gap-1 rounded-lg bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700 hover:bg-green-100 transition-colors"
+                        className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/25 transition-colors cursor-pointer"
                       >
                         <CheckCircle2 className="h-3.5 w-3.5" /> Approve
                       </button>
@@ -84,7 +84,7 @@ export default async function AdminCommentsPage() {
                       <input type="hidden" name="status" value="spam" />
                       <button
                         type="submit"
-                        className="inline-flex items-center gap-1 rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors"
+                        className="inline-flex items-center gap-1 rounded-lg bg-amber-500/15 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:bg-amber-500/25 transition-colors cursor-pointer"
                       >
                         <ShieldAlert className="h-3.5 w-3.5" /> Spam
                       </button>
@@ -96,7 +96,7 @@ export default async function AdminCommentsPage() {
                     <input type="hidden" name="status" value="trash" />
                     <button
                       type="submit"
-                      className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                      className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -104,14 +104,14 @@ export default async function AdminCommentsPage() {
                 </div>
               </div>
 
-              <p className="text-xs text-[var(--foreground-secondary)] leading-relaxed">
+              <p className="text-xs text-[var(--color-body-text)] leading-relaxed">
                 {comment.content}
               </p>
 
               {post && (
-                <p className="text-[11px] text-[var(--foreground-muted)]">
+                <p className="text-[11px] text-[var(--color-muted-text)]">
                   On article:{" "}
-                  <span className="font-semibold text-[var(--foreground)]">
+                  <span className="font-semibold text-[var(--color-heading)]">
                     {post.title}
                   </span>
                 </p>
@@ -121,8 +121,8 @@ export default async function AdminCommentsPage() {
         })}
 
         {comments.length === 0 && (
-          <div className="p-12 text-center text-xs text-[var(--foreground-muted)]">
-            <MessageSquare className="h-8 w-8 mx-auto text-slate-300 mb-2" />
+          <div className="p-12 text-center text-xs text-[var(--color-muted-text)]">
+            <MessageSquare className="h-8 w-8 mx-auto text-[var(--color-muted-text)]/40 mb-2" />
             No comments submitted yet.
           </div>
         )}

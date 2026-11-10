@@ -6,7 +6,15 @@ import type { ISeoMetadata } from "@/lib/seo/types";
 // Types
 // ──────────────────────────────────────
 
-export type UserRole = "admin" | "editor" | "author" | "subscriber";
+export type UserRole = "super_admin" | "admin" | "editor" | "author" | "subscriber";
+
+export const ROLE_HIERARCHY: Record<UserRole, number> = {
+  super_admin: 5,
+  admin: 4,
+  editor: 3,
+  author: 2,
+  subscriber: 1,
+};
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -63,7 +71,7 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["admin", "editor", "author", "subscriber"],
+      enum: ["super_admin", "admin", "editor", "author", "subscriber"],
       default: "subscriber",
     },
     bio: {

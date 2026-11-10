@@ -180,10 +180,10 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
         <div>
-          <h2 className="text-sm font-bold text-[var(--foreground)]">
+          <h2 className="font-display text-sm font-bold text-[var(--color-heading)]">
             Active Authors &amp; Editorial Contributors ({authors.length})
           </h2>
-          <p className="text-xs text-[var(--foreground-muted)] mt-0.5">
+          <p className="text-xs text-[var(--color-muted-text)] mt-0.5">
             Manage author bios, portraits, credentials, social profiles, and author-page SEO.
           </p>
         </div>
@@ -201,7 +201,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
         {authors.map((author) => (
           <div
             key={author._id}
-            className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-2xs space-y-4 flex flex-col justify-between"
+            className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-2xs space-y-4 flex flex-col justify-between"
           >
             <div className="space-y-4">
               <div className="flex items-start justify-between">
@@ -214,15 +214,15 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                       className="h-12 w-12 rounded-full object-cover border border-[var(--border)]"
                     />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-700 font-bold text-base">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent-light)] text-[var(--accent)] font-bold text-base">
                       {author.name.charAt(0)}
                     </div>
                   )}
                   <div>
-                    <h3 className="font-bold text-sm text-[var(--foreground)] truncate max-w-[150px]">
+                    <h3 className="font-display font-bold text-sm text-[var(--color-heading)] truncate max-w-[150px]">
                       {author.name}
                     </h3>
-                    <span className="text-[10px] font-semibold text-[var(--foreground-muted)] block truncate max-w-[150px]">
+                    <span className="text-[10px] font-mono font-semibold text-[var(--color-muted-text)] block truncate max-w-[150px]">
                       {author.email}
                     </span>
                   </div>
@@ -231,23 +231,23 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                 <span
                   className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                     author.role === "admin"
-                      ? "bg-purple-50 text-purple-700"
+                      ? "bg-[var(--accent-light)] text-[var(--accent)]"
                       : author.role === "editor"
-                      ? "bg-sky-50 text-sky-700"
-                      : "bg-emerald-50 text-emerald-700"
+                      ? "bg-sky-500/15 text-sky-700 dark:text-sky-400"
+                      : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                   }`}
                 >
                   {author.role}
                 </span>
               </div>
 
-              <p className="text-xs text-[var(--foreground-secondary)] line-clamp-2 leading-relaxed">
+              <p className="text-xs text-[var(--color-body-text)] line-clamp-2 leading-relaxed">
                 {author.bio || "No biography authored yet."}
               </p>
 
-              <div className="flex items-center gap-4 text-xs text-[var(--foreground-muted)] pt-2 border-t border-slate-100">
-                <span className="flex items-center gap-1 font-semibold text-[var(--foreground)]">
-                  <FileText className="h-3.5 w-3.5 text-indigo-600" />
+              <div className="flex items-center gap-4 text-xs text-[var(--color-muted-text)] pt-2 border-t border-[var(--border)]">
+                <span className="flex items-center gap-1 font-semibold text-[var(--color-heading)]">
+                  <FileText className="h-3.5 w-3.5 text-[var(--accent)]" />
                   {author.postCount} {author.postCount === 1 ? "article" : "articles"}
                 </span>
 
@@ -263,17 +263,17 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
               <button
                 onClick={() => openEdit(author)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-slate-50 text-slate-700 text-xs font-semibold hover:bg-slate-100 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-secondary-surface)] text-[var(--color-heading)] text-xs font-semibold hover:bg-[var(--color-main-background)] transition-colors cursor-pointer"
               >
                 <Edit2 className="h-3 w-3" /> Edit Profile &amp; SEO
               </button>
 
               <button
                 onClick={() => handleDelete(author._id)}
-                className="p-1.5 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/15 transition-colors cursor-pointer"
                 title="Delete Author"
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -285,15 +285,15 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
 
       {/* Modal / Drawer for Create or Edit */}
       {(isCreating || editingAuthor) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl border border-[var(--border)] shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-in fade-in-50 zoom-in-95">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="bg-[var(--color-card-background)] rounded-2xl border border-[var(--border)] shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-in fade-in-50 zoom-in-95">
             {/* Modal Header */}
-            <div className="p-6 border-b border-[var(--border)] flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-md z-10">
+            <div className="p-6 border-b border-[var(--border)] flex items-center justify-between sticky top-0 bg-[var(--color-card-background)]/95 backdrop-blur-md z-10">
               <div>
-                <h3 className="text-base font-bold text-[var(--foreground)]">
+                <h3 className="font-display text-base font-bold text-[var(--color-heading)]">
                   {editingAuthor ? `Edit Author: ${editingAuthor.name}` : "Add New Author"}
                 </h3>
-                <p className="text-xs text-[var(--foreground-muted)] mt-0.5">
+                <p className="text-xs text-[var(--color-muted-text)] mt-0.5">
                   Update author bio, credentials, links, and dedicated ProfilePage metadata.
                 </p>
               </div>
@@ -303,7 +303,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                   setIsCreating(false);
                   setEditingAuthor(null);
                 }}
-                className="p-1.5 rounded-xl border border-[var(--border)] hover:bg-slate-50 transition-colors"
+                className="p-1.5 rounded-lg border border-[var(--border)] text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] transition-colors cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -316,7 +316,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                 className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
                   activeTab === "general"
                     ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold"
-                    : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                    : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                 }`}
               >
                 General Details
@@ -326,7 +326,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                 className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "seo"
                     ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold"
-                    : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                    : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                 }`}
               >
                 <Globe className="h-3.5 w-3.5" />
@@ -339,8 +339,8 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                 <div
                   className={`flex items-center gap-2 p-3.5 rounded-xl text-xs font-semibold ${
                     feedback.type === "success"
-                      ? "bg-green-50 text-green-700 border border-green-200"
-                      : "bg-red-50 text-red-700 border border-red-200"
+                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                      : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30"
                   }`}
                 >
                   {feedback.type === "success" ? (
@@ -356,7 +356,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                         Author Name
                       </label>
                       <input
@@ -368,12 +368,12 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                           if (!editingAuthor) setSlug(slugify(e.target.value));
                         }}
                         placeholder="Dr. Sarah Connor"
-                        className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs font-bold"
+                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs font-bold outline-none focus:border-[var(--accent)]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                         Email Address
                       </label>
                       <input
@@ -382,14 +382,14 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="author@kraviona.com"
-                        className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs font-mono"
+                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs font-mono outline-none focus:border-[var(--accent)]"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                         URL Slug (/author/[slug])
                       </label>
                       <input
@@ -398,18 +398,18 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                         value={slug}
                         onChange={(e) => setSlug(slugify(e.target.value))}
                         placeholder="sarah-connor"
-                        className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs font-mono"
+                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs font-mono outline-none focus:border-[var(--accent)]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                         Role
                       </label>
                       <select
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
-                        className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs bg-white"
+                        className="w-full rounded-lg border border-[var(--border)] p-2.5 text-xs bg-[var(--color-main-background)] text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                       >
                         <option value="author">Author / Staff Writer</option>
                         <option value="editor">Senior Editor</option>
@@ -419,7 +419,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                       Portrait / Avatar Image URL
                     </label>
                     <input
@@ -427,12 +427,12 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                       value={image}
                       onChange={(e) => setImage(e.target.value)}
                       placeholder="https://images.unsplash.com/..."
-                      className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs font-mono"
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs font-mono outline-none focus:border-[var(--accent)]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                       Author Biography
                     </label>
                     <textarea
@@ -440,13 +440,13 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
                       placeholder="Senior AI researcher covering Indic foundational models..."
-                      className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs leading-relaxed"
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs leading-relaxed outline-none focus:border-[var(--accent)]"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[var(--border)]">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                         Personal Website / Portfolio
                       </label>
                       <input
@@ -454,12 +454,12 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                         value={website}
                         onChange={(e) => setWebsite(e.target.value)}
                         placeholder="https://sarahconnor.ai"
-                        className="w-full rounded-lg border border-[var(--border)] p-2 text-xs"
+                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                         Twitter / X Profile URL
                       </label>
                       <input
@@ -467,12 +467,12 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                         value={twitter}
                         onChange={(e) => setTwitter(e.target.value)}
                         placeholder="https://twitter.com/..."
-                        className="w-full rounded-lg border border-[var(--border)] p-2 text-xs"
+                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                         GitHub Profile URL
                       </label>
                       <input
@@ -480,12 +480,12 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                         value={github}
                         onChange={(e) => setGithub(e.target.value)}
                         placeholder="https://github.com/..."
-                        className="w-full rounded-lg border border-[var(--border)] p-2 text-xs"
+                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                         LinkedIn Profile URL
                       </label>
                       <input
@@ -493,7 +493,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                         value={linkedin}
                         onChange={(e) => setLinkedin(e.target.value)}
                         placeholder="https://linkedin.com/in/..."
-                        className="w-full rounded-lg border border-[var(--border)] p-2 text-xs"
+                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                       />
                     </div>
                   </div>
@@ -522,7 +522,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                     setIsCreating(false);
                     setEditingAuthor(null);
                   }}
-                  className="px-4 py-2 rounded-xl border border-[var(--border)] text-xs font-semibold text-[var(--foreground)] hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -530,7 +530,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[var(--accent)] text-white text-xs font-bold hover:bg-[var(--accent-hover)] transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-[var(--accent)] text-white text-xs font-bold hover:bg-[var(--accent-hover)] transition-all shadow-xs disabled:opacity-50 cursor-pointer"
                 >
                   <Save className="h-3.5 w-3.5" />
                   <span>{loading ? "Saving Author..." : "Save Profile & SEO"}</span>

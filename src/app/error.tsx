@@ -16,28 +16,30 @@ export default function ErrorPage({
   }, [error]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 bg-[var(--background)]">
-      <div className="max-w-md text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--error-light)] text-[var(--error)] mb-6 shadow-sm">
-          <AlertCircle className="h-8 w-8" />
+    <main className="flex min-h-screen flex-col items-center justify-center px-4 bg-[var(--color-main-background)]">
+      <div className="max-w-md text-center rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-8 shadow-sm">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-500/15 text-[var(--accent)] mb-5">
+          <AlertCircle className="h-7 w-7" />
         </div>
-        <p className="text-sm font-semibold uppercase tracking-wider text-[var(--error)]">500 Server Error</p>
-        <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-[var(--foreground)]">
+        <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)]">
+          500 Server Error
+        </p>
+        <h1 className="font-editorial mt-2 text-3xl font-bold tracking-tight text-[var(--color-heading)]">
           Something went wrong
         </h1>
-        <p className="mt-3 text-sm text-[var(--foreground-muted)]">
-          An unexpected error occurred during rendering. If this persists, our engineering team has already logged the incident.
+        <p className="mt-3 text-sm text-[var(--color-muted-text)] leading-relaxed">
+          An unexpected error occurred during rendering. Our engineering desk has logged the incident.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             onClick={() => reset()}
-            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-[var(--accent-hover)]"
+            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[var(--accent-hover)] cursor-pointer"
           >
             <RotateCcw className="h-4 w-4" /> Try Again
           </button>
           <Link
             href="/"
-            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-white px-5 py-2.5 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--background-secondary)]"
+            className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-5 py-2.5 text-sm font-semibold text-[var(--color-heading)] transition-all hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
             Back to Home
           </Link>

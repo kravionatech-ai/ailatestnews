@@ -66,11 +66,11 @@ export function PageEditor({ initialData }: PageEditorProps) {
   const defaultHomeBlocks = [
     {
       type: "hero",
-      title: "Latest AI News, Tools and Launches, Explained for India",
+      title: "AI, Technology, Research and Innovation Intelligence",
       subtitle:
-        "Independent reporting, hands-on model evaluations, and sovereign AI compute analysis. Built for engineers, founders, and tech enthusiasts across India.",
+        "Independent reporting, frontier model evaluations, and sovereign compute analysis built for engineers, researchers, and technology leaders.",
       settings: {
-        badge: "India's Sovereign AI & Generative Tech Hub",
+        badge: "Kraviona AI News Editorial Hub",
         primaryCtaText: "Explore Latest AI News",
         primaryCtaLink: "/category/ai-news",
         secondaryCtaText: "Compare Models",
@@ -81,18 +81,18 @@ export function PageEditor({ initialData }: PageEditorProps) {
     {
       type: "faq",
       title: "Everything You Need to Know",
-      subtitle: "Common questions about AI Latest News, Indic models, and sovereign compute in India",
+      subtitle: "Common questions about Kraviona AI News, frontier models, and AI infrastructure",
       settings: {
         items: [
           {
-            question: "What is AI Latest News and what does it cover?",
+            question: "What is Kraviona AI News and what does it cover?",
             answer:
-              "AI Latest News is an independent technology publication focusing on artificial intelligence, frontier foundation models, sovereign compute policies, and developer tooling with a specialized India lens. We cover model launches, GPU subsidies, local LLM deployment, and Indic language NLP for engineers and technology leaders.",
+              "Kraviona AI News is an independent digital news publication covering artificial intelligence, frontier foundation models, AI research papers, developer tooling, cybersecurity, and global technology policy.",
           },
           {
-            question: "How do you evaluate and benchmark AI models for India?",
+            question: "How do you evaluate and benchmark AI models?",
             answer:
-              "We benchmark models across four core criteria: Indic language comprehension (Hindi, Tamil, Telugu, Bengali), inference latency on Indian cloud datacenters, tokenization efficiency (tokens per Indic word), and rupee pricing feasibility for domestic startups and developers.",
+              "We benchmark models across reasoning accuracy, multilingual comprehension, inference latency, token efficiency, and total deployment cost for engineering teams.",
           },
           {
             question: "Are open-weight models like DeepSeek-R1 and Sarvam-1 completely free to use?",
@@ -229,21 +229,21 @@ export function PageEditor({ initialData }: PageEditorProps) {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-[var(--foreground)]">
+          <h1 className="font-display text-2xl font-bold text-[var(--color-heading)]">
             {isEditing ? `Edit Page: ${title}` : "Create Standalone Page"}
           </h1>
-          <p className="text-xs text-[var(--foreground-muted)] mt-1">
+          <p className="text-xs text-[var(--color-muted-text)] mt-1">
             Author static and directory landing pages with dedicated schema and meta controls.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           {message && (
             <span
               className={`text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 ${
                 message.type === "success"
-                  ? "bg-green-50 text-green-700"
-                  : "bg-red-50 text-red-700"
+                  ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                  : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
               }`}
             >
               {message.type === "success" ? (
@@ -260,7 +260,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
               href={previewPath}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1 px-3 py-2 rounded-xl border border-[var(--border)] bg-white text-xs font-semibold text-[var(--foreground)] hover:bg-slate-50 transition-colors"
+              className="flex items-center gap-1 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] transition-colors"
             >
               <ExternalLink className="h-3.5 w-3.5" /> Live URL
             </a>
@@ -270,7 +270,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
             type="button"
             disabled={loading}
             onClick={() => handleSubmit("draft")}
-            className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-white px-4 py-2 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--background-secondary)] transition-all shadow-2xs"
+            className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] px-4 py-2 text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] transition-all shadow-xs cursor-pointer"
           >
             <Save className="h-3.5 w-3.5" /> Save Draft
           </button>
@@ -279,7 +279,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
             type="button"
             disabled={loading}
             onClick={() => handleSubmit("published")}
-            className="flex items-center gap-1.5 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-[var(--accent-hover)] transition-all"
+            className="flex items-center gap-1.5 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-[var(--accent-hover)] transition-all cursor-pointer"
           >
             <Send className="h-3.5 w-3.5" /> Publish Page
           </button>
@@ -287,13 +287,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-[var(--border)] pb-2 text-xs font-semibold">
+      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] pb-2 text-xs font-semibold">
         <button
           onClick={() => setActiveTab("content")}
           className={`px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "content"
-              ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold shadow-3xs"
-              : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+              ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold"
+              : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
           }`}
         >
           <span>1. Content &amp; Template</span>
@@ -303,8 +303,8 @@ export function PageEditor({ initialData }: PageEditorProps) {
           onClick={() => setActiveTab("blocks")}
           className={`px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "blocks"
-              ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold shadow-3xs"
-              : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+              ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold"
+              : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
           }`}
         >
           <Layout className="h-3.5 w-3.5" />
@@ -315,8 +315,8 @@ export function PageEditor({ initialData }: PageEditorProps) {
           onClick={() => setActiveTab("seo")}
           className={`px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "seo"
-              ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold shadow-3xs"
-              : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+              ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold"
+              : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
           }`}
         >
           <Globe className="h-3.5 w-3.5" />
@@ -324,10 +324,10 @@ export function PageEditor({ initialData }: PageEditorProps) {
           <span
             className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
               quickAnalysis.score >= 80
-                ? "bg-emerald-100 text-emerald-800"
+                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                 : quickAnalysis.score >= 50
-                ? "bg-amber-100 text-amber-800"
-                : "bg-rose-100 text-rose-800"
+                ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
             }`}
           >
             {quickAnalysis.score}%
@@ -338,8 +338,8 @@ export function PageEditor({ initialData }: PageEditorProps) {
           onClick={() => setActiveTab("preview")}
           className={`px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "preview"
-              ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold shadow-3xs"
-              : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+              ? "bg-[var(--accent-light)] text-[var(--accent)] font-bold"
+              : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
           }`}
         >
           <Eye className="h-3.5 w-3.5" />
@@ -352,7 +352,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                 Page Title
               </label>
               <input
@@ -361,26 +361,26 @@ export function PageEditor({ initialData }: PageEditorProps) {
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
                 placeholder="e.g. Editorial Standards & Ethics Policy"
-                className="w-full rounded-2xl border border-[var(--border)] bg-white p-4 text-base sm:text-lg font-bold outline-none focus:border-[var(--accent)] shadow-2xs"
+                className="w-full rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-4 text-base sm:text-lg font-bold text-[var(--color-heading)] outline-none focus:border-[var(--accent)] shadow-xs"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)]">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)]">
                   URL Path / Slug
                 </label>
                 {initialData?.slug !== "home" && (
                   <button
                     type="button"
                     onClick={() => setIsSlugAuto(!isSlugAuto)}
-                    className="text-[10px] text-[var(--accent)] font-semibold hover:underline"
+                    className="text-[10px] text-[var(--accent)] font-semibold hover:underline cursor-pointer"
                   >
                     {isSlugAuto ? "Lock Slug" : "Auto-generate"}
                   </button>
                 )}
               </div>
-              <div className="flex items-center rounded-xl border border-[var(--border)] bg-[var(--background-secondary)] px-3 text-xs text-[var(--foreground-muted)]">
+              <div className="flex items-center rounded-xl border border-[var(--border)] bg-[var(--color-secondary-surface)] px-3 text-xs text-[var(--color-muted-text)]">
                 <span>/</span>
                 <input
                   type="text"
@@ -391,13 +391,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
                     setIsSlugAuto(false);
                     setSlug(e.target.value);
                   }}
-                  className="w-full bg-transparent px-1 py-2 font-mono outline-none text-[var(--foreground)] disabled:opacity-60"
+                  className="w-full bg-transparent px-1 py-2 font-mono outline-none text-[var(--color-heading)] disabled:opacity-60"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                 Excerpt / Meta Summary
               </label>
               <textarea
@@ -405,17 +405,17 @@ export function PageEditor({ initialData }: PageEditorProps) {
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 placeholder="Brief summary of the page purpose."
-                className="w-full rounded-xl border border-[var(--border)] bg-white p-3 text-xs outline-none focus:border-[var(--accent)]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-3 text-xs text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
               />
             </div>
 
             {/* Rich Editor */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--color-muted-text)]">
                   Page Content // Rich Text Editor
                 </label>
-                <span className="text-[11px] text-slate-500 font-medium">
+                <span className="text-[11px] text-[var(--color-muted-text)] font-medium">
                   WYSIWYG Visual, HTML Source &amp; Split Preview
                 </span>
               </div>
@@ -430,19 +430,19 @@ export function PageEditor({ initialData }: PageEditorProps) {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-4 text-xs">
-              <h3 className="font-bold uppercase tracking-wider text-[var(--foreground)]">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs space-y-4 text-xs">
+              <h3 className="font-bold uppercase tracking-wider text-[var(--color-heading)]">
                 Page Attributes
               </h3>
 
               <div>
-                <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                   Status
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 outline-none"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none"
                 >
                   <option value="published">Published</option>
                   <option value="draft">Draft</option>
@@ -451,13 +451,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
               </div>
 
               <div>
-                <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                   Template Layout
                 </label>
                 <select
                   value={template}
                   onChange={(e) => setTemplate(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 outline-none"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none"
                 >
                   <option value="default">Default Article / Editorial</option>
                   <option value="landing">Landing Page Hero</option>
@@ -466,15 +466,15 @@ export function PageEditor({ initialData }: PageEditorProps) {
                 </select>
               </div>
 
-              <div className="pt-2 border-t space-y-2">
+              <div className="pt-2 border-t border-[var(--border)] space-y-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={showInMenu}
                     onChange={(e) => setShowInMenu(e.target.checked)}
-                    className="rounded text-[var(--accent)]"
+                    className="rounded accent-[var(--accent)]"
                   />
-                  <span className="font-medium text-[var(--foreground)]">
+                  <span className="font-medium text-[var(--color-heading)]">
                     Show link in main Header navigation
                   </span>
                 </label>
@@ -484,40 +484,40 @@ export function PageEditor({ initialData }: PageEditorProps) {
                     type="checkbox"
                     checked={showInFooter}
                     onChange={(e) => setShowInFooter(e.target.checked)}
-                    className="rounded text-[var(--accent)]"
+                    className="rounded accent-[var(--accent)]"
                   />
-                  <span className="font-medium text-[var(--foreground)]">
+                  <span className="font-medium text-[var(--color-heading)]">
                     Show link in site Footer
                   </span>
                 </label>
               </div>
 
               <div>
-                <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block font-semibold text-[var(--color-muted-text)] mb-1">
                   Sort Order
                 </label>
                 <input
                   type="number"
                   value={order}
                   onChange={(e) => setOrder(Number(e.target.value))}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 outline-none"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none"
                 />
               </div>
             </div>
 
             {/* Quick SEO Health */}
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-3">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--color-heading)]">
                   SEO Health Score
                 </h3>
                 <span
                   className={`text-xs font-extrabold px-2 py-0.5 rounded-full ${
                     quickAnalysis.score >= 80
-                      ? "bg-green-100 text-green-700"
+                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                       : quickAnalysis.score >= 50
-                      ? "bg-amber-100 text-amber-700"
-                      : "bg-red-100 text-red-700"
+                      ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                      : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
                   }`}
                 >
                   {quickAnalysis.score} / 100
@@ -526,7 +526,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
               <button
                 type="button"
                 onClick={() => setActiveTab("seo")}
-                className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50/70 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition-colors"
+                className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-light)] py-2 text-xs font-bold text-[var(--accent)] hover:opacity-90 transition-colors cursor-pointer"
               >
                 <Globe className="h-3.5 w-3.5" /> Open Full Page SEO Panel
               </button>
@@ -538,14 +538,14 @@ export function PageEditor({ initialData }: PageEditorProps) {
       {/* TAB 2: SECTIONS & BLOCKS */}
       {activeTab === "blocks" && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs">
             <div>
-              <h2 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2">
+              <h2 className="font-display text-base font-bold text-[var(--color-heading)] flex items-center gap-2">
                 <Layout className="h-4 w-4 text-[var(--accent)]" />
                 Page Sections &amp; Block Architecture
               </h2>
-              <p className="text-xs text-[var(--foreground-muted)] mt-1">
-                Configure hero headlines, call-to-actions, 3D interactive orbs, and dynamic FAQ blocks.
+              <p className="text-xs text-[var(--color-muted-text)] mt-1">
+                Configure hero headlines, call-to-actions, visual panels, and dynamic FAQ blocks.
               </p>
             </div>
 
@@ -557,11 +557,11 @@ export function PageEditor({ initialData }: PageEditorProps) {
                     ...blocks,
                     {
                       type: "hero",
-                      title: "Latest AI News, Tools and Launches, Explained for India",
+                      title: "AI, Technology, Research and Innovation Intelligence",
                       subtitle:
-                        "Independent reporting, hands-on model evaluations, and sovereign AI compute analysis.",
+                        "Independent reporting, frontier model evaluations, and technology deep dives.",
                       settings: {
-                        badge: "India's Sovereign AI & Generative Tech Hub",
+                        badge: "Kraviona AI News Editorial Hub",
                         primaryCtaText: "Explore Latest AI News",
                         primaryCtaLink: "/category/ai-news",
                         secondaryCtaText: "Compare Models",
@@ -571,7 +571,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                     },
                   ]);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-bold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--accent-light)] text-[var(--accent)] border border-[var(--accent)]/30 hover:opacity-90 text-xs font-bold transition-colors cursor-pointer"
               >
                 <Plus className="h-3 w-3" /> Add Hero
               </button>
@@ -591,7 +591,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                     },
                   ]);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--color-secondary-surface)] text-[var(--color-heading)] hover:bg-[var(--border)] text-xs font-bold transition-colors cursor-pointer"
               >
                 <HelpCircle className="h-3 w-3" /> Add FAQ Block
               </button>
@@ -608,7 +608,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                     },
                   ]);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--color-secondary-surface)] text-[var(--color-heading)] hover:bg-[var(--border)] text-xs font-bold transition-colors cursor-pointer"
               >
                 <Plus className="h-3 w-3" /> Add Text Block
               </button>
@@ -620,13 +620,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
             {blocks.map((block: any, bIdx: number) => (
               <div
                 key={bIdx}
-                className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-2xs space-y-4"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-4"
               >
                 {/* Block Header */}
                 <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-slate-400">#{bIdx + 1}</span>
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700">
+                    <span className="text-[10px] font-bold text-[var(--color-muted-text)]">#{bIdx + 1}</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[var(--accent-light)] text-[var(--accent)]">
                       {block.type} Block
                     </span>
                   </div>
@@ -636,7 +636,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                     onClick={() => {
                       setBlocks(blocks.filter((_: any, i: number) => i !== bIdx));
                     }}
-                    className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
                     title="Remove Block"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -648,7 +648,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                           Indicator Badge Text
                         </label>
                         <input
@@ -660,13 +660,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
                             updated[bIdx].settings.badge = e.target.value;
                             setBlocks(updated);
                           }}
-                          placeholder="e.g. India's Sovereign AI & Generative Tech Hub"
-                          className="w-full rounded-xl border border-[var(--border)] bg-[var(--background-secondary)] p-2.5 text-xs font-semibold text-[var(--foreground)]"
+                          placeholder="e.g. Kraviona AI News Editorial Hub"
+                          className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] p-2.5 text-xs font-semibold text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                         />
                       </div>
 
                       <div className="flex items-center sm:pt-6">
-                        <label className="flex items-center gap-2 text-xs font-semibold text-[var(--foreground)] cursor-pointer">
+                        <label className="flex items-center gap-2 text-xs font-semibold text-[var(--color-heading)] cursor-pointer">
                           <input
                             type="checkbox"
                             checked={block.settings?.showOrb !== false}
@@ -676,15 +676,15 @@ export function PageEditor({ initialData }: PageEditorProps) {
                               updated[bIdx].settings.showOrb = e.target.checked;
                               setBlocks(updated);
                             }}
-                            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            className="rounded accent-[var(--accent)]"
                           />
-                          <span>Render 3D Neural Glass Orb Scene</span>
+                          <span>Show Editorial Hero Accent Panel</span>
                         </label>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                         Hero H1 Headline
                       </label>
                       <input
@@ -695,13 +695,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
                           updated[bIdx].title = e.target.value;
                           setBlocks(updated);
                         }}
-                        placeholder="e.g. Latest AI News, Tools and Launches, Explained for India"
-                        className="w-full rounded-xl border border-[var(--border)] bg-white p-3 text-sm font-bold text-[var(--foreground)]"
+                        placeholder="e.g. AI, Technology, Research and Innovation Intelligence"
+                        className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] p-3 text-sm font-bold text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                         Hero 2-Line Subtitle / Description
                       </label>
                       <textarea
@@ -712,13 +712,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
                           updated[bIdx].subtitle = e.target.value;
                           setBlocks(updated);
                         }}
-                        className="w-full rounded-xl border border-[var(--border)] bg-white p-2.5 text-xs text-[var(--foreground-secondary)]"
+                        className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] p-2.5 text-xs text-[var(--color-body-text)] outline-none focus:border-[var(--accent)]"
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[var(--border)]">
                       <div className="space-y-2">
-                        <label className="block text-xs font-bold text-slate-700">
+                        <label className="block text-xs font-bold text-[var(--color-heading)]">
                           Primary CTA (Button)
                         </label>
                         <input
@@ -731,7 +731,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                             updated[bIdx].settings.primaryCtaText = e.target.value;
                             setBlocks(updated);
                           }}
-                          className="w-full rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-semibold"
+                          className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-1.5 text-xs font-semibold"
                         />
                         <input
                           type="text"
@@ -743,12 +743,12 @@ export function PageEditor({ initialData }: PageEditorProps) {
                             updated[bIdx].settings.primaryCtaLink = e.target.value;
                             setBlocks(updated);
                           }}
-                          className="w-full rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-mono text-slate-600"
+                          className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-1.5 text-xs font-mono text-[var(--color-body-text)]"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-xs font-bold text-slate-700">
+                        <label className="block text-xs font-bold text-[var(--color-heading)]">
                           Secondary CTA (Button)
                         </label>
                         <input
@@ -761,7 +761,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                             updated[bIdx].settings.secondaryCtaText = e.target.value;
                             setBlocks(updated);
                           }}
-                          className="w-full rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-semibold"
+                          className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-3 py-1.5 text-xs font-semibold"
                         />
                         <input
                           type="text"
@@ -773,7 +773,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                             updated[bIdx].settings.secondaryCtaLink = e.target.value;
                             setBlocks(updated);
                           }}
-                          className="w-full rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-mono text-slate-600"
+                          className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-1.5 text-xs font-mono text-[var(--color-body-text)]"
                         />
                       </div>
                     </div>
@@ -785,7 +785,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                           FAQ Section Title
                         </label>
                         <input
@@ -797,12 +797,12 @@ export function PageEditor({ initialData }: PageEditorProps) {
                             setBlocks(updated);
                           }}
                           placeholder="Frequently Asked Questions"
-                          className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs font-bold"
+                          className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs font-bold"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                           FAQ Subtitle
                         </label>
                         <input
@@ -814,14 +814,14 @@ export function PageEditor({ initialData }: PageEditorProps) {
                             setBlocks(updated);
                           }}
                           placeholder="Common questions and answers"
-                          className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs"
+                          className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-3 pt-2">
                       <div className="flex items-center justify-between">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                        <label className="text-xs font-bold uppercase tracking-wider text-[var(--color-muted-text)]">
                           FAQ Items ({(block.settings?.items || []).length})
                         </label>
                         <button
@@ -836,7 +836,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                             });
                             setBlocks(updated);
                           }}
-                          className="text-[11px] font-bold text-indigo-600 hover:underline inline-flex items-center gap-1"
+                          className="text-[11px] font-bold text-[var(--accent)] hover:underline inline-flex items-center gap-1 cursor-pointer"
                         >
                           <Plus className="h-3 w-3" /> Add FAQ Item
                         </button>
@@ -845,7 +845,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                       {(block.settings?.items || []).map((faq: any, fIdx: number) => (
                         <div
                           key={fIdx}
-                          className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-2"
+                          className="p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/40 space-y-2"
                         >
                           <div className="flex items-center justify-between gap-2">
                             <input
@@ -857,7 +857,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                 setBlocks(updated);
                               }}
                               placeholder="Question text"
-                              className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900"
+                              className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] px-2.5 py-1.5 text-xs font-bold text-[var(--color-heading)]"
                             />
                             <button
                               type="button"
@@ -868,7 +868,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                                 ].settings.items.filter((_: any, i: number) => i !== fIdx);
                                 setBlocks(updated);
                               }}
-                              className="text-slate-400 hover:text-rose-500 p-1"
+                              className="text-[var(--color-muted-text)] hover:text-rose-500 p-1 cursor-pointer"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
@@ -882,7 +882,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                               setBlocks(updated);
                             }}
                             placeholder="Answer explanation"
-                            className="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-xs text-slate-700"
+                            className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] p-2.5 text-xs text-[var(--color-body-text)]"
                           />
                         </div>
                       ))}
@@ -894,7 +894,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                 {block.type === "text" && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                         Section Title
                       </label>
                       <input
@@ -905,12 +905,12 @@ export function PageEditor({ initialData }: PageEditorProps) {
                           updated[bIdx].title = e.target.value;
                           setBlocks(updated);
                         }}
-                        className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs font-bold"
+                        className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs font-bold"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                         Content (HTML or Markdown)
                       </label>
                       <textarea
@@ -921,7 +921,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
                           updated[bIdx].content = e.target.value;
                           setBlocks(updated);
                         }}
-                        className="w-full rounded-xl border border-[var(--border)] p-3 text-xs font-mono text-[var(--foreground)]"
+                        className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] p-3 text-xs font-mono text-[var(--color-heading)]"
                       />
                     </div>
                   </div>
@@ -930,7 +930,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
             ))}
 
             {blocks.length === 0 && (
-              <div className="rounded-3xl border border-dashed border-[var(--border)] p-12 text-center text-xs text-[var(--foreground-muted)] space-y-2">
+              <div className="rounded-2xl border border-dashed border-[var(--border)] p-12 text-center text-xs text-[var(--color-muted-text)] space-y-2">
                 <p>No customized layout blocks configured for this page.</p>
                 <p>Click &ldquo;Add Hero&rdquo; or &ldquo;Add FAQ Block&rdquo; above to structure dynamic sections.</p>
               </div>
@@ -955,13 +955,13 @@ export function PageEditor({ initialData }: PageEditorProps) {
 
       {/* TAB 3: LIVE PREVIEW */}
       {activeTab === "preview" && (
-        <div className="rounded-3xl border border-[var(--border)] bg-white p-8 shadow-xs space-y-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-8 shadow-xs space-y-6">
           <div className="max-w-3xl mx-auto space-y-4">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--foreground)]">
+            <h1 className="font-editorial text-3xl sm:text-4xl font-bold text-[var(--color-heading)]">
               {title || "Untitled Page"}
             </h1>
             {excerpt && (
-              <p className="text-base text-[var(--foreground-muted)]">{excerpt}</p>
+              <p className="text-base text-[var(--color-muted-text)]">{excerpt}</p>
             )}
             <div
               className="prose-article mt-8"

@@ -25,7 +25,7 @@ export function ShareButtons({ title, slug }: { title: string; slug: string }) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--foreground-muted)] mr-2">
+      <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mr-2">
         <Share2 className="h-3.5 w-3.5" /> Share
       </span>
 
@@ -33,7 +33,7 @@ export function ShareButtons({ title, slug }: { title: string; slug: string }) {
         href={tweetUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-white text-[var(--foreground-muted)] hover:text-sky-500 hover:border-sky-400 transition-all shadow-sm"
+        className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all shadow-xs"
         aria-label="Share on X"
       >
         <TwitterIcon className="h-4 w-4" />
@@ -43,7 +43,7 @@ export function ShareButtons({ title, slug }: { title: string; slug: string }) {
         href={linkedinUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-white text-[var(--foreground-muted)] hover:text-blue-600 hover:border-blue-400 transition-all shadow-sm"
+        className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all shadow-xs"
         aria-label="Share on LinkedIn"
       >
         <LinkedinIcon className="h-4 w-4" />
@@ -51,13 +51,13 @@ export function ShareButtons({ title, slug }: { title: string; slug: string }) {
 
       <button
         onClick={copyToClipboard}
-        className="flex h-8 items-center gap-1.5 px-2.5 rounded-lg border border-[var(--border)] bg-white text-xs font-medium text-[var(--foreground-muted)] hover:text-[var(--foreground)] hover:border-[var(--accent)] transition-all shadow-sm"
+        className="flex h-8 items-center gap-1.5 px-2.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-medium text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:border-[var(--accent)] transition-all shadow-xs cursor-pointer"
         aria-label="Copy article link"
       >
         {copied ? (
           <>
-            <Check className="h-3.5 w-3.5 text-green-600" />
-            <span className="text-green-600">Copied!</span>
+            <Check className="h-3.5 w-3.5 text-emerald-500" />
+            <span className="text-emerald-500">Copied!</span>
           </>
         ) : (
           <>

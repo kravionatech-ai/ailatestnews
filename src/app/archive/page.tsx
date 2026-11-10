@@ -23,8 +23,8 @@ export async function generateMetadata(): Promise<Metadata> {
     entityType: "page",
     entitySeo: page?.seo,
     path: "/archive",
-    title: page?.seo?.metaTitle || page?.title || "Publication Archive | AI Latest News",
-    excerpt: page?.seo?.metaDescription || page?.excerpt || "Explore our chronological publication timeline of AI dispatches, foundation model launches, and Indian AI benchmarks.",
+    title: page?.seo?.metaTitle || page?.title || "Publication Archive | Kraviona AI News",
+    excerpt: page?.seo?.metaDescription || page?.excerpt || "Explore the Kraviona AI News chronological archive of artificial intelligence dispatches, model benchmarks, and technology reporting.",
   });
 }
 
@@ -66,63 +66,65 @@ export default async function ArchivePage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-          <ArchiveIcon className="h-3.5 w-3.5 text-slate-900" />
-          <span>Chronological Index // AI Dispatches</span>
-        </div>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="border-b-2 border-[var(--color-heading)] pb-5 mb-10">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-2">
+            <ArchiveIcon className="h-3.5 w-3.5" />
+            <span>Chronological Index // AI Dispatches</span>
+          </div>
 
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
-          Publication Archive
-        </h1>
-        <p className="mt-2 text-sm text-slate-600 mb-12">
-          A historical index of all published engineering articles, guides, and architectural notes.
-        </p>
+          <h1 className="font-editorial text-3xl sm:text-5xl font-bold tracking-tight text-[var(--color-heading)]">
+            Publication Archive
+          </h1>
+          <p className="mt-2.5 text-sm text-[var(--color-muted-text)]">
+            A complete chronological index of published reporting, model analyses, and technology dispatches.
+          </p>
+        </div>
 
         <div className="space-y-12">
           {Object.entries(grouped).map(([year, months]) => (
-            <div key={year} className="relative pl-6 border-l-2 border-slate-900">
-              <span className="absolute -left-[17px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-xs font-mono font-bold text-white border-2 border-white">
+            <div key={year} className="relative pl-6 border-l-2 border-[var(--color-heading)]">
+              <span className="absolute -left-[17px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-mono font-bold text-white border-2 border-[var(--color-main-background)]">
                 {year.slice(-2)}
               </span>
 
-              <h2 className="text-2xl font-black text-slate-900 mb-6 font-mono">
+              <h2 className="font-display text-2xl font-extrabold text-[var(--color-heading)] mb-6 font-mono">
                 {year}
               </h2>
 
               <div className="space-y-8">
                 {Object.entries(months).map(([month, monthPosts]) => (
                   <div key={month} className="space-y-3">
-                    <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--color-muted-text)]">
                       {month}
                     </h3>
-                    <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
+                    <div className="divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] overflow-hidden shadow-xs">
                       {monthPosts.map((post) => (
                         <div
                           key={post._id}
-                          className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-slate-50 transition-colors gap-2"
+                          className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-[var(--color-secondary-surface)] transition-colors gap-2"
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             {post.category && (
-                              <span className="font-mono rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-700 shrink-0">
+                              <span className="font-mono rounded-md bg-[var(--color-secondary-surface)] border border-[var(--border)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-heading)] shrink-0">
                                 {post.category.name}
                               </span>
                             )}
                             <Link
                               href={`/blog/${post.slug}`}
-                              className="text-xs sm:text-sm font-bold text-slate-900 hover:text-indigo-600 transition-colors truncate"
+                              className="text-xs sm:text-sm font-bold text-[var(--color-heading)] hover:text-[var(--accent)] transition-colors truncate"
                             >
                               {post.title}
                             </Link>
                           </div>
 
-                          <div className="flex items-center gap-3 text-xs text-slate-500 sm:shrink-0 font-mono text-[11px]">
+                          <div className="flex items-center gap-3 text-[11px] text-[var(--color-muted-text)] sm:shrink-0 font-mono">
                             <span className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
                               {formatDate(post.publishedAt)}
                             </span>
                             {post.readingTime && (
-                              <span>{post.readingTime}m read</span>
+                              <span>{post.readingTime} min read</span>
                             )}
                           </div>
                         </div>
@@ -135,7 +137,7 @@ export default async function ArchivePage() {
           ))}
 
           {posts.length === 0 && (
-            <div className="p-12 text-center text-sm text-[var(--foreground-muted)]">
+            <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--color-card-background)] p-12 text-center text-sm text-[var(--color-muted-text)]">
               No articles recorded in the archive yet.
             </div>
           )}

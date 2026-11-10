@@ -111,7 +111,7 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `ailatestnews-seo-export-${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `kraviona-ai-news-seo-export-${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -120,12 +120,12 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
   const dirtyCount = Object.keys(editingRows).length;
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white shadow-2xs overflow-hidden">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-2xs overflow-hidden">
       {/* Unsaved changes banner */}
       {dirtyCount > 0 && (
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-xs text-amber-900 flex items-center justify-between">
+        <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2.5 text-xs text-amber-800 dark:text-amber-300 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>
               You have <strong>{dirtyCount}</strong> unsaved item{dirtyCount > 1 ? "s" : ""}. Click &ldquo;Save&rdquo; on each row to persist changes to MongoDB.
             </span>
@@ -133,7 +133,7 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
           <button
             type="button"
             onClick={() => setEditingRows({})}
-            className="text-[11px] font-bold text-amber-800 underline hover:text-amber-950 cursor-pointer"
+            className="text-[11px] font-bold underline hover:opacity-80 cursor-pointer"
           >
             Discard Edits
           </button>
@@ -141,27 +141,27 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
       )}
 
       {/* Table Toolbar */}
-      <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-slate-50/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-[var(--color-secondary-surface)] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Search */}
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[var(--foreground-muted)]" />
+          <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[var(--color-muted-text)]" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search titles or slugs..."
-            className="w-full rounded-xl border border-[var(--border)] bg-white pl-9 pr-3 py-1.5 text-xs outline-none focus:border-[var(--accent)]"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] pl-9 pr-3 py-1.5 text-xs outline-none focus:border-[var(--accent)]"
           />
         </div>
 
         {/* Filters and Actions */}
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
-            <Filter className="h-3.5 w-3.5 text-[var(--foreground-muted)]" />
+            <Filter className="h-3.5 w-3.5 text-[var(--color-muted-text)]" />
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as typeof filter)}
-              className="rounded-xl border border-[var(--border)] bg-white px-2.5 py-1.5 text-xs outline-none focus:border-[var(--accent)]"
+              className="rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] px-2.5 py-1.5 text-xs outline-none focus:border-[var(--accent)]"
             >
               <option value="all">All Content</option>
               <option value="missing_title">Missing Meta Title</option>
@@ -174,7 +174,7 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
           <button
             type="button"
             onClick={handleExportCsv}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] hover:bg-slate-50 shadow-3xs"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] px-3 py-1.5 text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-main-background)] shadow-3xs cursor-pointer"
           >
             <Download className="h-3.5 w-3.5" /> Export CSV
           </button>
@@ -184,7 +184,7 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50 border-b border-[var(--border)] font-semibold text-[var(--foreground-muted)] uppercase tracking-wider text-[10px]">
+          <thead className="bg-[var(--color-secondary-surface)] border-b border-[var(--border)] font-mono font-semibold text-[var(--color-muted-text)] uppercase tracking-wider text-[10px]">
             <tr>
               <th className="py-3 px-4 w-44">Content / Slug</th>
               <th className="py-3 px-4 w-48">Focus Keyword</th>
@@ -203,16 +203,16 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
               const titlePx = estimateTitlePixelWidth(titleValue);
 
               return (
-                <tr key={item._id} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={item._id} className="hover:bg-[var(--color-secondary-surface)]/60 transition-colors">
                   {/* Title & Slug */}
                   <td className="py-3 px-4">
-                    <span className="font-bold text-[var(--foreground)] block truncate max-w-[170px]">
+                    <span className="font-bold text-[var(--color-heading)] block truncate max-w-[170px]">
                       {item.title}
                     </span>
-                    <span className="font-mono text-[10px] text-[var(--foreground-muted)] block truncate max-w-[170px]">
+                    <span className="font-mono text-[10px] text-[var(--color-muted-text)] block truncate max-w-[170px]">
                       /{item.slug}
                     </span>
-                    <span className="inline-block mt-0.5 text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-slate-100 text-slate-600">
+                    <span className="inline-block mt-0.5 text-[9px] uppercase font-bold px-1.5 py-0.2 rounded bg-[var(--color-secondary-surface)] text-[var(--color-muted-text)]">
                       {item.type}
                     </span>
                   </td>
@@ -224,7 +224,7 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
                       value={currentSeo.focusKeyword || ""}
                       onChange={(e) => handleFieldChange(item._id, "focusKeyword", e.target.value)}
                       placeholder="Add keyword..."
-                      className="w-full rounded-lg border border-[var(--border)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--accent)]"
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-2 py-1 text-xs outline-none focus:border-[var(--accent)]"
                     />
                   </td>
 
@@ -235,11 +235,11 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
                       value={titleValue}
                       onChange={(e) => handleFieldChange(item._id, "metaTitle", e.target.value)}
                       placeholder={item.title}
-                      className="w-full rounded-lg border border-[var(--border)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--accent)]"
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-2 py-1 text-xs outline-none focus:border-[var(--accent)]"
                     />
-                    <div className="flex items-center justify-between text-[10px] text-[var(--foreground-muted)] mt-1">
+                    <div className="flex items-center justify-between text-[10px] text-[var(--color-muted-text)] mt-1 font-mono">
                       <span>{titleValue.length}/60 chars</span>
-                      <span className={titlePx > 580 ? "text-rose-600 font-bold" : ""}>
+                      <span className={titlePx > 580 ? "text-rose-600 dark:text-rose-400 font-bold" : ""}>
                         ~{titlePx}px
                       </span>
                     </div>
@@ -252,9 +252,9 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
                       value={descValue}
                       onChange={(e) => handleFieldChange(item._id, "metaDescription", e.target.value)}
                       placeholder="Write meta description..."
-                      className="w-full rounded-lg border border-[var(--border)] bg-white px-2 py-1 text-xs outline-none focus:border-[var(--accent)]"
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] px-2 py-1 text-xs outline-none focus:border-[var(--accent)]"
                     />
-                    <div className="text-[10px] text-[var(--foreground-muted)] text-right mt-0.5">
+                    <div className="text-[10px] text-[var(--color-muted-text)] text-right mt-0.5 font-mono">
                       {descValue.length}/160 chars
                     </div>
                   </td>
@@ -265,7 +265,7 @@ export function BulkSeoTable({ items, onSaveItem }: BulkSeoTableProps) {
                       type="button"
                       onClick={() => handleSave(item._id)}
                       disabled={!isDirty || isSaving}
-                      className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white px-3 py-1.5 font-bold shadow-3xs cursor-pointer"
+                      className="inline-flex items-center gap-1 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-40 text-white px-3 py-1.5 font-bold shadow-3xs cursor-pointer"
                     >
                       {isSaving ? (
                         <Loader2 className="h-3 w-3 animate-spin" />

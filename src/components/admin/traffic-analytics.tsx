@@ -290,9 +290,9 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
 
   // Reading depth values
   const readingDepthMilestones = [
-    { label: "25% Read", value: summary.readingDepth.quarter, color: "bg-sky-400" },
-    { label: "50% Read", value: summary.readingDepth.half, color: "bg-indigo-500" },
-    { label: "75% Read", value: summary.readingDepth.threeQuarter, color: "bg-violet-600" },
+    { label: "25% Read", value: summary.readingDepth.quarter, color: "bg-sky-500" },
+    { label: "50% Read", value: summary.readingDepth.half, color: "bg-[#263B50]" },
+    { label: "75% Read", value: summary.readingDepth.threeQuarter, color: "bg-amber-500" },
     { label: "100% Finished", value: summary.readingDepth.full, color: "bg-emerald-500" },
   ];
   const maxDepthVal = Math.max(1, summary.readingDepth.quarter, summary.totalViews);
@@ -304,14 +304,14 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
         <div>
           <div className="flex items-center gap-2 text-[var(--accent)]">
             <Activity className="h-4 w-4" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.16em]">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em]">
               Real Telemetry Engine
             </span>
           </div>
-          <h2 className="mt-1 text-xl font-extrabold text-[var(--foreground)] tracking-tight">
+          <h2 className="mt-1 font-display text-xl font-extrabold text-[var(--color-heading)] tracking-tight">
             Traffic &amp; Reader Engagement
           </h2>
-          <p className="mt-0.5 text-xs text-[var(--foreground-muted)]">
+          <p className="mt-0.5 text-xs text-[var(--color-muted-text)]">
             Privacy-safe article analytics aggregated at UTC day-level granularity.
           </p>
         </div>
@@ -319,7 +319,7 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Date range toggle group */}
           <div
-            className="inline-flex rounded-xl border border-[var(--border)] bg-white p-1 shadow-3xs"
+            className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-1 shadow-3xs"
             role="group"
             aria-label="Analytics date range filter"
           >
@@ -334,7 +334,7 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
                   range === days
                     ? "bg-[var(--accent)] text-white shadow-xs"
-                    : "text-[var(--foreground-muted)] hover:bg-slate-50 hover:text-[var(--foreground)]"
+                    : "text-[var(--color-muted-text)] hover:bg-[var(--color-secondary-surface)] hover:text-[var(--color-heading)]"
                 }`}
               >
                 {days} Days
@@ -347,9 +347,9 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
             onClick={handleRefresh}
             disabled={isRefreshing}
             aria-label="Refresh telemetry data"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] hover:bg-slate-50 shadow-3xs transition-all cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] px-3 py-1.5 text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] shadow-3xs transition-all cursor-pointer disabled:opacity-60"
           >
-            <RefreshCw className={`h-3.5 w-3.5 text-slate-500 ${isRefreshing ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-3.5 w-3.5 text-[var(--color-muted-text)] ${isRefreshing ? "animate-spin" : ""}`} />
             <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
@@ -357,25 +357,25 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
 
       {/* ── Error Banner (If DB or Telemetry Failed) ── */}
       {clientData.error && (
-        <div className="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800">
-          <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+        <div className="flex items-center gap-3 rounded-xl border border-rose-500/30 bg-rose-500/15 p-4 text-xs font-semibold text-rose-700 dark:text-rose-400">
+          <AlertCircle className="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400" />
           <span>Telemetry Notice: {clientData.error}. Historical totals remain safe.</span>
         </div>
       )}
 
       {/* ── Lifetime vs Period Clarity Banner ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50/70 via-sky-50/50 to-white p-4 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--color-secondary-surface)] p-4 text-xs">
         <div className="flex items-center gap-2.5">
-          <Info className="h-4 w-4 text-indigo-600 shrink-0" />
-          <span className="text-slate-700 font-medium">
-            <strong className="font-bold text-slate-900">Telemetry Distinction:</strong> Lifetime Article Views (
-            <span className="font-semibold text-indigo-700">{formatNumber(clientData.lifetimeViews)}</span>
+          <Info className="h-4 w-4 text-[var(--accent)] shrink-0" />
+          <span className="text-[var(--color-body-text)] font-medium">
+            <strong className="font-bold text-[var(--color-heading)]">Telemetry Distinction:</strong> Lifetime Article Views (
+            <span className="font-mono font-bold text-[var(--accent)]">{formatNumber(clientData.lifetimeViews)}</span>
             ) are preserved lifetime counters on published posts. Below telemetry shows verified events for the selected{" "}
-            <span className="font-semibold text-slate-900">{range}-day window</span>.
+            <span className="font-semibold text-[var(--color-heading)]">{range}-day window</span>.
           </span>
         </div>
-        <div className="inline-flex items-center gap-2 text-[11px] font-semibold text-slate-500">
-          <Calendar className="h-3.5 w-3.5 text-slate-400" />
+        <div className="inline-flex items-center gap-2 text-[11px] font-mono font-semibold text-[var(--color-muted-text)]">
+          <Calendar className="h-3.5 w-3.5" />
           <span>
             {formatUtcDate(series[0]?.date || "")} – {formatUtcDate(series[series.length - 1]?.date || "")} (UTC)
           </span>
@@ -384,81 +384,81 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
 
       {/* ── Selected Period Telemetry Summary Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-3xs">
-          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--foreground-muted)]">
-            <MousePointer2 className="h-3.5 w-3.5 text-indigo-500" />
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-4 shadow-3xs">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-muted-text)]">
+            <MousePointer2 className="h-3.5 w-3.5 text-[var(--accent)]" />
             Period Page Views
           </span>
-          <p className="mt-1 text-2xl font-black text-[var(--foreground)] tracking-tight">
+          <p className="mt-1 font-display text-2xl font-black text-[var(--color-heading)] tracking-tight">
             {formatNumber(summary.totalViews)}
           </p>
-          <span className="text-[10px] text-[var(--foreground-muted)]">
+          <span className="text-[10px] text-[var(--color-muted-text)]">
             {range}-day verified loads
           </span>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-3xs">
-          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--foreground-muted)]">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-4 shadow-3xs">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-muted-text)]">
             <Users className="h-3.5 w-3.5 text-sky-500" />
             Unique Readers
           </span>
-          <p className="mt-2 text-2xl font-black text-[var(--foreground)] tracking-tight">
+          <p className="mt-2 font-display text-2xl font-black text-[var(--color-heading)] tracking-tight">
             {formatNumber(summary.uniqueVisitors)}
           </p>
-          <span className="text-[10px] text-[var(--foreground-muted)]">
+          <span className="text-[10px] text-[var(--color-muted-text)]">
             Daily salted deduplication
           </span>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-3xs">
-          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--foreground-muted)]">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-4 shadow-3xs">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-muted-text)]">
             <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
             Daily Average
           </span>
-          <p className="mt-2 text-2xl font-black text-[var(--foreground)] tracking-tight">
+          <p className="mt-2 font-display text-2xl font-black text-[var(--color-heading)] tracking-tight">
             {summary.dailyAvgViews}
           </p>
-          <span className="text-[10px] text-[var(--foreground-muted)]">
+          <span className="text-[10px] text-[var(--color-muted-text)]">
             Views per day in range
           </span>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-3xs">
-          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--foreground-muted)]">
-            <Activity className="h-3.5 w-3.5 text-violet-500" />
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-4 shadow-3xs">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold text-[var(--color-muted-text)]">
+            <Activity className="h-3.5 w-3.5 text-amber-500" />
             Peak Day Traffic
           </span>
-          <p className="mt-2 text-2xl font-black text-[var(--foreground)] tracking-tight">
+          <p className="mt-2 font-display text-2xl font-black text-[var(--color-heading)] tracking-tight">
             {summary.peakDay.views > 0 ? formatNumber(summary.peakDay.views) : "0"}
           </p>
-          <span className="text-[10px] text-[var(--foreground-muted)] truncate block">
+          <span className="text-[10px] text-[var(--color-muted-text)] truncate block">
             {summary.peakDay.views > 0 ? formatUtcDate(summary.peakDay.date) : "No traffic peak yet"}
           </span>
         </div>
       </div>
 
       {/* ── Interactive Daily Chart ── */}
-      <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-2xs">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-sm font-bold text-[var(--foreground)]">
+            <h3 className="font-display text-sm font-bold text-[var(--color-heading)]">
               Daily Traffic Trajectory ({range} Days)
             </h3>
-            <p className="text-[11px] text-[var(--foreground-muted)] mt-0.5">
+            <p className="text-[11px] text-[var(--color-muted-text)] mt-0.5">
               Hover, tap, or scrub with arrow keys to inspect daily views and unique readers.
             </p>
           </div>
 
           {/* Active tooltip badge for quick glance */}
           {activeItem && (
-            <div className="flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50/80 px-3 py-1.5 text-xs">
-              <span className="font-bold text-slate-800">
+            <div className="flex items-center gap-3 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-light)] px-3 py-1.5 text-xs">
+              <span className="font-bold text-[var(--color-heading)]">
                 {formatUtcDate(activeItem.date, { weekday: "short", day: "numeric", month: "short" })}:
               </span>
-              <span className="font-bold text-indigo-700">
+              <span className="font-mono font-bold text-[var(--accent)]">
                 {activeItem.views} {activeItem.views === 1 ? "view" : "views"}
               </span>
-              <span className="text-sky-700">
+              <span className="text-[var(--color-muted-text)] font-mono">
                 ({activeItem.visitors} unique)
               </span>
             </div>
@@ -480,9 +480,9 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
             >
               <defs>
                 <linearGradient id="chartAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6366F1" stopOpacity="0.28" />
-                  <stop offset="70%" stopColor="#818CF8" stopOpacity="0.08" />
-                  <stop offset="100%" stopColor="#6366F1" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#D94F35" stopOpacity="0.28" />
+                  <stop offset="70%" stopColor="#E05A42" stopOpacity="0.08" />
+                  <stop offset="100%" stopColor="#D94F35" stopOpacity="0" />
                 </linearGradient>
               </defs>
 
@@ -497,14 +497,14 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                       x2={width - right}
                       y1={tickY}
                       y2={tickY}
-                      stroke="#F1F5F9"
+                      stroke="var(--border)"
                       strokeDasharray="4 4"
                     />
                     <text
                       x={left - 8}
                       y={tickY + 3.5}
                       textAnchor="end"
-                      fill="#94A3B8"
+                      fill="var(--color-muted-text)"
                       fontSize="10"
                       fontFamily="inherit"
                     >
@@ -521,7 +521,7 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
               <path
                 d={linePath}
                 fill="none"
-                stroke="#4F46E5"
+                stroke="#D94F35"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -542,7 +542,7 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                       x={getX(itemIndex)}
                       y={height - 8}
                       textAnchor="middle"
-                      fill="#94A3B8"
+                      fill="var(--color-muted-text)"
                       fontSize="10"
                       fontFamily="inherit"
                     >
@@ -564,8 +564,8 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                     cx={cx}
                     cy={cy}
                     r={isHovered ? 6 : 3.5}
-                    fill={isHovered ? "#38BDF8" : "#4F46E5"}
-                    stroke="#FFFFFF"
+                    fill={isHovered ? "#263B50" : "#D94F35"}
+                    stroke="var(--color-card-background)"
                     strokeWidth={isHovered ? 2.5 : 1.5}
                     className="transition-all duration-150"
                   />
@@ -581,7 +581,7 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                     x2={getX(hoverIndex)}
                     y1={top}
                     y2={top + plotHeight}
-                    stroke="#818CF8"
+                    stroke="#E05A42"
                     strokeWidth="1.5"
                     strokeDasharray="3 3"
                   />
@@ -590,7 +590,7 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                     cx={getX(hoverIndex)}
                     cy={getY(activeItem.views)}
                     r="8"
-                    fill="#6366F1"
+                    fill="#D94F35"
                     fillOpacity="0.25"
                   />
                 </g>
@@ -599,12 +599,12 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
           </div>
         ) : (
           /* Honest Empty State for Zero Historical Telemetry */
-          <div className="flex h-[220px] flex-col items-center justify-center rounded-xl bg-slate-50/70 p-6 text-center border border-dashed border-slate-200">
-            <Activity className="h-8 w-8 text-slate-300 mb-2" />
-            <p className="text-sm font-bold text-slate-700">
+          <div className="flex h-[220px] flex-col items-center justify-center rounded-xl bg-[var(--color-secondary-surface)]/50 p-6 text-center border border-dashed border-[var(--border)]">
+            <Activity className="h-8 w-8 text-[var(--color-muted-text)]/50 mb-2" />
+            <p className="text-sm font-bold text-[var(--color-heading)]">
               No daily traffic telemetry recorded for this {range}-day period
             </p>
-            <p className="mt-1 max-w-md text-xs text-slate-500 leading-relaxed">
+            <p className="mt-1 max-w-md text-xs text-[var(--color-muted-text)] leading-relaxed">
               New article visits will automatically track page views, unique visitors, and reading depth.
               Lifetime post counts ({formatNumber(clientData.lifetimeViews)}) remain intact and are not
               redistributed across fake dates.
@@ -616,12 +616,12 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
       {/* ── Detailed Breakdown Grids (Geo, Sources, Devices, Reading Depth) ── */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* 1. Traffic Sources */}
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-2xs">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[var(--foreground)]">
+            <h3 className="font-display text-sm font-bold text-[var(--color-heading)]">
               Traffic Sources &amp; Referrers
             </h3>
-            <span className="text-[10px] font-semibold text-slate-400">
+            <span className="text-[10px] font-mono font-semibold text-[var(--color-muted-text)]">
               {range}-day breakdown
             </span>
           </div>
@@ -634,14 +634,14 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                 return (
                   <div key={item.name}>
                     <div className="mb-1 flex justify-between gap-2 text-xs">
-                      <span className="font-semibold text-slate-800 truncate">{item.name}</span>
-                      <span className="text-slate-500 font-mono text-[11px]">
+                      <span className="font-semibold text-[var(--color-heading)] truncate">{item.name}</span>
+                      <span className="text-[var(--color-muted-text)] font-mono text-[11px]">
                         {formatNumber(item.views)} ({pct}%)
                       </span>
                     </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-secondary-surface)]">
                       <div
-                        className="h-full rounded-full bg-indigo-500 transition-all duration-300"
+                        className="h-full rounded-full bg-[var(--accent)] transition-all duration-300"
                         style={{ width: `${Math.max(4, (item.views / maxSource) * 100)}%` }}
                       />
                     </div>
@@ -658,13 +658,13 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
         </div>
 
         {/* 2. Top Countries */}
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-2xs">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Globe2 className="h-4 w-4 text-sky-500" />
-              <h3 className="text-sm font-bold text-[var(--foreground)]">Top Geographies</h3>
+              <h3 className="font-display text-sm font-bold text-[var(--color-heading)]">Top Geographies</h3>
             </div>
-            <span className="text-[10px] font-semibold text-slate-400">
+            <span className="text-[10px] font-mono font-semibold text-[var(--color-muted-text)]">
               {range}-day breakdown
             </span>
           </div>
@@ -677,12 +677,12 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                 return (
                   <div key={item.name}>
                     <div className="mb-1 flex justify-between gap-2 text-xs">
-                      <span className="font-semibold text-slate-800">{item.name}</span>
-                      <span className="text-slate-500 font-mono text-[11px]">
+                      <span className="font-semibold text-[var(--color-heading)]">{item.name}</span>
+                      <span className="text-[var(--color-muted-text)] font-mono text-[11px]">
                         {formatNumber(item.views)} ({pct}%)
                       </span>
                     </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-secondary-surface)]">
                       <div
                         className="h-full rounded-full bg-sky-500 transition-all duration-300"
                         style={{ width: `${Math.max(4, (item.views / maxCountry) * 100)}%` }}
@@ -701,13 +701,13 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
         </div>
 
         {/* 3. Device Breakdown */}
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-2xs">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Laptop className="h-4 w-4 text-violet-500" />
-              <h3 className="text-sm font-bold text-[var(--foreground)]">Reader Devices</h3>
+              <Laptop className="h-4 w-4 text-[#263B50] dark:text-sky-400" />
+              <h3 className="font-display text-sm font-bold text-[var(--color-heading)]">Reader Devices</h3>
             </div>
-            <span className="text-[10px] font-semibold text-slate-400">
+            <span className="text-[10px] font-mono font-semibold text-[var(--color-muted-text)]">
               {range}-day breakdown
             </span>
           </div>
@@ -720,21 +720,21 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                 return (
                   <div key={item.name}>
                     <div className="mb-1 flex items-center justify-between gap-2 text-xs">
-                      <span className="flex items-center gap-1.5 font-semibold text-slate-800">
+                      <span className="flex items-center gap-1.5 font-semibold text-[var(--color-heading)]">
                         {item.name === "Mobile" ? (
-                          <Smartphone className="h-3.5 w-3.5 text-slate-500" />
+                          <Smartphone className="h-3.5 w-3.5 text-[var(--color-muted-text)]" />
                         ) : (
-                          <Laptop className="h-3.5 w-3.5 text-slate-500" />
+                          <Laptop className="h-3.5 w-3.5 text-[var(--color-muted-text)]" />
                         )}
                         {item.name}
                       </span>
-                      <span className="text-slate-500 font-mono text-[11px]">
+                      <span className="text-[var(--color-muted-text)] font-mono text-[11px]">
                         {formatNumber(item.views)} ({pct}%)
                       </span>
                     </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-secondary-surface)]">
                       <div
-                        className="h-full rounded-full bg-violet-500 transition-all duration-300"
+                        className="h-full rounded-full bg-[#263B50] dark:bg-sky-400 transition-all duration-300"
                         style={{ width: `${Math.max(4, (item.views / maxDevice) * 100)}%` }}
                       />
                     </div>
@@ -751,13 +751,13 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
         </div>
 
         {/* 4. Article Reading Depth */}
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-2xs">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-emerald-500" />
-              <h3 className="text-sm font-bold text-[var(--foreground)]">Article Reading Depth</h3>
+              <h3 className="font-display text-sm font-bold text-[var(--color-heading)]">Article Reading Depth</h3>
             </div>
-            <span className="text-[10px] font-semibold text-slate-400">
+            <span className="text-[10px] font-mono font-semibold text-[var(--color-muted-text)]">
               {range}-day milestones
             </span>
           </div>
@@ -769,12 +769,12 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
                 return (
                   <div key={m.label}>
                     <div className="mb-1 flex justify-between gap-2 text-xs">
-                      <span className="font-semibold text-slate-800">{m.label}</span>
-                      <span className="text-slate-500 font-mono text-[11px]">
+                      <span className="font-semibold text-[var(--color-heading)]">{m.label}</span>
+                      <span className="text-[var(--color-muted-text)] font-mono text-[11px]">
                         {formatNumber(m.value)} milestones ({pct}%)
                       </span>
                     </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-secondary-surface)]">
                       <div
                         className={`h-full rounded-full ${m.color} transition-all duration-300`}
                         style={{ width: `${Math.max(4, pct)}%` }}
@@ -798,9 +798,9 @@ export function TrafficAnalytics({ data }: { data: TrafficAnalyticsPayload }) {
 
 function EmptyMetric({ title, description }: { title: string; description: string }) {
   return (
-    <div className="flex min-h-32 flex-col items-center justify-center rounded-xl bg-slate-50/70 p-4 text-center border border-dashed border-slate-200">
-      <p className="text-xs font-bold text-slate-700">{title}</p>
-      <p className="mt-1 max-w-xs text-[11px] text-slate-500 leading-normal">{description}</p>
+    <div className="flex min-h-32 flex-col items-center justify-center rounded-xl bg-[var(--color-secondary-surface)]/50 p-4 text-center border border-dashed border-[var(--border)]">
+      <p className="text-xs font-bold text-[var(--color-heading)]">{title}</p>
+      <p className="mt-1 max-w-xs text-[11px] text-[var(--color-muted-text)] leading-normal">{description}</p>
     </div>
   );
 }

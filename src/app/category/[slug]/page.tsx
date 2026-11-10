@@ -5,25 +5,30 @@ import Image from "next/image";
 import {
   Layers,
   ChevronRight,
+  ChevronLeft,
   TrendingUp,
   Calendar,
   Clock,
   Eye,
   HelpCircle,
-  Mail,
   ArrowRight,
   Tag as TagIcon,
   ShieldCheck,
 } from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
-import { PostCard } from "@/components/blog/post-card";
+import { NewsCard } from "@/components/blog/cards/news-card";
+import { KravionaNewsletter } from "@/components/home/kraviona/newsletter-banner";
 import { getCategoryBySlug, getAllCategories, getAllTags } from "@/lib/db/queries/taxonomies";
 import { getPublishedPosts } from "@/lib/db/queries/posts";
+import { getGlobalSettings } from "@/lib/db/queries/settings";
+import { resolveCategoryOrTopic } from "@/lib/categories/queries";
+import { EXPLORE_CATEGORIES_LIST, VIRTUAL_TOPIC_DESKS } from "@/lib/categories/topics";
 import { formatDate } from "@/lib/utils";
 import { buildEntityMetadata, getSiteUrl } from "@/lib/seo/fallback";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ page?: string }>;
 }
 
 export const revalidate = 300;
@@ -31,96 +36,92 @@ export const revalidate = 300;
 export async function generateStaticParams() {
   try {
     const categories = await getAllCategories();
-    return categories.map((c: { slug: string }) => ({ slug: c.slug }));
-  } catch (error) {
-    return [];
+    const dbSlugs = categories.map((c: { slug: string }) => c.slug);
+    const virtualSlugs = Object.keys(VIRTUAL_TOPIC_DESKS);
+    const merged = Array.from(new Set([...dbSlugs, ...virtualSlugs]));
+    return merged.map((slug) => ({ slug }));
+  } catch {
+    return Object.keys(VIRTUAL_TOPIC_DESKS).map((slug) => ({ slug }));
   }
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = await getCategoryBySlug(slug);
+  const dbCat = await getCategoryBySlug(slug);
+  const virtual = VIRTUAL_TOPIC_DESKS[slug];
+  const target = dbCat || virtual;
 
-  if (!category) return { title: "Category Not Found | AI Latest News" };
+  if (!target) return { title: "Category Not Found | Kraviona AI News" };
 
   return buildEntityMetadata({
     entityType: "category",
-    entitySeo: category.seo,
-    path: `/category/${category.slug}`,
-    title: `${category.name} — Latest AI News, Dispatches & Analysis`,
-    category: category.name,
-    excerpt: category.description || category.introHtml?.replace(/<[^>]+>/g, " ").slice(0, 160),
-    coverImage: category.image,
+    entitySeo: dbCat?.seo,
+    path: `/category/${slug}`,
+    title: `${target.name} — Kraviona AI News Intelligence & Reporting`,
+    category: target.name,
+    excerpt:
+      target.description ||
+      target.introHtml?.replace(/<[^>]+>/g, " ").slice(0, 160),
+    coverImage: dbCat?.image,
   });
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: CategoryPageProps) {
   const { slug } = await params;
-  const category = await getCategoryBySlug(slug);
+  const resolvedSearch = searchParams ? await searchParams : {};
+  const currentPage = Math.max(1, parseInt(resolvedSearch.page || "1", 10) || 1);
 
-  if (!category) notFound();
-
-  // Fetch category posts, trending posts, all categories for sidebar, and tags for sub-topics
-  const [{ posts }, { posts: trendingPosts }, allCategories, allTags] = await Promise.all([
-    getPublishedPosts({
-      categorySlug: slug,
-      limit: 15,
-      sort: "latest",
-    }),
-    getPublishedPosts({
-      limit: 4,
-      sort: "popular",
-    }),
+  const [resolved, trendingRes, allCategories, allTags, settings] = await Promise.all([
+    resolveCategoryOrTopic(slug, currentPage, 9),
+    getPublishedPosts({ limit: 5, sort: "popular" }),
     getAllCategories(),
     getAllTags(),
+    getGlobalSettings(),
   ]);
 
-  const siteUrl = getSiteUrl();
-  const leadPost = posts[0];
-  const secondaryPosts = posts.slice(1);
+  if (!resolved) notFound();
 
-  // Sub-topics relevant to this category (top 6 tags)
+  const { category, posts, pagination } = resolved;
+  const trendingPosts = trendingRes.posts || [];
+  const siteUrl = getSiteUrl();
+
+  const leadPost = currentPage === 1 ? posts[0] : null;
+  const gridPosts = currentPage === 1 ? posts.slice(1) : posts;
   const topicTags = allTags.slice(0, 6);
 
-  // Default rich intro if not configured in DB
   const categoryIntro =
     category.introHtml ||
-    `<p>Welcome to <strong>${category.name}</strong> on AI Latest News. We provide rigorous, hands-on reporting on foundation models, algorithmic breakthroughs, and sovereign Indian AI initiatives. Our team stress-tests every release across local developer workflows, pricing models, and Indic language benchmarks.</p>`;
+    `<p>Welcome to <strong>${category.name}</strong> at Kraviona AI News. Our editors deliver independent, primary-source intelligence on frontier model architectures, engineering tooling, global policy, and computational infrastructure.</p>`;
 
-  // Category FAQs
-  const categoryFaqs = category.faqs && category.faqs.length > 0 ? category.faqs : [
-    {
-      question: `How frequently is the ${category.name} hub updated?`,
-      answer: `Our editorial team monitors arXiv preprints, model repositories, and developer releases continuously, publishing verified reports and benchmark updates multiple times each week.`,
-    },
-    {
-      question: `Are all ${category.name} benchmarks tested on Indian hardware and pricing?`,
-      answer: `Yes. Whenever pricing or latency benchmarks are cited, we calculate direct Indian Rupee (INR) costs, GST compliance, and local cloud latency via Indian datacenter regions.`,
-    },
-    {
-      question: `Can researchers and startups submit news tips for ${category.name}?`,
-      answer: `Absolutely. Indian AI researchers, founders, and engineers can submit whitepapers, benchmark data, and release announcements via our Editorial Desk for independent verification.`,
-    },
-  ];
+  const categoryFaqs =
+    category.faqs && category.faqs.length > 0
+      ? category.faqs
+      : [
+          {
+            question: `How frequently is the ${category.name} desk updated?`,
+            answer: `Our correspondents monitor frontier preprints, major model repositories, and industry releases continuously, publishing verified dispatches every week.`,
+          },
+          {
+            question: `How does Kraviona AI News verify claims in ${category.name}?`,
+            answer: `Every published report cites primary documentation, model cards, benchmark methodology, and independent verification before going live.`,
+          },
+        ];
 
-  // Schema.org JSON-LD structured data
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: siteUrl,
-          },
+          { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
           {
             "@type": "ListItem",
             position: 2,
             name: "Categories",
-            item: `${siteUrl}/blog`,
+            item: `${siteUrl}/archive`,
           },
           {
             "@type": "ListItem",
@@ -132,7 +133,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       },
       {
         "@type": "CollectionPage",
-        name: `${category.name} - AI Latest News`,
+        name: `${category.name} — Kraviona AI News`,
         description: category.description,
         url: `${siteUrl}/category/${category.slug}`,
       },
@@ -141,163 +142,166 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         mainEntity: categoryFaqs.map((faq: { question: string; answer: string }) => ({
           "@type": "Question",
           name: faq.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-          },
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
         })),
       },
     ],
   };
 
   return (
-    <PublicShell>
-      {/* Inject Structured Data */}
+    <PublicShell
+      navLinks={settings?.navigation}
+      footerConfig={settings?.footer}
+      headlines={trendingPosts}
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="mx-auto max-w-[var(--max-content-width,1320px)] px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-1.5 text-xs text-slate-500 mb-6 flex-wrap"
+          className="flex items-center gap-1.5 text-xs font-mono text-[var(--color-muted-text)] mb-6 flex-wrap"
         >
-          <Link href="/" className="hover:text-slate-900 transition-colors">
+          <Link href="/" className="hover:text-[var(--accent)] transition-colors">
             Home
           </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-          <Link href="/blog" className="hover:text-slate-900 transition-colors">
+          <ChevronRight className="h-3.5 w-3.5" />
+          <Link href="/archive" className="hover:text-[var(--accent)] transition-colors">
             Categories
           </Link>
-          <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-          <span className="font-semibold text-slate-900">{category.name}</span>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="font-bold text-[var(--color-heading)]">{category.name}</span>
         </nav>
 
-        {/* High-Impact Newsroom Beat Desk Header (Clean, 1px Border, No Neon Blur Blobs) */}
-        <header className="rounded-2xl border border-slate-900 bg-white p-6 sm:p-10 mb-10 shadow-2xs">
+        {/* Editorial Category Introduction Banner */}
+        <header className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 sm:p-10 mb-10 shadow-xs">
           <div className="max-w-4xl space-y-4">
-            {/* Meta chips */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-white">
-                <Layers className="h-3 w-3" /> Beat Desk
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-[#101820] px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-white">
+                <Layers className="h-3 w-3 text-[#D94F35]" /> Intelligence Desk
               </span>
-              <span className="rounded-md bg-slate-100 border border-slate-200 px-2.5 py-1 font-mono text-[11px] font-semibold text-slate-700">
-                {posts.length} Published Dispatches
+              <span className="rounded-md bg-[var(--color-main-background)] border border-[var(--border)] px-2.5 py-1 font-mono text-[11px] font-semibold text-[var(--color-heading)]">
+                {pagination.total} Dispatches
               </span>
-              <span className="rounded-md bg-emerald-50 border border-emerald-200 px-2.5 py-1 font-mono text-[11px] font-semibold text-emerald-800 flex items-center gap-1">
-                <ShieldCheck className="h-3 w-3" /> Active Coverage
+              <span className="rounded-md bg-[var(--accent)]/10 border border-[var(--accent)]/25 px-2.5 py-1 font-mono text-[11px] font-semibold text-[var(--accent)] flex items-center gap-1">
+                <ShieldCheck className="h-3 w-3" /> Verified Reporting
               </span>
             </div>
 
-            {/* Title (H1) */}
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+            <h1 className="font-editorial text-3xl sm:text-5xl font-bold tracking-tight text-[var(--color-heading)] leading-tight">
               {category.name}
             </h1>
 
-            {/* Subtitle / Excerpt */}
             {category.description && (
-              <p className="text-base sm:text-lg text-slate-700 font-medium leading-relaxed">
+              <p className="text-base sm:text-lg text-[var(--color-heading)]/85 font-medium leading-relaxed">
                 {category.description}
               </p>
             )}
 
-            {/* Editorial Context */}
             <div
-              className="pt-2 text-xs sm:text-sm text-slate-600 leading-relaxed max-w-3xl border-t border-slate-100"
+              className="pt-3 text-sm text-[var(--color-muted-text)] leading-relaxed max-w-3xl border-t border-[var(--border)]"
               dangerouslySetInnerHTML={{ __html: categoryIntro }}
             />
 
-            {/* Sub-Topic Entity Pills */}
-            <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2">
-              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                <TagIcon className="h-3 w-3" /> Topics:
-              </span>
-              {topicTags.map((t: { _id: string; name: string; slug: string }) => (
-                <Link
-                  key={t._id}
-                  href={`/tag/${t.slug}`}
-                  className="rounded-md bg-slate-50 border border-slate-200 px-2.5 py-1 font-mono text-xs font-semibold text-slate-700 hover:border-slate-900 hover:text-slate-900 transition-colors"
-                >
-                  #{t.name}
-                </Link>
-              ))}
-            </div>
+            {topicTags.length > 0 && (
+              <div className="pt-3 border-t border-[var(--border)] flex flex-wrap items-center gap-2">
+                <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] flex items-center gap-1">
+                  <TagIcon className="h-3 w-3 text-[var(--accent)]" /> Related Topics:
+                </span>
+                {topicTags.map((t: { _id: string; name: string; slug: string }) => (
+                  <Link
+                    key={t._id}
+                    href={`/tag/${t.slug}`}
+                    className="rounded-md bg-[var(--color-main-background)] border border-[var(--border)] px-2.5 py-1 font-mono text-xs font-semibold text-[var(--color-heading)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+                  >
+                    #{t.name}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </header>
 
-        {/* Main Two-Column Editorial Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Main Feed Column (8 cols) */}
-          <main className="lg:col-span-8 space-y-10">
-            {/* Featured Lead Story Showcase */}
+        {/* Main 12-Column Editorial Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Primary Column (8 cols) */}
+          <div className="lg:col-span-8 space-y-10 min-w-0">
+            {/* Featured Story (Page 1) */}
             {leadPost && (
-              <section className="space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-                  <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-rose-600">
-                    Lead Investigation in {category.name}
+              <section aria-label="Featured Story" className="space-y-4">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2.5">
+                  <h2 className="font-mono text-xs font-black uppercase tracking-[0.14em] text-[var(--accent)]">
+                    Featured Story · {category.name}
                   </h2>
-                  <span className="font-mono text-[11px] text-slate-400">
-                    Featured Dispatch
+                  <span className="font-mono text-[11px] text-[var(--color-muted-text)]">
+                    Lead Coverage
                   </span>
                 </div>
 
-                <article className="group relative rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xs hover:border-slate-400 transition-all duration-300">
+                <article className="group relative rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] overflow-hidden shadow-xs hover:border-[var(--accent)] hover:shadow-md transition-all duration-300">
                   {leadPost.coverImage && (
-                    <div className="relative aspect-16/9 w-full overflow-hidden bg-slate-100 border-b border-slate-200">
+                    <div className="relative aspect-16/9 w-full overflow-hidden bg-[var(--color-secondary-surface)] border-b border-[var(--border)]">
                       <Image
                         src={leadPost.coverImage}
                         alt={leadPost.coverImageAlt || leadPost.title}
                         fill
                         priority
                         sizes="(max-width: 1024px) 100vw, 66vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-102"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
                   )}
 
                   <div className="p-6 sm:p-8 space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-900">
-                        {category.name}
+                    <div className="flex flex-wrap items-center gap-2.5 text-xs font-mono text-[var(--color-muted-text)]">
+                      <span className="font-bold uppercase tracking-wider text-[var(--accent)]">
+                        {leadPost.category?.name || category.name}
                       </span>
                       <span>·</span>
-                      <span className="flex items-center gap-1 text-[11px]">
+                      <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {formatDate(leadPost.publishedAt || leadPost.createdAt)}
                       </span>
+                      {leadPost.readingTime && (
+                        <>
+                          <span>·</span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {leadPost.readingTime} min read
+                          </span>
+                        </>
+                      )}
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-tight">
+                    <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-[var(--color-heading)] group-hover:text-[var(--accent)] transition-colors leading-tight">
                       <Link href={`/blog/${leadPost.slug}`}>
-                        <span className="absolute inset-0 z-0" />
+                        <span className="absolute inset-0 z-0" aria-hidden="true" />
                         {leadPost.title}
                       </Link>
                     </h3>
 
-                    <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
-                      {leadPost.excerpt}
-                    </p>
+                    {leadPost.excerpt && (
+                      <p className="text-sm sm:text-base text-[var(--color-muted-text)] leading-relaxed line-clamp-3">
+                        {leadPost.excerpt}
+                      </p>
+                    )}
 
-                    <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-                      <span className="font-semibold text-slate-800">
-                        By {leadPost.author?.name || "Editorial Staff"}
+                    <div className="pt-4 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--color-muted-text)]">
+                      <span className="font-bold text-[var(--color-heading)]">
+                        By {leadPost.author?.name || "Kraviona Editorial Staff"}
                       </span>
 
-                      <div className="flex items-center gap-3">
-                        {leadPost.readingTime && (
-                          <span className="flex items-center gap-1 text-[11px]">
-                            <Clock className="h-3 w-3" />
-                            {leadPost.readingTime} min read
-                          </span>
-                        )}
+                      <div className="flex items-center gap-3 font-mono text-[11px]">
                         {typeof leadPost.views === "number" && leadPost.views >= 10 && (
-                          <span className="flex items-center gap-1 text-[11px]">
+                          <span className="flex items-center gap-1">
                             <Eye className="h-3 w-3" />
                             {leadPost.views.toLocaleString()} reads
                           </span>
                         )}
+                        <span className="font-bold text-[var(--accent)]">Read →</span>
                       </div>
                     </div>
                   </div>
@@ -305,97 +309,157 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               </section>
             )}
 
-            {/* Secondary Stories Grid */}
-            <section className="space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900">
-                  All Dispatches in {category.name} ({secondaryPosts.length})
+            {/* Latest Articles Grid */}
+            <section aria-label="Latest Articles" className="space-y-5">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-2.5">
+                <h2 className="font-mono text-xs font-black uppercase tracking-[0.14em] text-[var(--color-heading)]">
+                  Latest Articles in {category.name}
                 </h2>
-                <span className="font-mono text-[11px] text-slate-400">
-                  Chronological Stream
+                <span className="font-mono text-[11px] text-[var(--color-muted-text)]">
+                  Page {pagination.page} of {pagination.pages}
                 </span>
               </div>
 
-              {secondaryPosts.length > 0 ? (
+              {gridPosts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {secondaryPosts.map((post: any) => (
-                    <PostCard key={post._id} post={post} />
+                  {gridPosts.map((post: any) => (
+                    <NewsCard
+                      key={post._id}
+                      post={post}
+                      variant="classic-editorial"
+                      showBadges={true}
+                      showExcerpt={true}
+                    />
                   ))}
                 </div>
               ) : !leadPost ? (
-                <div className="rounded-xl border border-dashed border-slate-300 p-12 text-center space-y-3 bg-white">
-                  <h3 className="text-base font-bold text-slate-900">
-                    No articles published in {category.name} yet
+                <div className="rounded-xl border border-dashed border-[var(--border)] p-12 text-center space-y-3 bg-[var(--color-card-background)]">
+                  <h3 className="font-display text-base font-bold text-[var(--color-heading)]">
+                    No dispatches published in {category.name} yet
                   </h3>
-                  <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    Our journalists are currently researching briefs for this topic. Check back shortly or browse other categories.
+                  <p className="text-xs text-[var(--color-muted-text)] max-w-md mx-auto">
+                    Our correspondents are compiling new briefings for this beat. Explore our archive or browse other intelligence desks.
                   </p>
                   <Link
-                    href="/blog"
-                    className="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-slate-900 hover:text-indigo-600 pt-2"
+                    href="/archive"
+                    className="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[var(--accent)] hover:underline pt-2"
                   >
-                    Browse all dispatches <ArrowRight className="h-3.5 w-3.5" />
+                    Browse All Dispatches <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               ) : null}
+
+              {/* Clean Server-Side Pagination */}
+              {pagination.pages > 1 && (
+                <nav
+                  aria-label="Category pagination"
+                  className="pt-6 border-t border-[var(--border)] flex items-center justify-between gap-4"
+                >
+                  {pagination.hasPrev ? (
+                    <Link
+                      href={`/category/${category.slug}?page=${pagination.page - 1}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] hover:border-[var(--accent)] px-4 py-2 text-xs font-bold text-[var(--color-heading)] transition-colors"
+                    >
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                      <span>Previous</span>
+                    </Link>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)]/50 px-4 py-2 text-xs font-bold text-[var(--color-muted-text)] opacity-50 cursor-not-allowed">
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                      <span>Previous</span>
+                    </span>
+                  )}
+
+                  <div className="hidden sm:flex items-center gap-1.5 font-mono text-xs">
+                    {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((pg) => (
+                      <Link
+                        key={pg}
+                        href={`/category/${category.slug}?page=${pg}`}
+                        className={`flex h-8 w-8 items-center justify-center rounded-lg font-bold transition-colors ${
+                          pg === pagination.page
+                            ? "bg-[var(--accent)] text-white"
+                            : "border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] hover:border-[var(--accent)]"
+                        }`}
+                      >
+                        {pg}
+                      </Link>
+                    ))}
+                  </div>
+
+                  {pagination.hasNext ? (
+                    <Link
+                      href={`/category/${category.slug}?page=${pagination.page + 1}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] hover:border-[var(--accent)] px-4 py-2 text-xs font-bold text-[var(--color-heading)] transition-colors"
+                    >
+                      <span>Next</span>
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </Link>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)]/50 px-4 py-2 text-xs font-bold text-[var(--color-muted-text)] opacity-50 cursor-not-allowed">
+                      <span>Next</span>
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </span>
+                  )}
+                </nav>
+              )}
             </section>
 
             {/* Category FAQ Section */}
-            <section className="rounded-xl border border-slate-200 bg-white p-6 sm:p-8 space-y-4 shadow-2xs">
-              <div className="flex items-center gap-2 border-b border-slate-900 pb-3">
-                <HelpCircle className="h-4 w-4 text-slate-900" />
-                <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900">
-                  Frequently Asked Questions // {category.name}
+            <section className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 sm:p-8 space-y-4 shadow-xs">
+              <div className="flex items-center gap-2 border-b border-[var(--border)] pb-3">
+                <HelpCircle className="h-4 w-4 text-[var(--accent)]" />
+                <h2 className="font-mono text-xs font-black uppercase tracking-wider text-[var(--color-heading)]">
+                  Desk Briefings &amp; Methodology · {category.name}
                 </h2>
               </div>
 
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-[var(--border)]">
                 {categoryFaqs.map((faq: { question: string; answer: string }, idx: number) => (
                   <div key={idx} className="py-3.5 space-y-1.5">
-                    <h3 className="text-xs sm:text-sm font-bold text-slate-900 flex items-start gap-2">
-                      <span className="text-indigo-600 font-mono">Q:</span>
+                    <h3 className="text-xs sm:text-sm font-bold text-[var(--color-heading)] flex items-start gap-2">
+                      <span className="text-[var(--accent)] font-mono">Q:</span>
                       {faq.question}
                     </h3>
-                    <p className="text-xs text-slate-600 leading-relaxed pl-5">
+                    <p className="text-xs text-[var(--color-muted-text)] leading-relaxed pl-5">
                       {faq.answer}
                     </p>
                   </div>
                 ))}
               </div>
             </section>
-          </main>
+          </div>
 
-          {/* Sidebar Column (4 cols) */}
+          {/* Editorial Sidebar (4 cols) */}
           <aside className="lg:col-span-4 space-y-6">
-            {/* The Most Read in Topic */}
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-2xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-900 pb-3">
-                <h3 className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-rose-600" /> The Most Read
+            {/* Trending Stories */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                <h3 className="font-mono text-[11px] font-black uppercase tracking-wider text-[var(--color-heading)] flex items-center gap-1.5">
+                  <TrendingUp className="h-3.5 w-3.5 text-[var(--accent)]" /> Trending Now
                 </h3>
-                <span className="font-mono text-[10px] text-slate-400 uppercase">
-                  This Week
+                <span className="font-mono text-[10px] text-[var(--color-muted-text)] uppercase">
+                  Most Read
                 </span>
               </div>
 
               <div className="space-y-4">
-                {trendingPosts.map((post: any, idx: number) => (
+                {trendingPosts.slice(0, 5).map((post: any, idx: number) => (
                   <Link
                     key={post._id}
                     href={`/blog/${post.slug}`}
-                    className="flex items-start gap-3 group block pb-3 border-b border-slate-100 last:border-b-0 last:pb-0"
+                    className="flex items-start gap-3 group pb-3 border-b border-[var(--border)] last:border-b-0 last:pb-0"
                   >
-                    <span className="text-xl font-black text-slate-300 group-hover:text-slate-900 transition-colors shrink-0 font-mono leading-none mt-0.5 w-7">
+                    <span className="text-xl font-editorial font-black text-[var(--accent)] shrink-0 leading-none mt-0.5 w-7">
                       0{idx + 1}
                     </span>
                     <div className="space-y-1 min-w-0">
-                      <h4 className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug line-clamp-2">
+                      <h4 className="font-display text-xs font-bold text-[var(--color-heading)] group-hover:text-[var(--accent)] transition-colors leading-snug line-clamp-2">
                         {post.title}
                       </h4>
-                      <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono">
-                        <span>{formatDate(post.publishedAt || post.createdAt)}</span>
+                      <div className="flex items-center gap-2 text-[10px] text-[var(--color-muted-text)] font-mono">
+                        <span>{formatDate(post.publishedAt || post.createdAt, { month: "short", day: "numeric" })}</span>
                         <span>·</span>
-                        <span>{post.readingTime || 5}m read</span>
+                        <span>{post.readingTime || 5} min</span>
                       </div>
                     </div>
                   </Link>
@@ -403,61 +467,50 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               </div>
             </div>
 
-            {/* Newsletter Dispatch Card */}
-            <div className="rounded-xl border border-slate-900 bg-slate-950 p-6 text-white shadow-2xs space-y-3.5">
-              <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-rose-400">
-                <Mail className="h-3.5 w-3.5" />
-                <span>The {category.name} Wire</span>
-              </div>
-              <h3 className="text-sm font-black text-white">
-                Get the Weekly Intelligence Dispatch
-              </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Direct insights on breakthrough AI models, benchmark analyses, and Indian sovereign compute updates.
-              </p>
-              <form action="/newsletter" method="GET" className="space-y-2">
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  placeholder="Enter email address"
-                  className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs text-white placeholder:text-slate-500 outline-none focus:border-rose-500"
-                />
-                <button
-                  type="submit"
-                  className="w-full rounded-lg bg-white py-2 font-mono text-xs font-bold uppercase tracking-wider text-slate-950 hover:bg-slate-200 transition-colors cursor-pointer"
-                >
-                  Subscribe
-                </button>
-              </form>
-              <span className="text-[10px] text-slate-400 block text-center">
-                Strict privacy. Zero spam. Unsubscribe in 1 click.
-              </span>
-            </div>
+            {/* Newsletter Subscription */}
+            <KravionaNewsletter variant="sidebar" source={`category:${category.slug}`} />
 
-            {/* Other Active Desks */}
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-2xs space-y-4">
-              <h3 className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-900 pb-2 border-b border-slate-100">
-                All Beat Desks
+            {/* Related Categories / Explore Desks */}
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-4">
+              <h3 className="font-mono text-[11px] font-black uppercase tracking-wider text-[var(--color-heading)] pb-2.5 border-b border-[var(--border)]">
+                Related Categories
               </h3>
-              <div className="space-y-1.5">
-                {allCategories
-                  .filter((c: { slug: string }) => c.slug !== slug)
-                  .map((c: { _id: string; slug: string; name: string; postCount?: number }) => (
-                    <Link
-                      key={c._id}
-                      href={`/category/${c.slug}`}
-                      className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors group"
-                    >
-                      <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900">
-                        {c.name}
-                      </span>
-                      <span className="text-[11px] font-mono text-slate-400">
-                        {c.postCount || 0}
-                      </span>
-                    </Link>
-                  ))}
+
+              <div className="flex flex-wrap gap-2">
+                {EXPLORE_CATEGORIES_LIST.filter((c) => c.slug !== slug).map((cat) => (
+                  <Link
+                    key={cat.slug}
+                    href={cat.href}
+                    className="rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] hover:border-[var(--accent)] hover:text-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-[var(--color-heading)] transition-colors"
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
               </div>
+
+              {allCategories.length > 0 && (
+                <div className="pt-3 border-t border-[var(--border)] space-y-1.5">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] block mb-2">
+                    Core Archives
+                  </span>
+                  {allCategories
+                    .filter((c: { slug: string }) => c.slug !== slug)
+                    .map((c: { _id: string; slug: string; name: string; postCount?: number }) => (
+                      <Link
+                        key={c._id}
+                        href={`/category/${c.slug}`}
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-[var(--color-main-background)] transition-colors group"
+                      >
+                        <span className="text-xs font-semibold text-[var(--color-heading)] group-hover:text-[var(--accent)]">
+                          {c.name}
+                        </span>
+                        <span className="text-[11px] font-mono text-[var(--color-muted-text)]">
+                          {c.postCount || 0}
+                        </span>
+                      </Link>
+                    ))}
+                </div>
+              )}
             </div>
           </aside>
         </div>

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
 @source "../**/*.{js,ts,jsx,tsx}";
 @source "../../src/**/*.{js,ts,jsx,tsx}";
 
@@ -7,6 +9,22 @@
  * ─── Tailwind v4 Theme Tokens ────────────────────────────
  */
 @theme {
+  /* Direct Design Token Utilities */
+  --color-primary-dark: var(--color-primary-dark);
+  --color-secondary-dark: var(--color-secondary-dark);
+  --color-primary-accent: var(--color-primary-accent);
+  --color-secondary-accent: var(--color-secondary-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-main-bg: var(--color-main-bg);
+  --color-card-bg: var(--color-card-bg);
+  --color-secondary-surface: var(--color-secondary-surface);
+  --color-heading: var(--color-heading);
+  --color-body-text: var(--color-body-text);
+  --color-muted-text: var(--color-muted-text);
+  --color-breaking: var(--color-breaking-news);
+  --color-trending: var(--color-trending);
+
+  /* Semantic Aliases mapped to Dynamic Tokens */
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
   --color-background-tertiary: var(--background-tertiary);
@@ -29,72 +47,165 @@
   --color-error: var(--error);
   --color-info: var(--info);
 
+  /* Kraviona Editorial Typography */
   --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), "Manrope", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-editorial: var(--font-playfair), var(--font-lora), "Playfair Display", Georgia, serif;
   --font-serif: var(--font-lora), "Lora", Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 /*
- * ─── Design Tokens (Light Theme Only) ────────────────────
- * color-scheme: light enforced globally
+ * ─── Kraviona AI News — Editorial Light Palette ────────────
  */
 
 :root {
   color-scheme: light;
 
-  /* ── Backgrounds ── */
-  --background: #ffffff;
-  --background-secondary: #f8fafc;
-  --background-tertiary: #f1f5f9;
+  /* ── Core Kraviona Brand Palette ── */
+  --kraviona-primary: #101820;
+  --kraviona-secondary: #263B50;
+  --kraviona-accent: #D94F35;
+  --kraviona-bg: #F5F4EF;
+  --kraviona-card: #FFFFFF;
+  --kraviona-text: #171C22;
+  --kraviona-text-muted: #687482;
+  --kraviona-border: #E4E2DC;
 
-  /* ── Foreground / Text ── */
-  --foreground: #0f172a;
-  --foreground-secondary: #334155;
-  --foreground-muted: #64748b;
-  --foreground-subtle: #94a3b8;
+  /* ── Token Variable Mapping ── */
+  --color-primary-dark: #101820;
+  --color-secondary-dark: #263B50;
+  --color-primary-accent: #D94F35;
+  --color-secondary-accent: #E05A42;
+  --color-accent-hover: #BF3E26;
+  --color-main-background: #F5F4EF;
+  --color-main-bg: #F5F4EF;
+  --color-card-background: #FFFFFF;
+  --color-card-bg: #FFFFFF;
+  --color-secondary-surface: #EBE9E1;
+  --color-heading: #171C22;
+  --color-body-text: #171C22;
+  --color-muted-text: #687482;
+  --color-border: #E4E2DC;
+  --color-breaking-news: #D94F35;
+  --color-trending: #D94F35;
+  --color-success: #15803D;
 
-  /* ── Accent (Indigo) ── */
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-light: #e0e7ff;
-  --accent-foreground: #ffffff;
+  /* ── Semantic Bindings ── */
+  --background: #F5F4EF;
+  --background-secondary: #FFFFFF;
+  --background-tertiary: #EBE9E1;
 
-  /* ── Borders ── */
-  --border: #e2e8f0;
-  --border-hover: #cbd5e1;
+  --foreground: #171C22;
+  --foreground-secondary: #263B50;
+  --foreground-muted: #687482;
+  --foreground-subtle: #8C96A2;
 
-  /* ── Shadows ── */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --accent: #D94F35;
+  --accent-hover: #BF3E26;
+  --accent-light: #FCECE8;
+  --accent-foreground: #FFFFFF;
 
-  /* ── Radius ── */
-  --radius-sm: 0.375rem;
+  --border: #E4E2DC;
+  --border-hover: #CDC9BF;
+
+  --breaking: #D94F35;
+  --trending: #D94F35;
+  --success: #15803D;
+  --warning: #B45309;
+  --warning-light: #FEF3C7;
+  --error: #B91C1C;
+  --error-light: #FEE2E2;
+  --info: #263B50;
+  --info-light: #E2E8F0;
+
+  /* ── Layout & Typography Sizing ── */
+  --header-height: 4.25rem;
+  --sidebar-width: 16rem;
+  --max-content-width: 1320px;
+  --container-padding: 1.5rem;
+  --card-border-radius: 0.75rem;
+  --radius-card: 0.75rem;
+  --button-border-radius: 0.5rem;
   --radius: 0.5rem;
+  --radius-sm: 0.375rem;
   --radius-md: 0.625rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
 
-  /* ── Status ── */
-  --success: #16a34a;
-  --success-light: #dcfce7;
-  --warning: #d97706;
-  --warning-light: #fef3c7;
-  --error: #dc2626;
-  --error-light: #fee2e2;
-  --info: #2563eb;
-  --info-light: #dbeafe;
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px 0 rgb(16 24 32 / 0.04);
+  --shadow: 0 2px 6px -1px rgb(16 24 32 / 0.06), 0 1px 3px -1px rgb(16 24 32 / 0.04);
+  --shadow-md: 0 6px 16px -4px rgb(16 24 32 / 0.08), 0 2px 6px -2px rgb(16 24 32 / 0.04);
+  --shadow-lg: 0 14px 28px -6px rgb(16 24 32 / 0.12), 0 4px 10px -4px rgb(16 24 32 / 0.06);
+}
 
-  /* ── Typography ── */
-  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-serif: var(--font-lora), "Lora", Georgia, Cambria, "Times New Roman", serif;
-  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+/*
+ * ─── Kraviona AI News — Editorial Dark Palette ─────────────
+ */
 
-  /* ── Sizing ── */
-  --header-height: 4rem;
-  --sidebar-width: 16rem;
-  --max-content-width: 72rem;
+html.dark,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --kraviona-primary: #F0F6FC;
+  --kraviona-secondary: #263B50;
+  --kraviona-accent: #E05A42;
+  --kraviona-bg: #0D1117;
+  --kraviona-card: #161B22;
+  --kraviona-text: #F0F6FC;
+  --kraviona-text-muted: #8B949E;
+  --kraviona-border: #30363D;
+
+  --color-primary-dark: #0A0E14;
+  --color-secondary-dark: #161B22;
+  --color-primary-accent: #E05A42;
+  --color-secondary-accent: #F0735D;
+  --color-accent-hover: #D94F35;
+  --color-main-background: #0D1117;
+  --color-main-bg: #0D1117;
+  --color-card-background: #161B22;
+  --color-card-bg: #161B22;
+  --color-secondary-surface: #21262D;
+  --color-heading: #F0F6FC;
+  --color-body-text: #D0D7DE;
+  --color-muted-text: #8B949E;
+  --color-border: #30363D;
+  --color-breaking-news: #E05A42;
+  --color-trending: #E05A42;
+  --color-success: #3FB950;
+
+  --background: #0D1117;
+  --background-secondary: #161B22;
+  --background-tertiary: #21262D;
+
+  --foreground: #F0F6FC;
+  --foreground-secondary: #D0D7DE;
+  --foreground-muted: #8B949E;
+  --foreground-subtle: #6E7681;
+
+  --accent: #E05A42;
+  --accent-hover: #D94F35;
+  --accent-light: rgba(224, 90, 66, 0.16);
+  --accent-foreground: #FFFFFF;
+
+  --border: #30363D;
+  --border-hover: #484F58;
+
+  --breaking: #E05A42;
+  --trending: #E05A42;
+  --success: #3FB950;
+  --warning: #D29922;
+  --warning-light: rgba(210, 153, 34, 0.15);
+  --error: #F85149;
+  --error-light: rgba(248, 81, 73, 0.15);
+  --info: #58A6FF;
+  --info-light: rgba(88, 166, 255, 0.15);
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.35);
+  --shadow: 0 2px 6px -1px rgb(0 0 0 / 0.45);
+  --shadow-md: 0 6px 16px -4px rgb(0 0 0 / 0.55);
+  --shadow-lg: 0 14px 28px -6px rgb(0 0 0 / 0.65);
 }
 
 /*
@@ -118,91 +229,110 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  overflow-x: hidden;
 }
 
 /*
- * ─── Typography ──────────────────────────────────────────
+ * ─── Editorial Article Typography ────────────────────────
  */
 
 .prose-article {
-  font-family: var(--font-serif);
-  font-size: 1.125rem;
-  line-height: 1.8;
-  color: #1e293b;
+  font-family: var(--font-sans);
+  font-size: 1.075rem;
+  line-height: 1.82;
+  color: var(--color-body-text);
+}
+
+@media (min-width: 640px) {
+  .prose-article {
+    font-size: 1.125rem;
+  }
 }
 
 .prose-article h1,
 .prose-article h2,
 .prose-article h3,
 .prose-article h4 {
-  font-family: var(--font-sans);
-  color: #0f172a;
+  font-family: var(--font-display);
+  color: var(--color-heading);
   font-weight: 800;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
 }
 
 .prose-article h2 {
-  font-size: 1.75rem;
+  font-size: 1.65rem;
   margin-top: 2.25em;
-  margin-bottom: 0.75em;
-  padding-bottom: 0.35em;
-  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 0.8em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid var(--border);
 }
 
 .prose-article h3 {
-  font-size: 1.35rem;
-  margin-top: 1.75em;
+  font-size: 1.325rem;
+  margin-top: 1.85em;
   margin-bottom: 0.6em;
 }
 
 .prose-article p {
-  margin-bottom: 1.6em;
-  letter-spacing: -0.01em;
+  margin-bottom: 1.55em;
+  letter-spacing: -0.005em;
 }
 
 .prose-article a {
-  color: #4338ca;
+  color: var(--accent);
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
-  font-weight: 500;
+  font-weight: 600;
   transition: color 0.15s ease;
 }
 
 .prose-article a:hover {
-  color: #312e81;
+  color: var(--accent-hover);
 }
 
 .prose-article code {
   font-family: var(--font-mono);
   font-size: 0.875em;
   background-color: var(--background-tertiary);
-  padding: 0.125em 0.375em;
+  color: var(--color-heading);
+  padding: 0.15em 0.4em;
   border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
 }
 
 .prose-article pre {
-  background-color: var(--foreground);
-  color: #e2e8f0;
+  background-color: #101820;
+  color: #F0F6FC;
   border-radius: var(--radius-lg);
-  padding: 1.5em;
+  padding: 1.4em;
   overflow-x: auto;
-  margin: 1.5em 0;
+  margin: 1.75em 0;
+  border: 1px solid #263B50;
 }
 
 .prose-article pre code {
   background: none;
+  border: none;
   padding: 0;
   color: inherit;
 }
 
 .prose-article blockquote {
-  border-left: 4px solid var(--accent);
-  padding-left: 1.5em;
-  margin: 1.5em 0;
+  border-left: 3px solid var(--accent);
+  background-color: var(--background-tertiary);
+  padding: 1.15em 1.4em;
+  margin: 1.75em 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-family: var(--font-editorial);
   font-style: italic;
-  color: var(--foreground-muted);
+  font-size: 1.12em;
+  color: var(--color-heading);
+}
+
+.prose-article blockquote p:last-child {
+  margin-bottom: 0;
 }
 
 .prose-article img {
@@ -225,8 +355,8 @@ body {
 }
 
 .prose-article li {
-  margin-bottom: 0.5em;
-  line-height: 1.7;
+  margin-bottom: 0.55em;
+  line-height: 1.72;
 }
 
 .prose-article table {
@@ -239,34 +369,35 @@ body {
 }
 
 .prose-article th {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: var(--background-tertiary);
+  color: var(--color-heading);
   font-weight: 700;
   padding: 0.75em 1em;
   text-align: left;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
 }
 
 .prose-article td {
   padding: 0.75em 1em;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
+  background-color: var(--background-secondary);
 }
 
 .prose-article tr:nth-child(even) td {
-  background-color: #f8fafc/50;
+  background-color: var(--background);
 }
 
 .prose-article hr {
   margin: 2.5em 0;
   border: none;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border);
 }
 
 .prose-article mark {
-  background-color: #fef08a;
-  color: #1e293b;
-  padding: 0.1em 0.3em;
-  border-radius: 2px;
+  background-color: var(--accent-light);
+  color: var(--color-heading);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
 }
 
 .prose-article figure {
@@ -275,9 +406,9 @@ body {
 }
 
 .prose-article figcaption {
-  margin-top: 0.5em;
+  margin-top: 0.6em;
   font-size: 0.8em;
-  color: #64748b;
+  color: var(--foreground-muted);
   font-family: var(--font-mono);
 }
 
@@ -289,31 +420,31 @@ body {
 }
 
 .prose-article .callout-info {
-  background-color: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1e3a8a;
+  background-color: var(--info-light);
+  border-color: var(--border);
+  color: var(--foreground);
 }
 
 .prose-article .callout-warning {
-  background-color: #fffbeb;
-  border-color: #fde68a;
-  color: #92400e;
+  background-color: var(--warning-light);
+  border-color: var(--border);
+  color: var(--foreground);
 }
 
 .prose-article .callout-success {
-  background-color: #f0fdf4;
-  border-color: #bbf7d0;
-  color: #166534;
+  background-color: rgba(21, 128, 61, 0.1);
+  border-color: var(--border);
+  color: var(--foreground);
 }
 
 .prose-article .callout-takeaway {
-  background-color: #f5f3ff;
-  border-color: #ddd6fe;
-  color: #4c1d95;
+  background-color: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--foreground);
 }
 
 /*
- * ─── Skeleton / Shimmer ──────────────────────────────────
+ * ─── Animations & Ticker ─────────────────────────────────
  */
 
 @keyframes shimmer {
@@ -325,10 +456,22 @@ body {
   }
 }
 
-@keyframes shimmer-slide {
-  100% {
-    transform: translateX(100%);
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
   }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  display: inline-flex;
+  animation: ticker-scroll 40s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
 }
 
 .skeleton {
@@ -348,8 +491,8 @@ body {
  */
 
 ::selection {
-  background-color: var(--accent-light);
-  color: var(--accent-hover);
+  background-color: var(--accent);
+  color: #FFFFFF;
 }
 
 /*
@@ -362,11 +505,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background-secondary);
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--foreground-subtle);
+  background: var(--border-hover);
   border-radius: 4px;
 }
 

@@ -146,13 +146,13 @@ export function TaxonomiesManager({
     <div className="space-y-8">
       {/* Feedback alerts */}
       {actionFeedback && (
-        <div className="p-3.5 rounded-2xl bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200 flex items-center gap-2 animate-in fade-in">
+        <div className="p-3.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-xs font-semibold border border-emerald-500/30 flex items-center gap-2 animate-in fade-in">
           <CheckCircle2 className="h-4 w-4 shrink-0" />
           <span>{actionFeedback}</span>
         </div>
       )}
       {errorFeedback && (
-        <div className="p-3.5 rounded-2xl bg-rose-50 text-rose-800 text-xs font-semibold border border-rose-200 flex items-center gap-2 animate-in fade-in">
+        <div className="p-3.5 rounded-xl bg-rose-500/15 text-rose-700 dark:text-rose-400 text-xs font-semibold border border-rose-500/30 flex items-center gap-2 animate-in fade-in">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{errorFeedback}</span>
         </div>
@@ -160,11 +160,11 @@ export function TaxonomiesManager({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* CATEGORIES SECTION */}
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-2xs space-y-4">
           <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
             <div className="flex items-center gap-2">
               <FolderTree className="h-4 w-4 text-[var(--accent)]" />
-              <h2 className="text-sm font-bold text-[var(--foreground)]">
+              <h2 className="font-display text-sm font-bold text-[var(--color-heading)]">
                 Categories ({initialCategories.length})
               </h2>
             </div>
@@ -176,20 +176,20 @@ export function TaxonomiesManager({
                   slug: "",
                   description: "",
                   introHtml: "",
-                  color: "#4f46e5",
+                  color: "#D94F35",
                   order: 0,
                   faqs: [],
                   seo: { schemaType: "CollectionPage" },
                 });
                 setIsNewCategory(true);
               }}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-2xs"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-2xs cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" /> New Category
             </button>
           </div>
 
-          <p className="text-[11px] text-[var(--foreground-muted)]">
+          <p className="text-[11px] text-[var(--color-muted-text)]">
             Category hub pages serve as primary topical pillars. Slugs automatically generate 301 redirects when renamed.
           </p>
 
@@ -198,25 +198,25 @@ export function TaxonomiesManager({
             {initialCategories.map((cat) => (
               <div
                 key={cat._id}
-                className="p-3 flex items-center justify-between hover:bg-[var(--background-secondary)] transition-colors group"
+                className="p-3 flex items-center justify-between hover:bg-[var(--color-secondary-surface)]/70 transition-colors group"
               >
                 <div className="flex items-center gap-2.5">
                   <span
                     className="h-3 w-3 rounded-full shrink-0"
-                    style={{ backgroundColor: cat.color || "#4f46e5" }}
+                    style={{ backgroundColor: cat.color || "#D94F35" }}
                   />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-[var(--foreground)]">
+                      <span className="text-xs font-bold text-[var(--color-heading)]">
                         {cat.name}
                       </span>
                       {cat.parent && (
-                        <span className="text-[9px] px-1.5 py-0.2 bg-slate-100 rounded text-slate-600 font-mono">
+                        <span className="text-[9px] px-1.5 py-0.2 bg-[var(--color-secondary-surface)] rounded text-[var(--color-muted-text)] font-mono">
                           Sub-category
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-[var(--foreground-muted)] font-mono">
+                    <span className="text-[10px] text-[var(--color-muted-text)] font-mono">
                       /category/{cat.slug} • {cat.postCount || 0} article(s)
                     </span>
                   </div>
@@ -229,7 +229,7 @@ export function TaxonomiesManager({
                       setEditingCategory(cat);
                       setIsNewCategory(false);
                     }}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-indigo-200 bg-indigo-50 text-[10px] font-bold text-indigo-700 hover:bg-indigo-100 transition-colors cursor-pointer"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-light)] text-[10px] font-bold text-[var(--accent)] hover:opacity-90 transition-colors cursor-pointer"
                     title="Edit Dedicated Category SEO Metadata"
                   >
                     <Globe className="h-3 w-3" />
@@ -240,7 +240,7 @@ export function TaxonomiesManager({
                     href={`/category/${cat.slug}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 transition-colors"
+                    className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-500/10 transition-colors"
                     title="View Public Hub"
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -252,7 +252,7 @@ export function TaxonomiesManager({
                       setEditingCategory(cat);
                       setIsNewCategory(false);
                     }}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] transition-colors cursor-pointer"
                     title="Edit Category Details"
                   >
                     <Edit2 className="h-3.5 w-3.5" />
@@ -260,7 +260,7 @@ export function TaxonomiesManager({
 
                   <button
                     onClick={() => handleDeleteCategory(cat._id, cat.name)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                    className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                     title="Delete Category"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -272,21 +272,21 @@ export function TaxonomiesManager({
         </div>
 
         {/* TAGS SECTION */}
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-2xs space-y-4">
           <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
             <div className="flex items-center gap-2">
               <Hash className="h-4 w-4 text-[var(--accent)]" />
-              <h2 className="text-sm font-bold text-[var(--foreground)]">
+              <h2 className="font-display text-sm font-bold text-[var(--color-heading)]">
                 Topic Tags ({initialTags.length})
               </h2>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsMergeModalOpen(true)}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-semibold hover:bg-indigo-100 transition-all shadow-2xs"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-secondary-surface)] text-[var(--color-heading)] text-xs font-semibold hover:bg-[var(--color-main-background)] transition-all shadow-2xs cursor-pointer"
                 title="Consolidate duplicate tags"
               >
-                <ArrowRightLeft className="h-3.5 w-3.5" /> Merge Tags
+                <ArrowRightLeft className="h-3.5 w-3.5 text-[var(--accent)]" /> Merge Tags
               </button>
               <button
                 onClick={() => {
@@ -299,14 +299,14 @@ export function TaxonomiesManager({
                   });
                   setIsNewTag(true);
                 }}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-2xs"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-2xs cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" /> New Tag
               </button>
             </div>
           </div>
 
-          <p className="text-[11px] text-[var(--foreground-muted)]">
+          <p className="text-[11px] text-[var(--color-muted-text)]">
             Tags identify entities (e.g. #claude-3-7, #deepseek-r1). Use the Merge tool to consolidate duplicates.
           </p>
 
@@ -315,13 +315,13 @@ export function TaxonomiesManager({
             {initialTags.map((tag) => (
               <div
                 key={tag._id}
-                className="p-3 flex items-center justify-between hover:bg-[var(--background-secondary)] transition-colors group"
+                className="p-3 flex items-center justify-between hover:bg-[var(--color-secondary-surface)]/70 transition-colors group"
               >
                 <div>
-                  <span className="text-xs font-bold text-[var(--foreground)]">
+                  <span className="text-xs font-bold text-[var(--color-heading)]">
                     #{tag.name}
                   </span>
-                  <span className="text-[10px] text-[var(--foreground-muted)] font-mono block">
+                  <span className="text-[10px] text-[var(--color-muted-text)] font-mono block">
                     /tag/{tag.slug} • {tag.postCount || 0} article(s)
                   </span>
                 </div>
@@ -332,7 +332,7 @@ export function TaxonomiesManager({
                       setEditingTag(tag);
                       setIsNewTag(false);
                     }}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                    className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] transition-colors cursor-pointer"
                     title="Edit Tag & SEO"
                   >
                     <Edit2 className="h-3.5 w-3.5" />
@@ -340,7 +340,7 @@ export function TaxonomiesManager({
 
                   <button
                     onClick={() => handleDeleteTag(tag._id, tag.name)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                    className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                     title="Delete Tag"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -382,30 +382,30 @@ export function TaxonomiesManager({
 
       {/* MERGE TAGS MODAL */}
       {isMergeModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2">
-                <ArrowRightLeft className="h-4 w-4 text-indigo-600" /> Merge Duplicate Tags
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="bg-[var(--color-card-background)] border border-[var(--border)] rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <h3 className="font-display text-sm font-bold text-[var(--color-heading)] flex items-center gap-2">
+                <ArrowRightLeft className="h-4 w-4 text-[var(--accent)]" /> Merge Duplicate Tags
               </h3>
-              <button onClick={() => setIsMergeModalOpen(false)}>
-                <X className="h-4 w-4 text-slate-400 hover:text-slate-700" />
+              <button onClick={() => setIsMergeModalOpen(false)} className="cursor-pointer">
+                <X className="h-4 w-4 text-[var(--color-muted-text)] hover:text-[var(--color-heading)]" />
               </button>
             </div>
 
-            <p className="text-xs text-[var(--foreground-muted)]">
-              This will update all articles tagged with the <strong>Source Tag</strong> to point to the <strong>Target Tag</strong>, and permanently delete the Source Tag.
+            <p className="text-xs text-[var(--color-muted-text)]">
+              This will update all articles tagged with the <strong className="text-[var(--color-heading)]">Source Tag</strong> to point to the <strong className="text-[var(--color-heading)]">Target Tag</strong>, and permanently delete the Source Tag.
             </p>
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-semibold text-rose-700 mb-1">
+                <label className="block font-semibold text-rose-700 dark:text-rose-400 mb-1">
                   Source Tag (Will be merged and deleted):
                 </label>
                 <select
                   value={mergeSource}
                   onChange={(e) => setMergeSource(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 p-2 outline-none focus:border-indigo-600 bg-white"
+                  className="w-full rounded-lg border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)] bg-[var(--color-main-background)] text-[var(--color-heading)]"
                 >
                   <option value="">Select source tag...</option>
                   {initialTags.map((t) => (
@@ -417,13 +417,13 @@ export function TaxonomiesManager({
               </div>
 
               <div>
-                <label className="block font-semibold text-emerald-700 mb-1">
+                <label className="block font-semibold text-emerald-700 dark:text-emerald-400 mb-1">
                   Target Tag (Will absorb articles and remain):
                 </label>
                 <select
                   value={mergeTarget}
                   onChange={(e) => setMergeTarget(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 p-2 outline-none focus:border-indigo-600 bg-white"
+                  className="w-full rounded-lg border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)] bg-[var(--color-main-background)] text-[var(--color-heading)]"
                 >
                   <option value="">Select target destination tag...</option>
                   {initialTags
@@ -437,11 +437,11 @@ export function TaxonomiesManager({
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
               <button
                 type="button"
                 onClick={() => setIsMergeModalOpen(false)}
-                className="px-4 py-2 rounded-xl border text-xs font-semibold"
+                className="px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
@@ -449,7 +449,7 @@ export function TaxonomiesManager({
                 type="button"
                 disabled={!mergeSource || !mergeTarget || mergeLoading}
                 onClick={handleExecuteMerge}
-                className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] disabled:opacity-50 cursor-pointer"
               >
                 {mergeLoading ? "Merging..." : "Confirm & Merge"}
               </button>
@@ -487,14 +487,14 @@ function CategoryEditorModal({
   const [description, setDescription] = useState(category.description || "");
   const [introHtml, setIntroHtml] = useState(category.introHtml || "");
   const [parent, setParent] = useState(category.parent || "");
-  const [color, setColor] = useState(category.color || "#4f46e5");
+  const [color, setColor] = useState(category.color || "#D94F35");
   const [icon, setIcon] = useState(category.icon || "Folder");
   const [order, setOrder] = useState(category.order || 0);
 
   const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>(category.faqs || []);
   const [seo, setSeo] = useState<ISeoMetadata>(
     category.seo || {
-      metaTitle: category.name ? `${category.name} - Latest News & Analysis` : "",
+      metaTitle: category.name ? `${category.name} — Kraviona AI News` : "",
       metaDescription: category.description || "",
       schemaType: "CollectionPage",
     }
@@ -541,19 +541,19 @@ function CategoryEditorModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col my-8 max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+      <div className="bg-[var(--color-card-background)] border border-[var(--border)] rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col my-8 max-h-[90vh]">
         {/* Modal Header */}
         <div className="p-6 border-b border-[var(--border)] flex items-center justify-between">
           <div>
-            <h3 className="text-base font-extrabold text-[var(--foreground)]">
+            <h3 className="font-display text-base font-extrabold text-[var(--color-heading)]">
               {isNew ? "Create Category" : `Edit Category: ${category.name}`}
             </h3>
-            <p className="text-[11px] text-[var(--foreground-muted)]">
+            <p className="text-[11px] text-[var(--color-muted-text)]">
               Manage taxonomy metadata, rich intro content for SEO hub, and FAQ rich snippets.
             </p>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
+          <button onClick={onClose} className="p-1 rounded-lg text-[var(--color-muted-text)] hover:text-[var(--color-heading)] cursor-pointer">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -572,7 +572,7 @@ function CategoryEditorModal({
               className={`pb-2.5 px-3 border-b-2 transition-colors cursor-pointer ${
                 tab === t.key
                   ? "border-[var(--accent)] text-[var(--accent)] font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  : "border-transparent text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
               }`}
             >
               {t.label}
@@ -583,7 +583,7 @@ function CategoryEditorModal({
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
           {error && (
-            <div className="p-3 rounded-xl bg-rose-50 text-rose-700 text-xs flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-rose-500/15 text-rose-700 dark:text-rose-400 text-xs flex items-center gap-2 border border-rose-500/30">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -593,7 +593,7 @@ function CategoryEditorModal({
             <div className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                  <label className="block font-semibold text-[var(--color-body-text)] mb-1">
                     Category Name
                   </label>
                   <input
@@ -604,12 +604,12 @@ function CategoryEditorModal({
                       setName(e.target.value);
                       if (isNew) setSlug(slugify(e.target.value));
                     }}
-                    className="w-full rounded-xl border border-[var(--border)] p-2.5 outline-none focus:border-[var(--accent)] font-bold"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 outline-none focus:border-[var(--accent)] font-bold"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                  <label className="block font-semibold text-[var(--color-body-text)] mb-1">
                     Slug (Auto creates 301 on change)
                   </label>
                   <input
@@ -617,13 +617,13 @@ function CategoryEditorModal({
                     required
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
-                    className="w-full rounded-xl border border-[var(--border)] p-2.5 font-mono outline-none focus:border-[var(--accent)]"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 font-mono outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block font-semibold text-[var(--color-body-text)] mb-1">
                   Short Tagline / Description
                 </label>
                 <textarea
@@ -631,19 +631,19 @@ function CategoryEditorModal({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Concise topic overview displayed on category cards and meta descriptions."
-                  className="w-full rounded-xl border border-[var(--border)] p-2.5 outline-none focus:border-[var(--accent)]"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                  <label className="block font-semibold text-[var(--color-body-text)] mb-1">
                     Parent Hierarchy
                   </label>
                   <select
                     value={parent}
                     onChange={(e) => setParent(e.target.value)}
-                    className="w-full rounded-xl border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)] bg-white"
+                    className="w-full rounded-lg border border-[var(--border)] p-2 outline-none focus:border-[var(--accent)] bg-[var(--color-main-background)] text-[var(--color-heading)]"
                   >
                     <option value="">None (Top Level Category)</option>
                     {allCategories
@@ -657,7 +657,7 @@ function CategoryEditorModal({
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                  <label className="block font-semibold text-[var(--color-body-text)] mb-1">
                     Accent Color
                   </label>
                   <div className="flex items-center gap-2">
@@ -665,26 +665,26 @@ function CategoryEditorModal({
                       type="color"
                       value={color}
                       onChange={(e) => setColor(e.target.value)}
-                      className="h-8 w-12 rounded cursor-pointer border"
+                      className="h-8 w-12 rounded cursor-pointer border border-[var(--border)] bg-[var(--color-main-background)]"
                     />
                     <input
                       type="text"
                       value={color}
                       onChange={(e) => setColor(e.target.value)}
-                      className="w-full rounded-xl border p-2 font-mono text-xs"
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 font-mono text-xs"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+                  <label className="block font-semibold text-[var(--color-body-text)] mb-1">
                     Display Order
                   </label>
                   <input
                     type="number"
                     value={order}
                     onChange={(e) => setOrder(Number(e.target.value))}
-                    className="w-full rounded-xl border border-[var(--border)] p-2 outline-none"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none"
                   />
                 </div>
               </div>
@@ -694,10 +694,10 @@ function CategoryEditorModal({
           {tab === "intro" && (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-body-text)] mb-1">
                   Rich Text Category Hub Intro (100–150 words)
                 </label>
-                <p className="text-[11px] text-[var(--foreground-muted)] mb-2">
+                <p className="text-[11px] text-[var(--color-muted-text)] mb-2">
                   This text appears at the top of the category hub page to provide search engines with contextual semantic depth.
                 </p>
                 <textarea
@@ -705,7 +705,7 @@ function CategoryEditorModal({
                   value={introHtml}
                   onChange={(e) => setIntroHtml(e.target.value)}
                   placeholder="<p>Comprehensive coverage of artificial intelligence models, benchmark breakdowns, and enterprise deployment strategies...</p>"
-                  className="w-full rounded-2xl border border-[var(--border)] p-4 text-xs font-mono outline-none focus:border-[var(--accent)] leading-relaxed"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-4 text-xs font-mono outline-none focus:border-[var(--accent)] leading-relaxed"
                 />
               </div>
             </div>
@@ -715,30 +715,30 @@ function CategoryEditorModal({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-xs font-bold text-[var(--foreground)]">
+                  <h4 className="text-xs font-bold text-[var(--color-heading)]">
                     Category Hub FAQs
                   </h4>
-                  <p className="text-[11px] text-[var(--foreground-muted)]">
+                  <p className="text-[11px] text-[var(--color-muted-text)]">
                     Injected into FAQPage JSON-LD schema on the category page.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setFaqs((prev) => [...prev, { question: "", answer: "" }])}
-                  className="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold"
+                  className="px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs font-semibold cursor-pointer"
                 >
                   + Add FAQ
                 </button>
               </div>
 
               {faqs.map((f, i) => (
-                <div key={i} className="p-3 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                <div key={i} className="p-3 rounded-xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/60 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-indigo-700">FAQ #{i + 1}</span>
+                    <span className="text-[10px] font-bold text-[var(--accent)] font-mono">FAQ #{i + 1}</span>
                     <button
                       type="button"
                       onClick={() => setFaqs((prev) => prev.filter((_, idx) => idx !== i))}
-                      className="text-slate-400 hover:text-rose-600 text-xs"
+                      className="text-[var(--color-muted-text)] hover:text-rose-600 dark:hover:text-rose-400 text-xs cursor-pointer"
                     >
                       Remove
                     </button>
@@ -755,7 +755,7 @@ function CategoryEditorModal({
                       }
                     }}
                     placeholder="Question..."
-                    className="w-full rounded-lg border p-2 text-xs bg-white"
+                    className="w-full rounded-lg border border-[var(--border)] p-2 text-xs bg-[var(--color-card-background)] text-[var(--color-heading)]"
                   />
                   <textarea
                     rows={2}
@@ -769,7 +769,7 @@ function CategoryEditorModal({
                       }
                     }}
                     placeholder="Answer..."
-                    className="w-full rounded-lg border p-2 text-xs bg-white"
+                    className="w-full rounded-lg border border-[var(--border)] p-2 text-xs bg-[var(--color-card-background)] text-[var(--color-heading)]"
                   />
                 </div>
               ))}
@@ -790,11 +790,11 @@ function CategoryEditorModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-[var(--border)] bg-slate-50 flex items-center justify-end gap-2.5">
+        <div className="p-4 border-t border-[var(--border)] bg-[var(--color-secondary-surface)] flex items-center justify-end gap-2.5">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border text-xs font-semibold"
+            className="px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] text-xs font-semibold cursor-pointer"
           >
             Cancel
           </button>
@@ -802,7 +802,7 @@ function CategoryEditorModal({
             type="button"
             disabled={loading}
             onClick={handleSave}
-            className="px-5 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-xs flex items-center gap-1.5"
+            className="px-5 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
           >
             <Save className="h-3.5 w-3.5" />
             {loading ? "Saving..." : "Save Category"}
@@ -833,7 +833,7 @@ function TagEditorModal({
   const [description, setDescription] = useState(tag.description || "");
   const [seo, setSeo] = useState<ISeoMetadata>(
     tag.seo || {
-      metaTitle: `${tag.name} - Latest News`,
+      metaTitle: `${tag.name} — Kraviona AI News`,
       schemaType: "CollectionPage",
     }
   );
@@ -873,26 +873,26 @@ function TagEditorModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b pb-3">
-          <h3 className="text-base font-bold text-[var(--foreground)]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+      <div className="bg-[var(--color-card-background)] border border-[var(--border)] rounded-2xl w-full max-w-lg shadow-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+          <h3 className="font-display text-base font-bold text-[var(--color-heading)]">
             {isNew ? "Create Tag" : `Edit Tag: #${tag.name}`}
           </h3>
-          <button onClick={onClose}>
-            <X className="h-5 w-5 text-slate-400 hover:text-slate-700" />
+          <button onClick={onClose} className="cursor-pointer">
+            <X className="h-5 w-5 text-[var(--color-muted-text)] hover:text-[var(--color-heading)]" />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-rose-50 text-rose-700 text-xs">
+          <div className="p-3 rounded-xl bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30 text-xs">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSave} className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+            <label className="block font-semibold text-[var(--color-body-text)] mb-1">
               Tag Name
             </label>
             <input
@@ -903,12 +903,12 @@ function TagEditorModal({
                 setName(e.target.value);
                 if (isNew) setSlug(slugify(e.target.value));
               }}
-              className="w-full rounded-xl border border-[var(--border)] p-2.5 font-bold outline-none"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 font-bold outline-none focus:border-[var(--accent)]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+            <label className="block font-semibold text-[var(--color-body-text)] mb-1">
               Slug
             </label>
             <input
@@ -916,12 +916,12 @@ function TagEditorModal({
               required
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
-              className="w-full rounded-xl border border-[var(--border)] p-2 font-mono outline-none"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 font-mono outline-none focus:border-[var(--accent)]"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-[var(--foreground-secondary)] mb-1">
+            <label className="block font-semibold text-[var(--color-body-text)] mb-1">
               Description
             </label>
             <textarea
@@ -929,15 +929,15 @@ function TagEditorModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Topic description for hub page..."
-              className="w-full rounded-xl border border-[var(--border)] p-2 outline-none"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2 outline-none focus:border-[var(--accent)]"
             />
           </div>
 
-          <div className="pt-2 border-t">
+          <div className="pt-2 border-t border-[var(--border)]">
             <button
               type="button"
               onClick={() => setShowSeo(!showSeo)}
-              className="text-indigo-600 font-bold hover:underline flex items-center gap-1"
+              className="text-[var(--accent)] font-bold hover:underline flex items-center gap-1 cursor-pointer"
             >
               <Globe className="h-3.5 w-3.5" />
               {showSeo ? "Hide SEO Panel" : "Customize Tag SEO & Social Meta"}
@@ -958,18 +958,18 @@ function TagEditorModal({
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-3 border-t">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--border)]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border text-xs font-semibold"
+              className="px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] text-xs font-semibold cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all"
+              className="px-5 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all cursor-pointer"
             >
               {loading ? "Saving..." : "Save Tag"}
             </button>

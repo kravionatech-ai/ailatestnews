@@ -156,22 +156,56 @@ export const getPostBySlug = cache(async function getPostBySlug(
 
     if (!post) return null;
 
-    // Fetch 3 related posts based on category and tags (strictly published)
-    const relatedPosts = await Post.find({
-      _id: { $ne: post._id },
-      status: "published",
-      $or: [{ category: post.category }, { tags: { $in: post.tags } }],
-    })
-      .sort({ publishedAt: -1, createdAt: -1 })
-      .limit(3)
-      .populate("author", "name image slug")
-      .populate("category", "name slug")
-      .select("title slug excerpt coverImage readingTime publishedAt views")
-      .lean();
+    const currentPubDate = post.publishedAt || post.createdAt || new Date();
+
+    // Fetch related posts, latest news sidebar posts, and adjacent prev/next posts in parallel
+    const [relatedPosts, latestPosts, prevPost, nextPost] = await Promise.all([
+      Post.find({
+        _id: { $ne: post._id },
+        status: "published",
+        $or: [{ category: post.category }, { tags: { $in: post.tags } }],
+      })
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .limit(3)
+        .populate("author", "name image slug")
+        .populate("category", "name slug")
+        .select("title slug excerpt coverImage coverImageAlt readingTime publishedAt views")
+        .lean(),
+      Post.find({
+        _id: { $ne: post._id },
+        status: "published",
+      })
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .limit(5)
+        .populate("category", "name slug")
+        .select("title slug coverImage readingTime publishedAt createdAt")
+        .lean(),
+      Post.findOne({
+        _id: { $ne: post._id },
+        status: "published",
+        publishedAt: { $lt: currentPubDate },
+      })
+        .sort({ publishedAt: -1 })
+        .populate("category", "name slug")
+        .select("title slug publishedAt")
+        .lean(),
+      Post.findOne({
+        _id: { $ne: post._id },
+        status: "published",
+        publishedAt: { $gt: currentPubDate },
+      })
+        .sort({ publishedAt: 1 })
+        .populate("category", "name slug")
+        .select("title slug publishedAt")
+        .lean(),
+    ]);
 
     return {
       post: JSON.parse(JSON.stringify(post)),
       relatedPosts: JSON.parse(JSON.stringify(relatedPosts)),
+      latestPosts: JSON.parse(JSON.stringify(latestPosts)),
+      prevPost: prevPost ? JSON.parse(JSON.stringify(prevPost)) : null,
+      nextPost: nextPost ? JSON.parse(JSON.stringify(nextPost)) : null,
     };
   } catch (err) {
     console.warn("[getPostBySlug] DB query fallback:", err);

@@ -27,11 +27,11 @@ export function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="rounded-3xl border border-[var(--border)] bg-green-50 p-8 text-center text-green-800 animate-in fade-in-50">
-        <CheckCircle2 className="mx-auto h-10 w-10 text-green-600 mb-3" />
-        <h3 className="text-lg font-bold">Transmission Received</h3>
-        <p className="mt-1 text-xs">
-          Thank you for reaching out. An editor will review your message within 24 business hours.
+      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/30 p-8 text-center text-emerald-900 dark:text-emerald-200 animate-in fade-in-50">
+        <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-600 dark:text-emerald-400 mb-3" />
+        <h3 className="font-display text-lg font-bold">Transmission Received</h3>
+        <p className="mt-1.5 text-xs opacity-90">
+          Thank you for reaching out to Kraviona AI News. An editor will review your message within 24 business hours.
         </p>
       </div>
     );
@@ -40,10 +40,10 @@ export function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-3xl border border-[var(--border)] bg-white p-8 shadow-xs space-y-4"
+      className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 sm:p-8 shadow-xs space-y-4"
     >
       {errorMessage && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 text-rose-700 text-xs font-semibold">
+        <div className="flex items-center gap-2 p-3 rounded-xl border border-rose-500/30 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 text-xs font-semibold">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{errorMessage}</span>
         </div>
@@ -51,47 +51,47 @@ export function ContactForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1.5">
             Your Name
           </label>
           <input
             type="text"
             name="name"
             required
-            placeholder="Sarah Connor"
-            className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3.5 py-2.5 text-sm outline-none focus:border-[var(--accent)]"
+            placeholder="Alex Rivera"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2.5 text-sm text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1.5">
             Email Address
           </label>
           <input
             type="email"
             name="email"
             required
-            placeholder="sarah@example.com"
-            className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3.5 py-2.5 text-sm outline-none focus:border-[var(--accent)]"
+            placeholder="alex@company.com"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2.5 text-sm text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1.5">
           Subject
         </label>
         <input
           type="text"
           name="subject"
           required
-          placeholder="AI News tip / Research inquiry / Pitch"
-          className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3.5 py-2.5 text-sm outline-none focus:border-[var(--accent)]"
+          placeholder="AI news tip / Research inquiry / Editorial pitch"
+          className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2.5 text-sm text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+        <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted-text)] mb-1.5">
           Message Body
         </label>
         <textarea
@@ -99,7 +99,7 @@ export function ContactForm() {
           required
           rows={5}
           placeholder="Provide detailed context, arXiv link, or benchmark methodology..."
-          className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] p-3.5 text-sm outline-none focus:border-[var(--accent)]"
+          className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] p-3.5 text-sm text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
         />
       </div>
 

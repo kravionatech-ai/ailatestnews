@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, X, Sparkles, ArrowRight, SlidersHorizontal } from "lucide-react";
+import { Search, X, Loader2, ArrowRight, Flame } from "lucide-react";
 
 const SUGGESTED_TOPICS = [
   "DeepSeek-R1",
@@ -10,7 +10,6 @@ const SUGGESTED_TOPICS = [
   "IndiaAI 10,000 GPUs",
   "Claude 3.5 Sonnet",
   "Llama 3.3",
-  "Cursor AI",
   "Enterprise RAG",
   "Ollama local",
 ];
@@ -31,7 +30,11 @@ export function SearchInputDeck({
   const [query, setQuery] = useState(initialQuery);
   const [isPending, startTransition] = useTransition();
 
-  const handleSearch = (newQuery: string, newSort = initialSort, newCategory = initialCategory) => {
+  const handleSearch = (
+    newQuery: string,
+    newSort = initialSort,
+    newCategory = initialCategory
+  ) => {
     const params = new URLSearchParams();
     const cleanQ = newQuery.trim();
     if (cleanQ) params.set("q", cleanQ);
@@ -64,31 +67,28 @@ export function SearchInputDeck({
 
   return (
     <div className="w-full max-w-3xl mx-auto">
-      {/* Search Input Box */}
-      <form onSubmit={handleSubmit} className="relative flex items-center">
+      <form onSubmit={handleSubmit} className="relative flex items-center gap-2.5 sm:gap-3">
         <div className="relative flex-1 group">
-          <div className="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-indigo-600 transition-transform group-focus-within:scale-110" />
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-[var(--accent)]" />
           </div>
 
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search AI models, tools, IndiaAI, comparisons, benchmarks..."
-            className="w-full rounded-2xl border-2 border-slate-200 bg-white pl-12 sm:pl-13 pr-12 py-3.5 sm:py-4 text-sm sm:text-base font-medium text-[var(--foreground)] placeholder:text-slate-400 outline-none transition-all shadow-sm focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100/60"
+            placeholder="Search AI models, research papers, tools, startups..."
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] pl-11 pr-11 py-3.5 text-sm sm:text-base font-medium text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none transition-all shadow-xs focus:border-[var(--accent)]"
           />
 
           {query && (
             <button
               type="button"
               onClick={handleClear}
-              className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+              className="absolute inset-y-0 right-3 flex items-center text-[var(--color-muted-text)] hover:text-[var(--color-heading)] transition-colors cursor-pointer"
               aria-label="Clear query"
             >
-              <div className="rounded-full p-1 hover:bg-slate-100">
-                <X className="h-4 w-4" />
-              </div>
+              <X className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -96,10 +96,10 @@ export function SearchInputDeck({
         <button
           type="submit"
           disabled={isPending}
-          className="ml-2.5 sm:ml-3 rounded-2xl bg-indigo-600 px-5 sm:px-7 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-white shadow-md shadow-indigo-600/20 hover:bg-indigo-700 active:scale-98 transition-all shrink-0 flex items-center gap-2 cursor-pointer disabled:opacity-70"
+          className="rounded-xl bg-[#101820] hover:bg-[#D94F35] dark:bg-[#E05A42] dark:hover:bg-[#D94F35] px-5 sm:px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-xs transition-all shrink-0 flex items-center gap-2 cursor-pointer disabled:opacity-70"
         >
           {isPending ? (
-            <Sparkles className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <>
               <span>Search</span>
@@ -110,9 +110,9 @@ export function SearchInputDeck({
       </form>
 
       {/* Suggested Topic Chips */}
-      <div className="mt-4 flex flex-wrap items-center gap-1.5 sm:gap-2">
-        <span className="text-xs font-semibold text-slate-500 flex items-center gap-1 mr-1">
-          <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+        <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] flex items-center gap-1 mr-1">
+          <Flame className="h-3.5 w-3.5 text-[var(--accent)]" />
           Trending:
         </span>
         {SUGGESTED_TOPICS.map((topic) => {
@@ -122,10 +122,10 @@ export function SearchInputDeck({
               key={topic}
               type="button"
               onClick={() => handleTopicClick(topic)}
-              className={`rounded-xl px-2.5 sm:px-3 py-1 text-xs font-semibold transition-all cursor-pointer ${
+              className={`rounded-lg px-3 py-1 text-xs font-semibold transition-all cursor-pointer ${
                 isActive
-                  ? "bg-indigo-600 text-white shadow-xs"
-                  : "bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 border border-transparent"
+                  ? "bg-[var(--accent)] text-white"
+                  : "border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
               }`}
             >
               {topic}

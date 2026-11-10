@@ -196,41 +196,41 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
       {/* Feedback banner */}
       {feedback && (
         <div
-          className={`flex items-center gap-3 p-4 rounded-2xl border text-sm font-semibold transition-all ${
+          className={`flex items-center gap-3 p-4 rounded-xl border text-sm font-semibold transition-all ${
             feedback.type === "success"
-              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-              : "bg-rose-50 text-rose-800 border-rose-200"
+              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+              : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30"
           }`}
         >
           {feedback.type === "success" ? (
-            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="h-5 w-5 shrink-0" />
           ) : (
-            <AlertCircle className="h-5 w-5 text-rose-600 shrink-0" />
+            <AlertCircle className="h-5 w-5 shrink-0" />
           )}
           <span>{feedback.message}</span>
         </div>
       )}
 
       {/* Control Deck: View Switcher & Global Diagnostics */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-[var(--foreground)] tracking-tight">
+          <h1 className="font-display text-2xl font-extrabold text-[var(--color-heading)] tracking-tight">
             SEO Command Center &amp; Page Inventory
           </h1>
-          <p className="text-xs text-[var(--foreground-muted)] mt-1">
+          <p className="text-xs text-[var(--color-muted-text)] mt-1">
             Manage meta titles, descriptions, canonical URLs, robots directives, OpenGraph visuals, and sitemap rules across all {items.length} public routes.
           </p>
         </div>
 
         {/* View Mode Switcher */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200 shrink-0">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[var(--color-secondary-surface)] border border-[var(--border)] shrink-0">
           <button
             type="button"
             onClick={() => setViewMode("inventory")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               viewMode === "inventory"
-                ? "bg-white text-indigo-600 shadow-2xs"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-[var(--color-card-background)] text-[var(--accent)] shadow-2xs"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
           >
             <ListFilter className="h-3.5 w-3.5" />
@@ -240,10 +240,10 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
           <button
             type="button"
             onClick={() => setViewMode("bulk")}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               viewMode === "bulk"
-                ? "bg-white text-indigo-600 shadow-2xs"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-[var(--color-card-background)] text-[var(--accent)] shadow-2xs"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
           >
             <TableIcon className="h-3.5 w-3.5" />
@@ -256,26 +256,26 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
       {viewMode === "inventory" && (
         <div className="space-y-4">
           {/* Filters Bar */}
-          <div className="flex flex-wrap items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+          <div className="flex flex-wrap items-center gap-3 bg-[var(--color-card-background)] p-4 rounded-xl border border-[var(--border)] shadow-2xs">
             {/* Search Input */}
             <div className="relative flex-1 min-w-[220px]">
-              <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-[var(--color-muted-text)]" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by title, slug, or route..."
-                className="w-full rounded-xl border border-slate-200 pl-9 pr-3 py-2 text-xs outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] pl-9 pr-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
               />
             </div>
 
             {/* Type Filter */}
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold text-slate-500">Route Type:</span>
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)]">Route Type:</span>
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-indigo-600 cursor-pointer"
+                className="rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-2 text-xs font-semibold text-[var(--color-heading)] outline-none focus:border-[var(--accent)] cursor-pointer"
               >
                 <option value="all">All Routes ({items.length})</option>
                 <option value="home">Homepage (1)</option>
@@ -288,11 +288,11 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
 
             {/* Health Filter */}
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold text-slate-500">SEO Health:</span>
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)]">SEO Health:</span>
               <select
                 value={healthFilter}
                 onChange={(e) => setHealthFilter(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-indigo-600 cursor-pointer"
+                className="rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-2 text-xs font-semibold text-[var(--color-heading)] outline-none focus:border-[var(--accent)] cursor-pointer"
               >
                 <option value="all">All States</option>
                 <option value="warnings_only">Needs Attention (Warnings)</option>
@@ -305,10 +305,10 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
           </div>
 
           {/* Inventory Table */}
-          <div className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xs">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold text-[10px]">
+                <thead className="bg-[var(--color-secondary-surface)] border-b border-[var(--border)] text-[var(--color-muted-text)] uppercase tracking-wider font-mono font-bold text-[10px]">
                   <tr>
                     <th className="px-4 py-3">Route &amp; Title</th>
                     <th className="px-4 py-3">Type</th>
@@ -318,7 +318,7 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                     <th className="px-4 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
+                <tbody className="divide-y divide-[var(--border)] text-[var(--color-body-text)] font-medium">
                   {filteredItems.map((item) => {
                     const seo = item.seo || {};
                     const title = seo.metaTitle || item.title;
@@ -326,17 +326,17 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                     const diagnostics = getDiagnostics(item);
 
                     return (
-                      <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
+                      <tr key={item.id} className="hover:bg-[var(--color-secondary-surface)]/70 transition-colors">
                         {/* Route & Title */}
                         <td className="px-4 py-3 max-w-xs">
-                          <div className="font-bold text-slate-900 truncate">{item.title}</div>
-                          <div className="text-[11px] font-mono text-indigo-600 flex items-center gap-1 mt-0.5">
+                          <div className="font-bold text-[var(--color-heading)] truncate">{item.title}</div>
+                          <div className="text-[11px] font-mono text-[var(--accent)] flex items-center gap-1 mt-0.5">
                             <span>{item.route}</span>
                             <a
                               href={item.route}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-slate-400 hover:text-indigo-600 inline-block"
+                              className="text-[var(--color-muted-text)] hover:text-[var(--accent)] inline-block"
                               title="Open public page"
                             >
                               <ExternalLink className="h-3 w-3" />
@@ -349,14 +349,14 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                           <span
                             className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
                               item.type === "home"
-                                ? "bg-amber-100 text-amber-800"
+                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
                                 : item.type === "page"
-                                ? "bg-blue-100 text-blue-800"
+                                ? "bg-sky-500/15 text-sky-700 dark:text-sky-400"
                                 : item.type === "category"
-                                ? "bg-emerald-100 text-emerald-800"
+                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                                 : item.type === "post"
-                                ? "bg-indigo-100 text-indigo-800"
-                                : "bg-purple-100 text-purple-800"
+                                ? "bg-[var(--accent-light)] text-[var(--accent)]"
+                                : "bg-purple-500/15 text-purple-700 dark:text-purple-400"
                             }`}
                           >
                             {item.type}
@@ -365,11 +365,11 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
 
                         {/* Meta Description */}
                         <td className="px-4 py-3 max-w-sm">
-                          <p className="line-clamp-2 text-slate-600 text-[11px] leading-relaxed">
+                          <p className="line-clamp-2 text-[var(--color-body-text)] text-[11px] leading-relaxed">
                             {desc}
                           </p>
                           {seo.metaDescription && (
-                            <span className="text-[10px] text-slate-400 font-mono mt-0.5 inline-block">
+                            <span className="text-[10px] text-[var(--color-muted-text)] font-mono mt-0.5 inline-block">
                               {seo.metaDescription.length} chars
                             </span>
                           )}
@@ -377,9 +377,9 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
 
                         {/* Canonical & Robots */}
                         <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="text-[11px] font-mono text-slate-500">
+                          <div className="text-[11px] font-mono text-[var(--color-muted-text)]">
                             {seo.canonicalUrl ? (
-                              <span className="text-emerald-700 font-semibold truncate max-w-[150px] inline-block">
+                              <span className="text-emerald-700 dark:text-emerald-400 font-semibold truncate max-w-[150px] inline-block">
                                 Custom Canonical
                               </span>
                             ) : (
@@ -390,13 +390,13 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                             <span
                               className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold ${
                                 seo.robots?.index === false
-                                  ? "bg-rose-100 text-rose-700"
-                                  : "bg-emerald-50 text-emerald-700"
+                                  ? "bg-rose-500/15 text-rose-700 dark:text-rose-400"
+                                  : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                               }`}
                             >
                               {seo.robots?.index === false ? "noindex" : "index"}
                             </span>
-                            <span className="text-[9px] text-slate-400 font-mono">
+                            <span className="text-[9px] text-[var(--color-muted-text)] font-mono">
                               {seo.robots?.follow === false ? "nofollow" : "follow"}
                             </span>
                           </div>
@@ -405,21 +405,21 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                         {/* Health Warnings */}
                         <td className="px-4 py-3">
                           {diagnostics.length === 0 ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">
-                              <CheckCircle2 className="h-3 w-3 text-emerald-600" /> Optimal
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
+                              <CheckCircle2 className="h-3 w-3" /> Optimal
                             </span>
                           ) : (
                             <div className="space-y-1">
                               {diagnostics.slice(0, 2).map((warn, wIdx) => (
                                 <span
                                   key={wIdx}
-                                  className="block text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60 truncate max-w-[180px]"
+                                  className="block text-[10px] font-semibold text-amber-800 dark:text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 truncate max-w-[180px]"
                                 >
                                   ⚠️ {warn}
                                 </span>
                               ))}
                               {diagnostics.length > 2 && (
-                                <span className="text-[9px] text-slate-400 font-bold block">
+                                <span className="text-[9px] text-[var(--color-muted-text)] font-bold block">
                                   +{diagnostics.length - 2} more warning(s)
                                 </span>
                               )}
@@ -432,7 +432,7 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(item)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors cursor-pointer shadow-2xs"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--accent)] text-white text-xs font-bold hover:bg-[var(--accent-hover)] transition-colors cursor-pointer shadow-2xs"
                           >
                             <Edit3 className="h-3 w-3" />
                             <span>Edit Full SEO</span>
@@ -460,19 +460,19 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
           onClick={() => setActiveEditItem(null)}
         >
           <div
-            className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
+            className="relative w-full max-w-4xl max-h-[90vh] bg-[var(--color-card-background)] rounded-2xl shadow-2xl border border-[var(--border)] overflow-hidden flex flex-col animate-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="p-5 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
+            <div className="p-5 border-b border-[var(--border)] bg-[var(--color-secondary-surface)] flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--accent)]">
                     SEO Editor: {activeEditItem.type}
                   </span>
-                  <span className="text-xs font-mono text-slate-500">• {activeEditItem.route}</span>
+                  <span className="text-xs font-mono text-[var(--color-muted-text)]">• {activeEditItem.route}</span>
                 </div>
-                <h3 className="text-base font-extrabold text-slate-900 mt-0.5">
+                <h3 className="font-display text-base font-extrabold text-[var(--color-heading)] mt-0.5">
                   {activeEditItem.title}
                 </h3>
               </div>
@@ -480,7 +480,7 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
               <button
                 type="button"
                 onClick={() => setActiveEditItem(null)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-card-background)] transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -502,8 +502,8 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
-              <span className="text-xs text-slate-500">
+            <div className="p-4 border-t border-[var(--border)] bg-[var(--color-secondary-surface)] flex items-center justify-between">
+              <span className="text-xs text-[var(--color-muted-text)]">
                 Saving will update MongoDB and trigger immediate cache revalidation &amp; IndexNow.
               </span>
 
@@ -511,7 +511,7 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                 <button
                   type="button"
                   onClick={() => setActiveEditItem(null)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                  className="px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-main-background)] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -520,7 +520,7 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                   type="button"
                   disabled={isPending}
                   onClick={handleSaveModal}
-                  className="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-all flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-bold hover:bg-[var(--accent-hover)] transition-all flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
                 >
                   {isPending ? (
                     <Sparkles className="h-3.5 w-3.5 animate-spin" />

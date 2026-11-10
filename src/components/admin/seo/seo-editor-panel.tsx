@@ -63,8 +63,8 @@ export function SeoEditorPanel({
     });
   };
 
-  const effectiveTitle = seo.metaTitle || title || "Untitled Dispatches";
-  const effectiveDescription = seo.metaDescription || excerpt || "Stay ahead with AI Latest News.";
+  const effectiveTitle = seo.metaTitle || title || "Untitled Dispatch";
+  const effectiveDescription = seo.metaDescription || excerpt || "Stay ahead with Kraviona AI News.";
   const effectiveSlug = slug || "post";
   const fullUrl = `${baseUrl}/${entityType === "post" ? "blog" : entityType === "category" ? "category" : ""}/${effectiveSlug}`.replace(/\/+/g, "/").replace("https:/", "https://");
   const effectiveOgImage = seo.ogImage || coverImage || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80";
@@ -161,29 +161,29 @@ export function SeoEditorPanel({
   // Score Badge Styling
   const scoreColor =
     analysis.score >= 80
-      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
       : analysis.score >= 50
-      ? "bg-amber-50 text-amber-700 border-amber-200"
-      : "bg-rose-50 text-rose-700 border-rose-200";
+      ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
+      : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30";
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-white shadow-2xs overflow-hidden">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs overflow-hidden">
       {/* Panel Header */}
-      <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-gradient-to-r from-indigo-50/40 via-white to-sky-50/40 flex flex-wrap items-center justify-between gap-3">
+      <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-[var(--color-secondary-surface)]/50 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-2xs">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent)] text-white shadow-xs">
             <Globe className="h-4 w-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-sm sm:text-base text-[var(--foreground)]">
-                AI Latest News SEO Engine
+              <h3 className="font-display font-bold text-sm sm:text-base text-[var(--color-heading)]">
+                Kraviona SEO Engine
               </h3>
-              <span className="text-[10px] font-semibold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="text-[10px] font-semibold bg-[var(--accent-light)] text-[var(--accent)] border border-[var(--accent)]/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
                 v2.0
               </span>
             </div>
-            <p className="text-xs text-[var(--foreground-muted)]">
+            <p className="text-xs text-[var(--color-muted-text)]">
               Real-time audit, schema generation &amp; indexing controls
             </p>
           </div>
@@ -194,7 +194,7 @@ export function SeoEditorPanel({
           <button
             type="button"
             onClick={() => setShowChecklist(!showChecklist)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs ${scoreColor}`}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer ${scoreColor}`}
           >
             <span>SEO Score:</span>
             <span className="text-sm font-extrabold">{analysis.score}/100</span>
@@ -205,10 +205,10 @@ export function SeoEditorPanel({
 
       {/* Collapsible SEO Checklist & Recommendations */}
       {showChecklist && (
-        <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-slate-50/50">
-          <div className="flex items-center justify-between mb-3 text-xs font-semibold text-[var(--foreground)]">
+        <div className="p-4 sm:p-5 border-b border-[var(--border)] bg-[var(--color-main-background)]">
+          <div className="flex items-center justify-between mb-3 text-xs font-semibold text-[var(--color-heading)]">
             <span>Audit Checklist ({analysis.checklist.filter((c) => c.status === "pass").length}/{analysis.checklist.length} Passed)</span>
-            <span className="text-[var(--foreground-muted)]">
+            <span className="text-[var(--color-muted-text)]">
               {analysis.wordCount} words • ~{analysis.readingTime} min read
             </span>
           </div>
@@ -223,27 +223,27 @@ export function SeoEditorPanel({
                   : XCircle;
               const iconColor =
                 rule.status === "pass"
-                  ? "text-emerald-600"
+                  ? "text-emerald-600 dark:text-emerald-400"
                   : rule.status === "warn"
-                  ? "text-amber-500"
-                  : "text-rose-500";
+                  ? "text-amber-500 dark:text-amber-400"
+                  : "text-rose-500 dark:text-rose-400";
 
               return (
                 <div
                   key={rule.id}
-                  className="flex items-start gap-2 p-2 rounded-lg bg-white border border-gray-100 shadow-3xs"
+                  className="flex items-start gap-2 p-2.5 rounded-xl bg-[var(--color-card-background)] border border-[var(--border)]"
                 >
                   <Icon className={`h-4 w-4 flex-shrink-0 mt-0.5 ${iconColor}`} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-[var(--foreground)] truncate">
+                      <span className="font-semibold text-[var(--color-heading)] truncate">
                         {rule.label}
                       </span>
-                      <span className="font-mono text-[10px] text-[var(--foreground-muted)]">
+                      <span className="font-mono text-[10px] text-[var(--color-muted-text)]">
                         {rule.points}/{rule.maxPoints}pt
                       </span>
                     </div>
-                    <p className="text-[11px] text-[var(--foreground-muted)] leading-tight mt-0.5">
+                    <p className="text-[11px] text-[var(--color-muted-text)] leading-tight mt-0.5">
                       {rule.message}
                     </p>
                   </div>
@@ -255,7 +255,7 @@ export function SeoEditorPanel({
       )}
 
       {/* Tabs Navigation */}
-      <div className="flex border-b border-[var(--border)] bg-white px-3 sm:px-5 overflow-x-auto no-scrollbar">
+      <div className="flex border-b border-[var(--border)] bg-[var(--color-card-background)] px-3 sm:px-5 overflow-x-auto no-scrollbar">
         {[
           { id: "general", label: "General", icon: Globe },
           { id: "social", label: "Social Cards", icon: Share2 },
@@ -273,7 +273,7 @@ export function SeoEditorPanel({
               className={`flex items-center gap-2 py-3 px-3 text-xs font-semibold border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
                 isActive
                   ? "border-[var(--accent)] text-[var(--accent)]"
-                  : "border-transparent text-[var(--foreground-secondary)] hover:text-[var(--foreground)]"
+                  : "border-transparent text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -291,9 +291,9 @@ export function SeoEditorPanel({
             {/* Focus Keyword & AI assist */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-[var(--foreground)] flex items-center gap-1.5">
+                <label className="text-xs font-bold text-[var(--color-heading)] flex items-center gap-1.5">
                   Focus Keyword
-                  <span className="text-[10px] font-normal text-[var(--foreground-muted)]">
+                  <span className="text-[10px] font-normal text-[var(--color-muted-text)]">
                     (Primary search topic)
                   </span>
                 </label>
@@ -301,7 +301,7 @@ export function SeoEditorPanel({
                   type="button"
                   onClick={() => handleAiGenerate("keywords")}
                   disabled={Boolean(aiLoading)}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer disabled:opacity-50"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:underline transition-colors cursor-pointer disabled:opacity-50"
                 >
                   {aiLoading === "keywords" ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -316,20 +316,20 @@ export function SeoEditorPanel({
                 value={seo.focusKeyword || ""}
                 onChange={(e) => updateField("focusKeyword", e.target.value)}
                 placeholder="e.g. Sarvam-1 launch, DeepSeek-R1, ChatGPT vs Gemini"
-                className="w-full rounded-xl border border-[var(--border)] px-3.5 py-2 text-xs outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
               />
             </div>
 
             {/* Secondary Keywords */}
             <div>
-              <label className="block text-xs font-bold text-[var(--foreground)] mb-1.5">
+              <label className="block text-xs font-bold text-[var(--color-heading)] mb-1.5">
                 Secondary Keywords
               </label>
               <div className="flex flex-wrap gap-1.5 mb-2">
                 {seo.secondaryKeywords?.map((kw, idx) => (
                   <span
                     key={idx}
-                    className="inline-flex items-center gap-1 rounded-lg bg-indigo-50 border border-indigo-100 px-2.5 py-1 text-[11px] font-medium text-indigo-700"
+                    className="inline-flex items-center gap-1 rounded-lg bg-[var(--accent-light)] border border-[var(--accent)]/30 px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]"
                   >
                     <span>{kw}</span>
                     <button
@@ -338,7 +338,7 @@ export function SeoEditorPanel({
                         const updated = seo.secondaryKeywords?.filter((_, i) => i !== idx);
                         updateField("secondaryKeywords", updated);
                       }}
-                      className="text-indigo-400 hover:text-rose-600"
+                      className="text-[var(--accent)] hover:text-rose-600 cursor-pointer"
                     >
                       <Trash2 className="h-3 w-3" />
                     </button>
@@ -361,7 +361,7 @@ export function SeoEditorPanel({
                     }
                   }}
                   placeholder="Add secondary keyword and press Enter..."
-                  className="flex-1 rounded-xl border border-[var(--border)] px-3.5 py-1.5 text-xs outline-none focus:border-[var(--accent)]"
+                  className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-1.5 text-xs text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
                 />
                 <button
                   type="button"
@@ -372,7 +372,7 @@ export function SeoEditorPanel({
                       setNewSecondaryKeyword("");
                     }
                   }}
-                  className="inline-flex items-center gap-1 rounded-xl bg-slate-100 hover:bg-slate-200 px-3 py-1.5 text-xs font-semibold text-[var(--foreground)]"
+                  className="inline-flex items-center gap-1 rounded-xl bg-[var(--color-secondary-surface)] hover:bg-[var(--border)] px-3 py-1.5 text-xs font-semibold text-[var(--color-heading)] cursor-pointer"
                 >
                   <Plus className="h-3.5 w-3.5" /> Add
                 </button>
@@ -382,18 +382,18 @@ export function SeoEditorPanel({
             {/* Meta Title */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-[var(--foreground)]">
+                <label className="text-xs font-bold text-[var(--color-heading)]">
                   SEO Meta Title
                 </label>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] text-[var(--foreground-muted)] font-mono">
+                  <span className="text-[10px] text-[var(--color-muted-text)] font-mono">
                     {effectiveTitle.length}/60 chars • ~{titlePx}/580px
                   </span>
                   <button
                     type="button"
                     onClick={() => handleAiGenerate("title")}
                     disabled={Boolean(aiLoading)}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 cursor-pointer disabled:opacity-50"
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:underline cursor-pointer disabled:opacity-50"
                   >
                     {aiLoading === "title" ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
@@ -408,11 +408,11 @@ export function SeoEditorPanel({
                 type="text"
                 value={seo.metaTitle || ""}
                 onChange={(e) => updateField("metaTitle", e.target.value)}
-                placeholder={title ? `${title} | AI Latest News` : "Enter high-CTR SEO title..."}
-                className="w-full rounded-xl border border-[var(--border)] px-3.5 py-2 text-xs outline-none focus:border-[var(--accent)]"
+                placeholder={title ? `${title} | Kraviona AI News` : "Enter high-CTR SEO title..."}
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
               />
               {/* Pixel-width Visual Indicator */}
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div className="mt-1.5 h-1.5 w-full rounded-full bg-[var(--color-secondary-surface)] overflow-hidden">
                 <div
                   className={`h-full transition-all ${
                     titlePx > 580
@@ -429,18 +429,18 @@ export function SeoEditorPanel({
             {/* Meta Description */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-[var(--foreground)]">
+                <label className="text-xs font-bold text-[var(--color-heading)]">
                   Meta Description
                 </label>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] text-[var(--foreground-muted)] font-mono">
+                  <span className="text-[10px] text-[var(--color-muted-text)] font-mono">
                     {effectiveDescription.length}/160 chars • ~{descPx}/960px
                   </span>
                   <button
                     type="button"
                     onClick={() => handleAiGenerate("description")}
                     disabled={Boolean(aiLoading)}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 cursor-pointer disabled:opacity-50"
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--accent)] hover:underline cursor-pointer disabled:opacity-50"
                   >
                     {aiLoading === "description" ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
@@ -456,10 +456,10 @@ export function SeoEditorPanel({
                 value={seo.metaDescription || ""}
                 onChange={(e) => updateField("metaDescription", e.target.value)}
                 placeholder={excerpt || "Summarize this article with relevant keywords..."}
-                className="w-full rounded-xl border border-[var(--border)] px-3.5 py-2 text-xs outline-none focus:border-[var(--accent)]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
               />
               {/* Pixel-width Visual Indicator */}
-              <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div className="mt-1.5 h-1.5 w-full rounded-full bg-[var(--color-secondary-surface)] overflow-hidden">
                 <div
                   className={`h-full transition-all ${
                     descPx > 960
@@ -476,7 +476,7 @@ export function SeoEditorPanel({
             {/* Canonical URL & Breadcrumb Title */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+                <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                   Canonical URL Override
                 </label>
                 <input
@@ -484,11 +484,11 @@ export function SeoEditorPanel({
                   value={seo.canonicalUrl || ""}
                   onChange={(e) => updateField("canonicalUrl", e.target.value)}
                   placeholder={fullUrl}
-                  className="w-full rounded-xl border border-[var(--border)] px-3 py-1.5 text-xs outline-none focus:border-[var(--accent)] font-mono text-[11px]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-1.5 text-xs text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)] font-mono text-[11px]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+                <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                   Breadcrumb Label
                 </label>
                 <input
@@ -496,7 +496,7 @@ export function SeoEditorPanel({
                   value={seo.breadcrumbTitle || ""}
                   onChange={(e) => updateField("breadcrumbTitle", e.target.value)}
                   placeholder={title || "Short navigation title"}
-                  className="w-full rounded-xl border border-[var(--border)] px-3 py-1.5 text-xs outline-none focus:border-[var(--accent)]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-1.5 text-xs text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] outline-none focus:border-[var(--accent)]"
                 />
               </div>
             </div>
@@ -507,11 +507,11 @@ export function SeoEditorPanel({
         {activeTab === "social" && (
           <div className="space-y-5">
             <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
-              <span className="text-xs font-bold text-[var(--foreground)]">
+              <span className="text-xs font-bold text-[var(--color-heading)]">
                 Social Card Customization
               </span>
               {/* Platform Switcher */}
-              <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-0.5 text-xs font-semibold">
+              <div className="flex items-center gap-1 rounded-lg bg-[var(--color-secondary-surface)] p-0.5 text-xs font-semibold">
                 {(["x", "facebook", "whatsapp"] as const).map((p) => (
                   <button
                     key={p}
@@ -519,8 +519,8 @@ export function SeoEditorPanel({
                     onClick={() => setSocialPlatform(p)}
                     className={`px-2.5 py-1 rounded-md capitalize transition-all cursor-pointer ${
                       socialPlatform === p
-                        ? "bg-white text-indigo-700 shadow-2xs"
-                        : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                        ? "bg-[var(--color-card-background)] text-[var(--accent)] shadow-xs"
+                        : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                     }`}
                   >
                     {p === "x" ? "X / Twitter" : p}
@@ -533,7 +533,7 @@ export function SeoEditorPanel({
               {/* Fields */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+                  <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                     OG / Social Title
                   </label>
                   <input
@@ -541,12 +541,12 @@ export function SeoEditorPanel({
                     value={seo.ogTitle || ""}
                     onChange={(e) => updateField("ogTitle", e.target.value)}
                     placeholder={effectiveTitle}
-                    className="w-full rounded-xl border border-[var(--border)] px-3.5 py-2 text-xs outline-none focus:border-[var(--accent)]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+                  <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                     OG / Social Description
                   </label>
                   <textarea
@@ -554,12 +554,12 @@ export function SeoEditorPanel({
                     value={seo.ogDescription || ""}
                     onChange={(e) => updateField("ogDescription", e.target.value)}
                     placeholder={effectiveDescription}
-                    className="w-full rounded-xl border border-[var(--border)] px-3.5 py-2 text-xs outline-none focus:border-[var(--accent)]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+                  <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                     OG Image URL (1200x630)
                   </label>
                   <input
@@ -567,18 +567,18 @@ export function SeoEditorPanel({
                     value={seo.ogImage || ""}
                     onChange={(e) => updateField("ogImage", e.target.value)}
                     placeholder={coverImage || "https://..."}
-                    className="w-full rounded-xl border border-[var(--border)] px-3.5 py-2 text-xs outline-none focus:border-[var(--accent)] font-mono text-[11px]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs text-[var(--color-heading)] outline-none focus:border-[var(--accent)] font-mono text-[11px]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+                  <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                     Twitter Card Format
                   </label>
                   <select
                     value={seo.twitterCard || "summary_large_image"}
                     onChange={(e) => updateField("twitterCard", e.target.value as "summary" | "summary_large_image")}
-                    className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-xs outline-none focus:border-[var(--accent)]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-2 text-xs text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                   >
                     <option value="summary_large_image">Large Image Card (1200x630 - Recommended)</option>
                     <option value="summary">Small Square Summary Card</option>
@@ -588,13 +588,13 @@ export function SeoEditorPanel({
 
               {/* Live Social Card Preview */}
               <div>
-                <span className="block text-xs font-bold text-[var(--foreground)] mb-2">
+                <span className="block text-xs font-bold text-[var(--color-heading)] mb-2">
                   Live {socialPlatform.toUpperCase()} Preview
                 </span>
 
-                <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-main-background)] overflow-hidden shadow-xs">
                   {/* Image */}
-                  <div className="relative aspect-16/9 w-full bg-slate-100 overflow-hidden">
+                  <div className="relative aspect-16/9 w-full bg-[var(--color-secondary-surface)] overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={effectiveOgImage}
@@ -604,14 +604,14 @@ export function SeoEditorPanel({
                   </div>
 
                   {/* Text Container */}
-                  <div className="p-3.5 bg-slate-50 border-t border-slate-100">
-                    <span className="block text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                  <div className="p-3.5 bg-[var(--color-secondary-surface)]/50 border-t border-[var(--border)]">
+                    <span className="block text-[10px] uppercase font-bold text-[var(--color-muted-text)] tracking-wider">
                       {baseUrl.replace(/^https?:\/\//, "")}
                     </span>
-                    <h4 className="font-bold text-xs sm:text-sm text-slate-900 line-clamp-2 mt-0.5">
+                    <h4 className="font-bold text-xs sm:text-sm text-[var(--color-heading)] line-clamp-2 mt-0.5">
                       {seo.ogTitle || effectiveTitle}
                     </h4>
-                    <p className="text-[11px] text-slate-600 line-clamp-2 mt-1">
+                    <p className="text-[11px] text-[var(--color-body-text)] line-clamp-2 mt-1">
                       {seo.ogDescription || effectiveDescription}
                     </p>
                   </div>
@@ -626,11 +626,11 @@ export function SeoEditorPanel({
           <div className="space-y-6">
             {/* Robots Configuration */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)] mb-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--color-heading)] mb-3">
                 Robots Meta Directives
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-white cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] cursor-pointer hover:bg-[var(--color-secondary-surface)]">
                   <input
                     type="checkbox"
                     checked={seo.robots?.index ?? true}
@@ -643,12 +643,12 @@ export function SeoEditorPanel({
                         maxImagePreview: seo.robots?.maxImagePreview ?? "large",
                       })
                     }
-                    className="rounded text-indigo-600"
+                    className="rounded accent-[var(--accent)]"
                   />
-                  <span className="font-semibold">Index Page</span>
+                  <span className="font-semibold text-[var(--color-heading)]">Index Page</span>
                 </label>
 
-                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-white cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] cursor-pointer hover:bg-[var(--color-secondary-surface)]">
                   <input
                     type="checkbox"
                     checked={seo.robots?.follow ?? true}
@@ -661,12 +661,12 @@ export function SeoEditorPanel({
                         maxImagePreview: seo.robots?.maxImagePreview ?? "large",
                       })
                     }
-                    className="rounded text-indigo-600"
+                    className="rounded accent-[var(--accent)]"
                   />
-                  <span className="font-semibold">Follow Links</span>
+                  <span className="font-semibold text-[var(--color-heading)]">Follow Links</span>
                 </label>
 
-                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-white cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] cursor-pointer hover:bg-[var(--color-secondary-surface)]">
                   <input
                     type="checkbox"
                     checked={seo.robots?.noarchive ?? false}
@@ -679,12 +679,12 @@ export function SeoEditorPanel({
                         maxImagePreview: seo.robots?.maxImagePreview ?? "large",
                       })
                     }
-                    className="rounded text-indigo-600"
+                    className="rounded accent-[var(--accent)]"
                   />
-                  <span className="font-semibold">No Archive</span>
+                  <span className="font-semibold text-[var(--color-heading)]">No Archive</span>
                 </label>
 
-                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-white cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] cursor-pointer hover:bg-[var(--color-secondary-surface)]">
                   <input
                     type="checkbox"
                     checked={seo.robots?.nosnippet ?? false}
@@ -697,20 +697,20 @@ export function SeoEditorPanel({
                         maxImagePreview: seo.robots?.maxImagePreview ?? "large",
                       })
                     }
-                    className="rounded text-indigo-600"
+                    className="rounded accent-[var(--accent)]"
                   />
-                  <span className="font-semibold">No Snippet</span>
+                  <span className="font-semibold text-[var(--color-heading)]">No Snippet</span>
                 </label>
               </div>
             </div>
 
             {/* Sitemap Settings */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)] mb-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--color-heading)] mb-3">
                 XML Sitemap Controls
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-white cursor-pointer">
+                <label className="flex items-center gap-2 p-3 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={seo.sitemap?.include ?? true}
@@ -721,12 +721,13 @@ export function SeoEditorPanel({
                         changefreq: seo.sitemap?.changefreq ?? "weekly",
                       })
                     }
+                    className="rounded accent-[var(--accent)]"
                   />
-                  <span className="text-xs font-semibold">Include in sitemap.xml</span>
+                  <span className="text-xs font-semibold text-[var(--color-heading)]">Include in sitemap.xml</span>
                 </label>
 
                 <div>
-                  <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+                  <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                     Priority ({seo.sitemap?.priority ?? 0.7})
                   </label>
                   <input
@@ -742,12 +743,12 @@ export function SeoEditorPanel({
                         changefreq: seo.sitemap?.changefreq ?? "weekly",
                       })
                     }
-                    className="w-full"
+                    className="w-full accent-[var(--accent)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+                  <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                     Change Frequency
                   </label>
                   <select
@@ -760,7 +761,7 @@ export function SeoEditorPanel({
                         changefreq: e.target.value as any,
                       })
                     }
-                    className="w-full rounded-xl border border-[var(--border)] bg-white px-3 py-1.5 text-xs outline-none"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-1.5 text-xs text-[var(--color-heading)] outline-none"
                   >
                     <option value="always">Always</option>
                     <option value="hourly">Hourly</option>
@@ -774,22 +775,22 @@ export function SeoEditorPanel({
             </div>
 
             {/* IndexNow Immediate Ping Action */}
-            <div className="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-4">
+            <div className="rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent-light)] p-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-indigo-900">
+                    <span className="text-xs font-bold text-[var(--color-heading)]">
                       IndexNow Real-time Submission
                     </span>
-                    <span className="text-[10px] font-semibold bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-semibold bg-[var(--color-card-background)] text-[var(--accent)] border border-[var(--accent)]/30 px-2 py-0.5 rounded-full">
                       Bing • Yandex • Seznam
                     </span>
                   </div>
-                  <p className="text-xs text-indigo-700 mt-0.5">
+                  <p className="text-xs text-[var(--color-body-text)] mt-0.5">
                     Instantly notifies search engines of content updates without waiting for re-crawl.
                   </p>
                   {seo.indexNowStatus?.lastPingedAt && (
-                    <span className="block text-[10px] text-indigo-500 mt-1">
+                    <span className="block text-[10px] text-[var(--color-muted-text)] mt-1">
                       Last submitted: {new Date(seo.indexNowStatus.lastPingedAt).toLocaleString()}
                     </span>
                   )}
@@ -799,7 +800,7 @@ export function SeoEditorPanel({
                   type="button"
                   onClick={handleRequestIndexNow}
                   disabled={indexNowLoading}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 text-xs font-bold shadow-2xs transition-all cursor-pointer disabled:opacity-50 flex-shrink-0"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-4 py-2 text-xs font-bold shadow-xs transition-all cursor-pointer disabled:opacity-50 flex-shrink-0"
                 >
                   {indexNowLoading ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -811,7 +812,7 @@ export function SeoEditorPanel({
               </div>
 
               {indexNowMessage && (
-                <div className="mt-3 p-2.5 rounded-xl bg-white border border-indigo-100 text-xs text-indigo-800 font-medium">
+                <div className="mt-3 p-2.5 rounded-xl bg-[var(--color-card-background)] border border-[var(--border)] text-xs text-[var(--color-heading)] font-medium">
                   {indexNowMessage}
                 </div>
               )}
@@ -819,10 +820,10 @@ export function SeoEditorPanel({
 
             {/* 301 Redirect Aliases */}
             <div>
-              <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+              <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                 Legacy 301 URL Aliases (redirectFrom)
               </label>
-              <p className="text-[11px] text-[var(--foreground-muted)] mb-2">
+              <p className="text-[11px] text-[var(--color-muted-text)] mb-2">
                 Comma-separated legacy URLs that should 301 redirect to this page.
               </p>
               <input
@@ -835,7 +836,7 @@ export function SeoEditorPanel({
                   )
                 }
                 placeholder="/old-post-slug, /ai-models/previous-review"
-                className="w-full rounded-xl border border-[var(--border)] px-3.5 py-2 text-xs font-mono outline-none"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs font-mono text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
               />
             </div>
           </div>
@@ -846,10 +847,10 @@ export function SeoEditorPanel({
           <div className="space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <label className="text-xs font-bold text-[var(--foreground)]">
+                <label className="text-xs font-bold text-[var(--color-heading)]">
                   Primary Schema.org Type
                 </label>
-                <p className="text-[11px] text-[var(--foreground-muted)]">
+                <p className="text-[11px] text-[var(--color-muted-text)]">
                   Structured data injected into the head for Google rich results
                 </p>
               </div>
@@ -857,7 +858,7 @@ export function SeoEditorPanel({
                 type="button"
                 onClick={() => handleAiGenerate("schema")}
                 disabled={Boolean(aiLoading)}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 cursor-pointer disabled:opacity-50 self-start sm:self-auto"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)] hover:underline cursor-pointer disabled:opacity-50 self-start sm:self-auto"
               >
                 {aiLoading === "schema" ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -871,7 +872,7 @@ export function SeoEditorPanel({
             <select
               value={seo.schemaType || "NewsArticle"}
               onChange={(e) => updateField("schemaType", e.target.value)}
-              className="w-full rounded-xl border border-[var(--border)] bg-white px-3.5 py-2 text-xs font-semibold outline-none focus:border-[var(--accent)]"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs font-semibold text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
             >
               <option value="NewsArticle">NewsArticle (Breaking News &amp; Reports)</option>
               <option value="TechArticle">TechArticle (Deep Dives &amp; Architectures)</option>
@@ -885,10 +886,10 @@ export function SeoEditorPanel({
 
             {/* Custom JSON-LD Overrides */}
             <div>
-              <label className="block text-xs font-bold text-[var(--foreground)] mb-1">
+              <label className="block text-xs font-bold text-[var(--color-heading)] mb-1">
                 Custom JSON-LD Editor (Overrides / Extra Schema)
               </label>
-              <p className="text-[11px] text-[var(--foreground-muted)] mb-2">
+              <p className="text-[11px] text-[var(--color-muted-text)] mb-2">
                 Provide custom valid JSON-LD if you wish to override or extend the automated schema.
               </p>
               <textarea
@@ -896,7 +897,7 @@ export function SeoEditorPanel({
                 value={seo.schemaOverrides || ""}
                 onChange={(e) => updateField("schemaOverrides", e.target.value)}
                 placeholder='{\n  "@context": "https://schema.org",\n  "@type": "TechArticle",\n  "headline": "..."\n}'
-                className="w-full rounded-xl border border-[var(--border)] bg-slate-900 text-slate-100 font-mono text-xs p-3.5 outline-none focus:ring-1 focus:ring-indigo-400"
+                className="w-full rounded-xl border border-[var(--border)] bg-[#101820] text-slate-100 font-mono text-xs p-3.5 outline-none focus:border-[var(--accent)]"
               />
             </div>
           </div>
@@ -906,17 +907,17 @@ export function SeoEditorPanel({
         {activeTab === "preview" && (
           <div className="space-y-5">
             <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
-              <span className="text-xs font-bold text-[var(--foreground)]">
+              <span className="text-xs font-bold text-[var(--color-heading)]">
                 Live Google Search Snippet
               </span>
-              <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-0.5 text-xs font-semibold">
+              <div className="flex items-center gap-1 rounded-lg bg-[var(--color-secondary-surface)] p-0.5 text-xs font-semibold">
                 <button
                   type="button"
                   onClick={() => setSerpDevice("desktop")}
                   className={`inline-flex items-center gap-1 px-3 py-1 rounded-md transition-all cursor-pointer ${
                     serpDevice === "desktop"
-                      ? "bg-white text-indigo-700 shadow-2xs font-bold"
-                      : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                      ? "bg-[var(--color-card-background)] text-[var(--accent)] shadow-xs font-bold"
+                      : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                   }`}
                 >
                   <Monitor className="h-3 w-3" /> Desktop
@@ -926,8 +927,8 @@ export function SeoEditorPanel({
                   onClick={() => setSerpDevice("mobile")}
                   className={`inline-flex items-center gap-1 px-3 py-1 rounded-md transition-all cursor-pointer ${
                     serpDevice === "mobile"
-                      ? "bg-white text-indigo-700 shadow-2xs font-bold"
-                      : "text-[var(--foreground-muted)] hover:text-[var(--foreground)]"
+                      ? "bg-[var(--color-card-background)] text-[var(--accent)] shadow-xs font-bold"
+                      : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
                   }`}
                 >
                   <Smartphone className="h-3 w-3" /> Mobile
@@ -937,32 +938,32 @@ export function SeoEditorPanel({
 
             {/* Google Result Card */}
             <div
-              className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all ${
+              className={`rounded-2xl border border-[var(--border)] bg-[var(--color-main-background)] p-5 shadow-xs transition-all ${
                 serpDevice === "mobile" ? "max-w-sm mx-auto" : "max-w-2xl"
               }`}
             >
               {/* Site Breadcrumbs */}
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-indigo-600">
-                  AI
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-primary-dark,#101820)] text-[10px] font-bold text-white font-editorial">
+                  K
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-[12px] font-medium text-slate-800 leading-none">
-                    AI Latest News
+                  <span className="text-[12px] font-medium text-[var(--color-heading)] leading-none">
+                    Kraviona AI News
                   </span>
-                  <span className="text-[11px] text-slate-500 font-mono truncate leading-tight">
+                  <span className="text-[11px] text-[var(--color-muted-text)] font-mono truncate leading-tight">
                     {fullUrl}
                   </span>
                 </div>
               </div>
 
               {/* Title */}
-              <h3 className="text-base sm:text-lg font-medium text-[#1a0dab] hover:underline cursor-pointer leading-snug line-clamp-2">
+              <h3 className="text-base sm:text-lg font-medium text-[#1a0dab] dark:text-sky-400 hover:underline cursor-pointer leading-snug line-clamp-2">
                 {effectiveTitle}
               </h3>
 
               {/* Description */}
-              <p className="mt-1 text-xs sm:text-sm text-[#4d5156] line-clamp-2 leading-relaxed">
+              <p className="mt-1 text-xs sm:text-sm text-[#4d5156] dark:text-[var(--color-body-text)] line-clamp-2 leading-relaxed">
                 {effectiveDescription}
               </p>
             </div>

@@ -20,8 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
     entityType: "page",
     entitySeo: page?.seo,
     path: "/terms",
-    title: page?.seo?.metaTitle || page?.title || "Terms of Service | AI Latest News",
-    excerpt: page?.seo?.metaDescription || page?.excerpt || "Terms and conditions governing the use of AI Latest News.",
+    title: page?.seo?.metaTitle || page?.title || "Terms of Service | Kraviona AI News",
+    excerpt: page?.seo?.metaDescription || page?.excerpt || "Terms and conditions governing the use of Kraviona AI News.",
   });
 }
 
@@ -45,30 +45,35 @@ export default async function TermsPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--foreground)] mb-8">
-          {page?.title || "Terms of Service"}
-        </h1>
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="border-b-2 border-[var(--color-heading)] pb-5 mb-8">
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-2">
+            Legal &amp; Governance
+          </p>
+          <h1 className="font-editorial text-3xl sm:text-4xl font-bold text-[var(--color-heading)]">
+            {page?.title || "Terms of Service"}
+          </h1>
+        </div>
 
         {page?.contentHtml ? (
           <div
-            className="prose-article text-sm leading-relaxed space-y-6"
+            className="prose-article text-base leading-relaxed space-y-6 text-[var(--color-body-text)]"
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         ) : (
-          <div className="prose-article text-sm leading-relaxed space-y-6">
+          <div className="prose-article text-base leading-relaxed space-y-6 text-[var(--color-body-text)]">
             <p>
-              Welcome to AI Latest News. By accessing or interacting with our platform, you agree to comply with and be bound by the following editorial terms.
+              Welcome to Kraviona AI News. By accessing or interacting with our publication, you agree to comply with and be bound by the following editorial terms.
             </p>
 
-            <h3 className="font-bold text-base text-[var(--foreground)] mt-6">1. Code Snippets &amp; Licensing</h3>
+            <h2 className="font-display font-bold text-lg text-[var(--color-heading)] mt-6">1. Code Snippets &amp; Licensing</h2>
             <p>
-              All source code samples, snippets, and architectural boilerplate published on AI Latest News are provided under the MIT License unless explicitly designated otherwise. You are free to adapt, execute, and embed them within personal and commercial software.
+              Unless explicitly stated otherwise, original editorial reporting and brand assets remain the intellectual property of Kraviona AI News, while accompanying tutorial code snippets are provided under permissive open-source terms where indicated.
             </p>
 
-            <h3 className="font-bold text-base text-[var(--foreground)] mt-6">2. Accuracy &amp; Disclaimers</h3>
+            <h2 className="font-display font-bold text-lg text-[var(--color-heading)] mt-6">2. Accuracy &amp; Disclaimers</h2>
             <p>
-              While our editorial staff rigorously tests every model evaluation and compute benchmark, the field of artificial intelligence evolves rapidly. Articles represent research snapshots at publication date and should be independently validated for mission-critical deployments.
+              While our editorial staff rigorously verifies model evaluations, research findings, and technology benchmarks, the field of artificial intelligence evolves rapidly. Articles represent documented snapshots at publication time and should be independently validated for mission-critical deployments.
             </p>
           </div>
         )}

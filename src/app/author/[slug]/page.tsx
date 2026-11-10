@@ -8,6 +8,7 @@ import { PublicShell } from "@/components/layout/public-shell";
 import { PostCard } from "@/components/blog/post-card";
 import { getAuthorBySlug } from "@/lib/db/queries/taxonomies";
 import { getPublishedPosts } from "@/lib/db/queries/posts";
+import { getGlobalSettings } from "@/lib/db/queries/settings";
 import { buildEntityMetadata, getSiteUrl } from "@/lib/seo/fallback";
 
 interface AuthorPageProps {
@@ -20,14 +21,14 @@ export async function generateMetadata({ params }: AuthorPageProps): Promise<Met
   const { slug } = await params;
   const author = await getAuthorBySlug(slug);
 
-  if (!author) return { title: "Author Not Found | AI Latest News" };
+  if (!author) return { title: "Author Not Found | Kraviona AI News" };
 
   return buildEntityMetadata({
     entityType: "author",
     path: `/author/${slug}`,
     author: author.name,
     title: `${author.name} — Author Archive & Biography`,
-    excerpt: author.bio || `Read technical AI dispatches, foundation model analyses, and articles published by ${author.name} on AI Latest News.`,
+    excerpt: author.bio || `Read technical AI dispatches, foundation model analyses, and articles published by ${author.name} on Kraviona AI News.`,
     coverImage: author.image,
   });
 }
@@ -38,10 +39,13 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
 
   if (!author) notFound();
 
-  const { posts } = await getPublishedPosts({
-    authorSlug: slug,
-    limit: 15,
-  });
+  const [{ posts }, settings] = await Promise.all([
+    getPublishedPosts({
+      authorSlug: slug,
+      limit: 15,
+    }),
+    getGlobalSettings(),
+  ]);
 
   const siteUrl = getSiteUrl();
 
@@ -66,24 +70,24 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
   };
 
   return (
-    <PublicShell>
+    <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="mx-auto max-w-[var(--max-content-width,1320px)] px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 mb-6 transition-colors"
+          className="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[var(--color-muted-text)] hover:text-[var(--accent)] mb-6 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> All Articles
         </Link>
 
         {/* Author Bio Banner */}
-        <div className="mb-12 rounded-2xl border border-slate-900 bg-white p-6 sm:p-10 shadow-2xs flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
+        <div className="mb-12 rounded-2xl border border-[var(--border)] border-t-4 border-t-[var(--accent)] bg-[var(--color-card-background)] p-6 sm:p-10 shadow-xs flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
           {author.image ? (
-            <div className="relative h-24 w-24 rounded-full overflow-hidden border border-slate-200 shrink-0">
+            <div className="relative h-24 w-24 rounded-full overflow-hidden border border-[var(--border)] shrink-0">
               <Image
                 src={author.image}
                 alt={author.name}
@@ -93,21 +97,21 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
               />
             </div>
           ) : (
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-900 text-white font-mono font-bold text-3xl shrink-0">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#101820] text-[#F5F4EF] font-mono font-bold text-3xl shrink-0">
               {author.name.charAt(0)}
             </div>
           )}
 
-          <div className="flex-1 space-y-2">
-            <span className="inline-block rounded-md bg-slate-100 border border-slate-200 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-700">
+          <div className="flex-1 space-y-2.5">
+            <span className="inline-block rounded-md bg-[var(--color-secondary-surface)] border border-[var(--border)] px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--accent)]">
               {author.role || "Contributing Journalist"}
             </span>
-            <h1 className="text-3xl sm:text-4xl font-black text-slate-900">
+            <h1 className="font-editorial text-3xl sm:text-4xl font-bold text-[var(--color-heading)]">
               {author.name}
             </h1>
-            <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
+            <p className="text-sm text-[var(--color-body-text)] max-w-2xl leading-relaxed">
               {author.bio ||
-                "Senior technology journalist and researcher covering foundation models, GPU compute economics, and sovereign AI initiatives across India."}
+                "Senior technology journalist and researcher covering foundation models, AI engineering systems, and global innovation intelligence."}
             </p>
 
             <div className="mt-4 flex items-center justify-center sm:justify-start gap-2 pt-2">
@@ -116,7 +120,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                   href={author.website}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-colors shadow-2xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors shadow-xs"
                   aria-label="Author Website"
                 >
                   <Globe className="h-4 w-4" />
@@ -127,7 +131,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                   href={author.socialLinks.twitter}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-colors shadow-2xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors shadow-xs"
                   aria-label="Twitter Profile"
                 >
                   <TwitterIcon className="h-4 w-4" />
@@ -138,7 +142,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                   href={author.socialLinks.github}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-colors shadow-2xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors shadow-xs"
                   aria-label="GitHub Profile"
                 >
                   <GithubIcon className="h-4 w-4" />
@@ -149,7 +153,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                   href={author.socialLinks.linkedin}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-900 transition-colors shadow-2xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-muted-text)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors shadow-xs"
                   aria-label="LinkedIn Profile"
                 >
                   <LinkedinIcon className="h-4 w-4" />
@@ -159,12 +163,12 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
           </div>
         </div>
 
-        <div className="flex items-end justify-between mb-8 pb-3 border-b border-slate-900">
+        <div className="flex items-end justify-between mb-8 pb-3 border-b-2 border-[var(--color-heading)]">
           <div>
-            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] block mb-1">
               Byline Archive
             </span>
-            <h2 className="text-2xl font-black text-slate-900">
+            <h2 className="font-editorial text-2xl font-bold text-[var(--color-heading)]">
               Published Dispatches ({posts.length})
             </h2>
           </div>
@@ -177,7 +181,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
         </div>
 
         {posts.length === 0 && (
-          <div className="rounded-xl border border-dashed border-slate-300 p-12 text-center text-sm text-slate-500 bg-white">
+          <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--color-card-background)] p-12 text-center text-sm text-[var(--color-muted-text)]">
             No published articles found for this author.
           </div>
         )}

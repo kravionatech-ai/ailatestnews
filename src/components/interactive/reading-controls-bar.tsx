@@ -96,25 +96,27 @@ export function ReadingControlsBar({
 
   return (
     <aside
-      className="mb-8 rounded-xl border border-slate-200 bg-slate-50/90 p-3 sm:p-4 flex flex-wrap items-center justify-between gap-4 text-xs shadow-2xs"
+      className="mb-8 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-3 sm:p-4 flex flex-wrap items-center justify-between gap-4 text-xs shadow-xs"
       aria-label="Reading controls and typography settings"
     >
       {/* Time remaining indicator */}
-      <div className="flex items-center gap-2 font-mono text-slate-700">
-        <Clock className="h-3.5 w-3.5 text-indigo-600" />
+      <div className="flex items-center gap-2 font-mono text-[var(--color-body-text)]">
+        <Clock className="h-3.5 w-3.5 text-[var(--accent)]" />
         <span className="font-bold">{timeLeft} min remaining</span>
-        <span className="text-slate-400 hidden sm:inline">|</span>
-        <span className="text-slate-500 hidden sm:inline">Deep-Dive Dispatch</span>
+        <span className="text-[var(--border)] hidden sm:inline">|</span>
+        <span className="text-[var(--color-muted-text)] hidden sm:inline">Deep-Dive Dispatch</span>
       </div>
 
       {/* Typography and Reading Tools */}
       <div className="flex items-center gap-3">
         {/* Font Family Toggle */}
-        <div className="flex items-center rounded-lg border border-slate-200 bg-white p-0.5 shadow-2xs">
+        <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] p-0.5 shadow-xs">
           <button
             onClick={() => setFontFamily("serif")}
             className={`px-2 py-1 rounded text-xs font-serif font-bold transition-colors cursor-pointer ${
-              fontFamily === "serif" ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900"
+              fontFamily === "serif"
+                ? "bg-[var(--accent)] text-white"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
             title="Serif typography (Editorial)"
           >
@@ -123,7 +125,9 @@ export function ReadingControlsBar({
           <button
             onClick={() => setFontFamily("sans")}
             className={`px-2 py-1 rounded text-xs font-sans font-bold transition-colors cursor-pointer ${
-              fontFamily === "sans" ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900"
+              fontFamily === "sans"
+                ? "bg-[var(--accent)] text-white"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
             title="Sans-serif typography (Modern)"
           >
@@ -132,11 +136,13 @@ export function ReadingControlsBar({
         </div>
 
         {/* Font Size Adjuster */}
-        <div className="flex items-center rounded-lg border border-slate-200 bg-white p-0.5 shadow-2xs">
+        <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] p-0.5 shadow-xs">
           <button
             onClick={() => setFontSize("sm")}
             className={`px-2 py-1 rounded text-[11px] font-mono font-bold transition-colors cursor-pointer ${
-              fontSize === "sm" ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900"
+              fontSize === "sm"
+                ? "bg-[var(--accent)] text-white"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
             title="Compact text size"
           >
@@ -145,7 +151,9 @@ export function ReadingControlsBar({
           <button
             onClick={() => setFontSize("md")}
             className={`px-2 py-1 rounded text-xs font-mono font-bold transition-colors cursor-pointer ${
-              fontSize === "md" ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900"
+              fontSize === "md"
+                ? "bg-[var(--accent)] text-white"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
             title="Default text size"
           >
@@ -154,7 +162,9 @@ export function ReadingControlsBar({
           <button
             onClick={() => setFontSize("lg")}
             className={`px-2 py-1 rounded text-sm font-mono font-bold transition-colors cursor-pointer ${
-              fontSize === "lg" ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900"
+              fontSize === "lg"
+                ? "bg-[var(--accent)] text-white"
+                : "text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
             }`}
             title="Large text size"
           >
@@ -165,16 +175,16 @@ export function ReadingControlsBar({
         {/* Bookmark / Save to Queue */}
         <button
           onClick={toggleSave}
-          className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-bold transition-all cursor-pointer shadow-2xs ${
+          className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-bold transition-all cursor-pointer shadow-xs ${
             isSaved
-              ? "border-emerald-500 bg-emerald-50 text-emerald-800"
-              : "border-slate-200 bg-white text-slate-700 hover:border-slate-900 hover:text-slate-900"
+              ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+              : "border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
           }`}
           title={isSaved ? "Saved to Reading Queue" : "Save for later"}
         >
           {isSaved ? (
             <>
-              <Check className="h-3.5 w-3.5 text-emerald-600" />
+              <Check className="h-3.5 w-3.5 text-emerald-500" />
               <span>Saved</span>
             </>
           ) : (
@@ -188,7 +198,7 @@ export function ReadingControlsBar({
         {/* Quick Share */}
         <button
           onClick={handleShare}
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-bold text-slate-700 hover:border-slate-900 hover:text-slate-900 transition-all cursor-pointer shadow-2xs"
+          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-1.5 font-bold text-[var(--color-heading)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all cursor-pointer shadow-xs"
           title="Share dispatch"
         >
           <Share2 className="h-3.5 w-3.5" />

@@ -6,8 +6,21 @@ import { PostsManagerTable } from "@/components/admin/posts/posts-manager-table"
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminPostsPage() {
+export default async function AdminPostsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ filter?: string }>;
+}) {
   await connectDB();
+  const resolved = searchParams ? await searchParams : {};
+  const initialSpecialFilter =
+    resolved.filter === "featured"
+      ? "featured"
+      : resolved.filter === "missing-meta"
+      ? "missing-meta"
+      : resolved.filter === "needs-update"
+      ? "needs-update"
+      : "all";
 
   const [posts, categories, authors] = await Promise.all([
     Post.find()
@@ -48,6 +61,7 @@ export default async function AdminPostsPage() {
         initialPosts={JSON.parse(JSON.stringify(posts))}
         categories={JSON.parse(JSON.stringify(categories))}
         authors={JSON.parse(JSON.stringify(authors))}
+        initialSpecialFilter={initialSpecialFilter}
       />
     </div>
   );

@@ -68,25 +68,25 @@ export default async function IndiaAiHubPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="mx-auto max-w-[var(--max-content-width,1320px)] px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         {/* Header */}
-        <div className="mb-8 pb-4 border-b border-slate-900 max-w-3xl">
-          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-            <Flag className="h-3.5 w-3.5 text-rose-600" />
+        <div className="mb-8 pb-5 border-b-2 border-[var(--color-heading)] max-w-3xl">
+          <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-2">
+            <Flag className="h-3.5 w-3.5" />
             <span>Sovereign Compute // India AI Mission</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+          <h1 className="font-editorial text-3xl sm:text-5xl font-bold text-[var(--color-heading)] tracking-tight">
             {page?.title || "India AI Ecosystem Hub"}
           </h1>
-          <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+          <p className="mt-2.5 text-sm sm:text-base text-[var(--color-muted-text)] leading-relaxed">
             {page?.excerpt ||
-              "Dedicated technical coverage of India's ₹10,372 crore IndiaAI Mission, domestic foundation models (Sarvam, Krutrim, BharatGen), GPU datacenter clusters, and Indic NLP."}
+              "Dedicated technical coverage of India's IndiaAI Mission, domestic foundation models, GPU datacenter clusters, and Indic NLP."}
           </p>
         </div>
 
         {page?.contentHtml && (
           <div
-            className="prose-article text-sm max-w-4xl mx-auto mb-10"
+            className="prose-article text-sm max-w-4xl mx-auto mb-10 text-[var(--color-body-text)]"
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         )}
@@ -99,7 +99,7 @@ export default async function IndiaAiHubPage() {
         </div>
 
         {posts.length === 0 && (
-          <div className="rounded-3xl border border-dashed border-[var(--border)] p-12 text-center text-xs text-[var(--foreground-muted)]">
+          <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--color-card-background)] p-12 text-center text-xs text-[var(--color-muted-text)]">
             No published dispatches in this topical pillar yet. Check back shortly.
           </div>
         )}

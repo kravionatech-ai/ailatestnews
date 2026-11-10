@@ -289,7 +289,7 @@ export function PostEditor({
     if (tag === "code") snippet = "\n<pre><code>// Insert code snippet\nconst response = await ai.generate();</code></pre>\n";
     if (tag === "quote") snippet = "\n<blockquote>Insightful perspective or announcement summary.</blockquote>\n";
     if (tag === "list") snippet = "\n<ul>\n  <li>Key feature 1</li>\n  <li>Key feature 2</li>\n</ul>\n";
-    if (tag === "callout") snippet = '\n<div class="p-4 rounded-xl bg-indigo-50 border-l-4 border-indigo-600 my-4 text-xs"><strong>Key Takeaway:</strong> Foundational benchmark result.</div>\n';
+    if (tag === "callout") snippet = '\n<div class="callout-box callout-takeaway p-4 rounded-xl my-4 text-xs"><strong>Key Takeaway:</strong> Foundational benchmark result.</div>\n';
 
     setContentHtml((prev) => prev + snippet);
   };
@@ -470,9 +470,9 @@ export function PostEditor({
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Crash Recovery / Autosave Banner */}
       {hasAutosaveDraft && (
-        <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs flex items-center justify-between gap-4 text-amber-900 shadow-xs animate-in fade-in">
+        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs flex items-center justify-between gap-4 text-[var(--color-heading)] shadow-xs animate-in fade-in">
           <div className="flex items-center gap-2">
-            <RotateCcw className="h-4 w-4 text-amber-700 shrink-0" />
+            <RotateCcw className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span>
               <strong>Unsaved Local Draft Detected:</strong> You have unsaved changes from a previous session
               {autosaveTimestamp && ` (${autosaveTimestamp})`}.
@@ -481,13 +481,13 @@ export function PostEditor({
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={restoreAutosaveDraft}
-              className="px-3 py-1 rounded-xl bg-amber-600 text-white font-semibold hover:bg-amber-700 transition-colors"
+              className="px-3 py-1 rounded-lg bg-amber-600 text-white font-semibold hover:bg-amber-700 transition-colors cursor-pointer"
             >
               Restore Changes
             </button>
             <button
               onClick={dismissAutosaveDraft}
-              className="px-2 py-1 text-amber-700 hover:underline font-medium"
+              className="px-2 py-1 text-amber-700 dark:text-amber-400 hover:underline font-medium cursor-pointer"
             >
               Dismiss
             </button>
@@ -498,21 +498,24 @@ export function PostEditor({
       {/* Top Action Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-[var(--foreground)]">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
+            Editorial Composer · Kraviona CMS
+          </span>
+          <h1 className="font-display text-2xl sm:text-3xl font-black text-[var(--color-heading)] mt-0.5">
             {isEditing ? "Edit Article" : "Compose New Article"}
           </h1>
-          <p className="text-xs text-[var(--foreground-muted)] mt-1">
-            Author with real-time SEO scoring, Claude AI generation, FAQ JSON-LD, and revisions.
+          <p className="text-xs text-[var(--color-muted-text)] mt-1">
+            Author with real-time SEO scoring, FAQ JSON-LD, rich formatting, and revisions.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           {message && (
             <span
-              className={`text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 ${
+              className={`text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 font-semibold ${
                 message.type === "success"
-                  ? "bg-green-50 text-green-700"
-                  : "bg-red-50 text-red-700"
+                  ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                  : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
               }`}
             >
               {message.type === "success" ? (
@@ -528,10 +531,10 @@ export function PostEditor({
             <button
               type="button"
               onClick={handleOpenRevisions}
-              className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-xs font-semibold text-[var(--foreground)] hover:bg-slate-50 transition-all shadow-2xs cursor-pointer"
+              className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] px-3 py-2 text-xs font-semibold text-[var(--color-heading)] hover:border-[var(--accent)] transition-all shadow-xs cursor-pointer"
               title="View revision history"
             >
-              <History className="h-3.5 w-3.5 text-indigo-600" /> Revisions
+              <History className="h-3.5 w-3.5 text-[var(--accent)]" /> Revisions
             </button>
           )}
 
@@ -539,7 +542,7 @@ export function PostEditor({
             type="button"
             disabled={loading}
             onClick={() => handleSubmit("draft")}
-            className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-white px-4 py-2 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--background-secondary)] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] px-4 py-2 text-xs font-semibold text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] transition-all shadow-xs cursor-pointer disabled:opacity-50"
           >
             <Save className="h-3.5 w-3.5" /> Save Draft
           </button>
@@ -548,7 +551,7 @@ export function PostEditor({
             type="button"
             disabled={loading}
             onClick={() => handleSubmit(status === "scheduled" ? "scheduled" : "published")}
-            className="flex items-center gap-1.5 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-[var(--accent-hover)] transition-all cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-[var(--accent-hover)] transition-all cursor-pointer disabled:opacity-50"
           >
             <Send className="h-3.5 w-3.5" />
             {status === "scheduled" ? "Schedule Article" : "Publish Now"}
@@ -623,7 +626,7 @@ export function PostEditor({
           <div className="lg:col-span-2 space-y-6">
             {/* Title */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+              <label className="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] mb-1.5">
                 Headline (Title)
               </label>
               <input
@@ -631,25 +634,25 @@ export function PostEditor({
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
                 placeholder="e.g. OpenAI Announces GPT-5: Architectural Innovations and Benchmark Results"
-                className="w-full rounded-2xl border border-[var(--border)] bg-white p-4 text-base sm:text-lg font-bold outline-none focus:border-[var(--accent)] shadow-2xs"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-4 font-display text-base sm:text-lg font-bold outline-none focus:border-[var(--accent)] shadow-xs"
               />
             </div>
 
             {/* Slug */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)]">
+                <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)]">
                   URL Slug
                 </label>
                 <button
                   type="button"
                   onClick={() => setIsSlugAuto(!isSlugAuto)}
-                  className="text-[10px] text-[var(--accent)] font-semibold hover:underline"
+                  className="text-[10px] text-[var(--accent)] font-semibold hover:underline cursor-pointer"
                 >
                   {isSlugAuto ? "Lock Slug" : "Auto-generate"}
                 </button>
               </div>
-              <div className="flex items-center rounded-xl border border-[var(--border)] bg-[var(--background-secondary)] px-3 text-xs text-[var(--foreground-muted)]">
+              <div className="flex items-center rounded-xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/60 px-3 text-xs text-[var(--color-muted-text)]">
                 <span>/blog/</span>
                 <input
                   type="text"
@@ -658,14 +661,14 @@ export function PostEditor({
                     setIsSlugAuto(false);
                     setSlug(e.target.value);
                   }}
-                  className="w-full bg-transparent px-1 py-2 font-mono outline-none text-[var(--foreground)]"
+                  className="w-full bg-transparent px-1 py-2 font-mono outline-none text-[var(--color-heading)]"
                 />
               </div>
             </div>
 
             {/* Excerpt */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--foreground-secondary)] mb-1">
+              <label className="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] mb-1.5">
                 Summary / Excerpt (Lead Paragraph)
               </label>
               <textarea
@@ -673,17 +676,17 @@ export function PostEditor({
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
                 placeholder="A concise, high-signal summary of the breakthrough and its impact."
-                className="w-full rounded-xl border border-[var(--border)] bg-white p-3 text-xs outline-none focus:border-[var(--accent)]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-3 text-xs outline-none focus:border-[var(--accent)]"
               />
             </div>
 
             {/* Rich Text Editor */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Article Body // Rich Text Editor
+                <label className="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)]">
+                  Article Body · Rich Text Editor
                 </label>
-                <span className="text-[11px] text-slate-500 font-medium">
+                <span className="text-[11px] text-[var(--color-muted-text)] font-medium">
                   WYSIWYG Visual, HTML Source &amp; Split Preview
                 </span>
               </div>
@@ -699,20 +702,20 @@ export function PostEditor({
           {/* Sidebar Settings */}
           <div className="space-y-6">
             {/* Publishing Card */}
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs space-y-4">
+              <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--color-heading)]">
                 Document Settings
               </h3>
 
               {/* Status */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-muted-text)] mb-1">
                   Status
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs outline-none focus:border-[var(--accent)]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                 >
                   <option value="draft">Draft (Private)</option>
                   <option value="published">Published (Public)</option>
@@ -724,14 +727,14 @@ export function PostEditor({
               {/* Scheduled Date Picker */}
               {status === "scheduled" && (
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--foreground-secondary)] mb-1">
+                  <label className="block text-xs font-semibold text-[var(--color-muted-text)] mb-1">
                     Scheduled Publication Time
                   </label>
                   <input
                     type="datetime-local"
                     value={scheduledAt}
                     onChange={(e) => setScheduledAt(e.target.value)}
-                    className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs outline-none focus:border-[var(--accent)] font-mono text-[11px]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)] font-mono text-[11px]"
                   />
                 </div>
               )}
@@ -739,13 +742,13 @@ export function PostEditor({
               {/* Author */}
               {allAuthors.length > 0 && (
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--foreground-secondary)] mb-1">
+                  <label className="block text-xs font-semibold text-[var(--color-muted-text)] mb-1">
                     Assigned Author
                   </label>
                   <select
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
-                    className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs outline-none focus:border-[var(--accent)]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                   >
                     {allAuthors.map((a) => (
                       <option key={a._id} value={a._id}>
@@ -759,13 +762,13 @@ export function PostEditor({
               {/* Category with Inline New Category */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-[var(--foreground-secondary)]">
+                  <label className="text-xs font-semibold text-[var(--color-muted-text)]">
                     Category
                   </label>
                   <button
                     type="button"
                     onClick={() => setShowCategoryModal(true)}
-                    className="text-[10px] text-[var(--accent)] font-bold hover:underline flex items-center gap-0.5"
+                    className="text-[10px] text-[var(--accent)] font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
                   >
                     <Plus className="h-3 w-3" /> New
                   </button>
@@ -773,7 +776,7 @@ export function PostEditor({
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs outline-none focus:border-[var(--accent)]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                 >
                   {categories.map((c) => (
                     <option key={c._id} value={c._id}>
@@ -786,13 +789,13 @@ export function PostEditor({
               {/* Tags with Inline New Tag */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-[var(--foreground-secondary)]">
+                  <label className="text-xs font-semibold text-[var(--color-muted-text)]">
                     Topic Tags
                   </label>
                   <button
                     type="button"
                     onClick={() => setShowTagModal(true)}
-                    className="text-[10px] text-[var(--accent)] font-bold hover:underline flex items-center gap-0.5"
+                    className="text-[10px] text-[var(--accent)] font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
                   >
                     <Plus className="h-3 w-3" /> New Tag
                   </button>
@@ -805,13 +808,13 @@ export function PostEditor({
                     return (
                       <span
                         key={tId}
-                        className="inline-flex items-center gap-1 rounded-lg bg-indigo-50 border border-indigo-200 px-2 py-0.5 text-[10px] font-semibold text-indigo-700"
+                        className="inline-flex items-center gap-1 rounded-lg bg-[var(--accent-light)] border border-[var(--accent)]/30 px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)]"
                       >
                         #{tagObj?.name || tId}
                         <button
                           type="button"
                           onClick={() => setSelectedTags((prev) => prev.filter((id) => id !== tId))}
-                          className="hover:text-rose-600"
+                          className="hover:text-rose-600 cursor-pointer"
                         >
                           <X className="h-2.5 w-2.5" />
                         </button>
@@ -827,7 +830,7 @@ export function PostEditor({
                       setSelectedTags((prev) => Array.from(new Set([...prev, e.target.value])));
                     }
                   }}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs outline-none focus:border-[var(--accent)]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                 >
                   <option value="">+ Add an existing tag...</option>
                   {tagsList
@@ -846,21 +849,21 @@ export function PostEditor({
                   type="checkbox"
                   checked={featured}
                   onChange={(e) => setFeatured(e.target.checked)}
-                  className="rounded text-[var(--accent)] h-4 w-4"
+                  className="rounded text-[var(--accent)] accent-[var(--accent)] h-4 w-4"
                 />
-                <span className="text-xs font-semibold text-[var(--foreground)]">
+                <span className="text-xs font-semibold text-[var(--color-heading)]">
                   Highlight as Featured Story
                 </span>
               </label>
             </div>
 
             {/* Media & Cover Image Card */}
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-4">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--color-heading)]">
                   Featured Cover Image
                 </h3>
-                <span className="text-[10px] text-slate-400 font-mono">1200x630 Optimal</span>
+                <span className="text-[10px] text-[var(--color-muted-text)] font-mono">1200x630 Optimal</span>
               </div>
 
               {/* Direct Choose Image Buttons */}
@@ -869,7 +872,7 @@ export function PostEditor({
                   type="button"
                   disabled={isUploadingCover}
                   onClick={() => coverFileInputRef.current?.click()}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-3 py-2 text-xs font-bold text-white hover:bg-slate-800 disabled:opacity-50 transition-colors cursor-pointer shadow-xs"
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#101820] dark:bg-[var(--accent)] px-3 py-2 text-xs font-bold text-white hover:bg-[#263B50] dark:hover:bg-[var(--accent-hover)] disabled:opacity-50 transition-colors cursor-pointer shadow-xs"
                 >
                   {isUploadingCover ? (
                     <>
@@ -887,9 +890,9 @@ export function PostEditor({
                 <button
                   type="button"
                   onClick={() => setShowCoverPickerModal(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-2 text-xs font-bold text-[var(--color-heading)] hover:border-[var(--accent)] transition-colors cursor-pointer"
                 >
-                  <ImageIcon className="h-3.5 w-3.5 text-indigo-600" />
+                  <ImageIcon className="h-3.5 w-3.5 text-[var(--accent)]" />
                   <span>Media Library</span>
                 </button>
 
@@ -906,12 +909,12 @@ export function PostEditor({
               </div>
 
               {coverUploadError && (
-                <p className="text-xs text-rose-600 font-semibold">{coverUploadError}</p>
+                <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">{coverUploadError}</p>
               )}
 
               {/* URL Display / Manual Edit */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-muted-text)] mb-1">
                   Active Image URL (Auto-filled on upload)
                 </label>
                 <input
@@ -919,20 +922,20 @@ export function PostEditor({
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
                   placeholder="https://res.cloudinary.com/... or https://..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs font-mono outline-none focus:border-[var(--accent)]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs font-mono outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               {/* Alt Text (SEO Essential) */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-[var(--foreground-secondary)]">
+                  <label className="text-xs font-semibold text-[var(--color-muted-text)]">
                     Image Alt Text <span className="text-rose-500">*</span>
                   </label>
                   <button
                     type="button"
                     onClick={generateAltTextWithAi}
-                    className="text-[10px] text-indigo-600 font-bold hover:underline flex items-center gap-1"
+                    className="text-[10px] text-[var(--accent)] font-bold hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <Sparkles className="h-3 w-3" /> AI Generate
                   </button>
@@ -942,21 +945,21 @@ export function PostEditor({
                   value={coverImageAlt}
                   onChange={(e) => setCoverImageAlt(e.target.value)}
                   placeholder="Accurate description for screen readers and SEO"
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs outline-none focus:border-[var(--accent)]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
               {/* Caption */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--foreground-secondary)] mb-1">
+                <label className="block text-xs font-semibold text-[var(--color-muted-text)] mb-1">
                   Photo Caption / Credit
                 </label>
                 <input
                   type="text"
                   value={coverImageCaption}
                   onChange={(e) => setCoverImageCaption(e.target.value)}
-                  placeholder="Credit: TechCrunch / Midjourney"
-                  className="w-full rounded-xl border border-[var(--border)] bg-white p-2 text-xs outline-none focus:border-[var(--accent)]"
+                  placeholder="Credit: Kraviona Desk / Agency"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
@@ -964,14 +967,14 @@ export function PostEditor({
               {coverImage && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-[var(--foreground-secondary)] flex items-center gap-1">
-                      <Crosshair className="h-3.5 w-3.5 text-indigo-600" />
+                    <span className="text-[11px] font-semibold text-[var(--color-muted-text)] flex items-center gap-1">
+                      <Crosshair className="h-3.5 w-3.5 text-[var(--accent)]" />
                       Focal Point ({focalPoint.x}%, {focalPoint.y}%)
                     </span>
                     <button
                       type="button"
                       onClick={() => setFocalPoint({ x: 50, y: 50 })}
-                      className="text-[10px] text-slate-500 hover:underline"
+                      className="text-[10px] text-[var(--color-muted-text)] hover:underline cursor-pointer"
                     >
                       Reset Center
                     </button>
@@ -983,7 +986,7 @@ export function PostEditor({
                       const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
                       setFocalPoint({ x, y });
                     }}
-                    className="relative w-full h-32 rounded-xl overflow-hidden cursor-crosshair border border-slate-200"
+                    className="relative w-full h-32 rounded-xl overflow-hidden cursor-crosshair border border-[var(--border)]"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -993,7 +996,7 @@ export function PostEditor({
                     />
                     <div
                       style={{ left: `${focalPoint.x}%`, top: `${focalPoint.y}%` }}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white bg-indigo-600 shadow-md pointer-events-none"
+                      className="absolute -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white bg-[var(--accent)] shadow-md pointer-events-none"
                     />
                   </div>
                 </div>
@@ -1001,25 +1004,25 @@ export function PostEditor({
             </div>
 
             {/* Quick SEO Health Snapshot */}
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-5 shadow-2xs space-y-3">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-5 shadow-xs space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--foreground)]">
+                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--color-heading)]">
                   Live SEO Health
                 </h3>
                 <span
                   className={`text-xs font-extrabold px-2 py-0.5 rounded-full ${
                     quickAnalysis.score >= 80
-                      ? "bg-green-100 text-green-700"
+                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                       : quickAnalysis.score >= 50
-                      ? "bg-amber-100 text-amber-700"
-                      : "bg-red-100 text-red-700"
+                      ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                      : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
                   }`}
                 >
                   {quickAnalysis.score} / 100
                 </span>
               </div>
 
-              <p className="text-[11px] text-[var(--foreground-muted)]">
+              <p className="text-[11px] text-[var(--color-muted-text)]">
                 {quickAnalysis.checklist.filter((c) => c.status === "pass").length} of{" "}
                 {quickAnalysis.checklist.length} audit checks passing.
               </p>
@@ -1027,7 +1030,7 @@ export function PostEditor({
               <button
                 type="button"
                 onClick={() => setActiveTab("seo")}
-                className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50/70 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition-colors"
+                className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-light)] py-2 text-xs font-bold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-colors cursor-pointer"
               >
                 <Globe className="h-3.5 w-3.5" /> Open Full SEO Engine
               </button>
@@ -1055,20 +1058,20 @@ export function PostEditor({
       {activeTab === "faqs-related" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Post-Level FAQ Builder */}
-          <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-2xs space-y-5">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-5">
             <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <div>
-                <h2 className="text-sm font-bold text-[var(--foreground)]">
+                <h2 className="font-display text-sm font-bold text-[var(--color-heading)]">
                   Post-Level FAQs (FAQPage JSON-LD)
                 </h2>
-                <p className="text-[11px] text-[var(--foreground-muted)]">
+                <p className="text-[11px] text-[var(--color-muted-text)]">
                   Add Q&amp;A pairs rendered as accordions and automatically injected into Google Schema.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={addFaqItem}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-2xs"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all shadow-xs cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" /> Add Q&amp;A
               </button>
@@ -1078,16 +1081,16 @@ export function PostEditor({
               {faqs.map((faq, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5 relative group"
+                  className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] space-y-2.5 relative group"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--accent)]">
                       Question #{idx + 1}
                     </span>
                     <button
                       type="button"
                       onClick={() => removeFaqItem(idx)}
-                      className="text-slate-400 hover:text-rose-600 p-1"
+                      className="text-[var(--color-muted-text)] hover:text-rose-600 p-1 cursor-pointer"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -1096,21 +1099,21 @@ export function PostEditor({
                     type="text"
                     value={faq.question}
                     onChange={(e) => updateFaqItem(idx, "question", e.target.value)}
-                    placeholder="e.g. Is this model open source for commercial use in India?"
-                    className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs outline-none font-semibold focus:border-[var(--accent)]"
+                    placeholder="e.g. Is this model open source for commercial use?"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none font-semibold focus:border-[var(--accent)]"
                   />
                   <textarea
                     rows={2}
                     value={faq.answer}
                     onChange={(e) => updateFaqItem(idx, "answer", e.target.value)}
                     placeholder="Clear, authoritative answer explaining the terms or benchmarks."
-                    className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs outline-none focus:border-[var(--accent)]"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-card-background)] text-[var(--color-heading)] p-2 text-xs outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               ))}
 
               {faqs.length === 0 && (
-                <div className="p-8 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                <div className="p-8 text-center text-xs text-[var(--color-muted-text)] border border-dashed border-[var(--border)] rounded-xl">
                   No FAQs added yet. Click &quot;Add Q&amp;A&quot; to enrich this article with FAQPage rich snippets.
                 </div>
               )}
@@ -1118,12 +1121,12 @@ export function PostEditor({
           </div>
 
           {/* Related Posts Curated Picker */}
-          <div className="rounded-2xl border border-[var(--border)] bg-white p-6 shadow-2xs space-y-5">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-5">
             <div className="border-b border-[var(--border)] pb-3">
-              <h2 className="text-sm font-bold text-[var(--foreground)]">
+              <h2 className="font-display text-sm font-bold text-[var(--color-heading)]">
                 Curated Related Articles (Max 4)
               </h2>
-              <p className="text-[11px] text-[var(--foreground-muted)]">
+              <p className="text-[11px] text-[var(--color-muted-text)]">
                 Explicitly select stories to recommend at the end of this article.
               </p>
             </div>
@@ -1135,13 +1138,13 @@ export function PostEditor({
                 return (
                   <div
                     key={rId}
-                    className="flex items-center justify-between p-2.5 rounded-xl border border-indigo-200 bg-indigo-50/50 text-xs font-semibold text-[var(--foreground)]"
+                    className="flex items-center justify-between p-2.5 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent-light)] text-xs font-semibold text-[var(--color-heading)]"
                   >
                     <span className="truncate pr-2">{postObj?.title || rId}</span>
                     <button
                       type="button"
                       onClick={() => setRelatedPosts((prev) => prev.filter((id) => id !== rId))}
-                      className="text-slate-400 hover:text-rose-600"
+                      className="text-[var(--color-muted-text)] hover:text-rose-600 cursor-pointer"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -1158,7 +1161,7 @@ export function PostEditor({
                         setRelatedPosts((prev) => Array.from(new Set([...prev, e.target.value])));
                       }
                     }}
-                    className="w-full rounded-xl border border-dashed border-slate-300 p-2.5 text-xs outline-none focus:border-[var(--accent)] bg-slate-50"
+                    className="w-full rounded-xl border border-dashed border-[var(--border)] p-2.5 text-xs outline-none focus:border-[var(--accent)] bg-[var(--color-main-background)] text-[var(--color-heading)]"
                   >
                     <option value="">+ Search &amp; attach a related article...</option>
                     {publishedPosts
@@ -1178,12 +1181,12 @@ export function PostEditor({
 
       {/* TAB 4: LIVE PREVIEW */}
       {activeTab === "preview" && (
-        <div className="rounded-3xl border border-[var(--border)] bg-white p-8 shadow-xs space-y-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-8 shadow-xs space-y-6">
           <div className="max-w-3xl mx-auto space-y-4">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--foreground)]">
+            <h1 className="font-editorial text-3xl sm:text-4xl font-black text-[var(--color-heading)]">
               {title || "Untitled Article"}
             </h1>
-            <p className="text-base text-[var(--foreground-muted)]">
+            <p className="text-base text-[var(--color-muted-text)]">
               {excerpt || "Excerpt preview..."}
             </p>
             {coverImage && (
@@ -1192,10 +1195,10 @@ export function PostEditor({
                 <img
                   src={coverImage}
                   alt={coverImageAlt || "Cover Preview"}
-                  className="w-full rounded-2xl max-h-96 object-cover"
+                  className="w-full rounded-xl max-h-96 object-cover"
                 />
                 {coverImageCaption && (
-                  <figcaption className="text-center text-xs text-slate-500 mt-2">
+                  <figcaption className="text-center text-xs text-[var(--color-muted-text)] mt-2">
                     {coverImageCaption}
                   </figcaption>
                 )}
@@ -1211,13 +1214,13 @@ export function PostEditor({
             {/* FAQs Preview */}
             {faqs.length > 0 && (
               <div className="mt-12 pt-8 border-t border-[var(--border)] space-y-3">
-                <h3 className="text-lg font-bold text-[var(--foreground)]">
+                <h3 className="font-display text-lg font-bold text-[var(--color-heading)]">
                   Frequently Asked Questions
                 </h3>
                 {faqs.map((f, i) => (
-                  <div key={i} className="rounded-xl border border-slate-200 p-4 bg-slate-50">
-                    <p className="font-bold text-xs text-[var(--foreground)]">{f.question}</p>
-                    <p className="text-xs text-[var(--foreground-secondary)] mt-1">{f.answer}</p>
+                  <div key={i} className="rounded-xl border border-[var(--border)] p-4 bg-[var(--color-main-background)]">
+                    <p className="font-bold text-xs text-[var(--color-heading)]">{f.question}</p>
+                    <p className="text-xs text-[var(--color-body-text)] mt-1">{f.answer}</p>
                   </div>
                 ))}
               </div>
@@ -1228,9 +1231,9 @@ export function PostEditor({
 
       {/* Inline Create Category Modal */}
       {showCategoryModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl space-y-4">
-            <h3 className="text-sm font-bold text-[var(--foreground)]">Create New Category</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="bg-[var(--color-card-background)] border border-[var(--border)] rounded-2xl p-6 w-full max-w-sm shadow-xl space-y-4">
+            <h3 className="font-display text-sm font-bold text-[var(--color-heading)]">Create New Category</h3>
             <form onSubmit={handleCreateCategoryInline} className="space-y-3">
               <input
                 type="text"
@@ -1238,19 +1241,19 @@ export function PostEditor({
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 placeholder="e.g. Autonomous Agents"
-                className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs outline-none focus:border-[var(--accent)]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs outline-none focus:border-[var(--accent)]"
               />
               <div className="flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowCategoryModal(false)}
-                  className="px-3 py-1.5 rounded-xl border text-xs"
+                  className="px-3 py-1.5 rounded-xl border border-[var(--border)] text-xs text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-3 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold"
+                  className="px-3 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-semibold cursor-pointer"
                 >
                   Create &amp; Select
                 </button>
@@ -1262,9 +1265,9 @@ export function PostEditor({
 
       {/* Inline Create Tag Modal */}
       {showTagModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl space-y-4">
-            <h3 className="text-sm font-bold text-[var(--foreground)]">Create New Tag</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="bg-[var(--color-card-background)] border border-[var(--border)] rounded-2xl p-6 w-full max-w-sm shadow-xl space-y-4">
+            <h3 className="font-display text-sm font-bold text-[var(--color-heading)]">Create New Tag</h3>
             <form onSubmit={handleCreateTagInline} className="space-y-3">
               <input
                 type="text"
@@ -1272,19 +1275,19 @@ export function PostEditor({
                 value={newTagName}
                 onChange={(e) => setNewTagName(e.target.value)}
                 placeholder="e.g. claude-3-7"
-                className="w-full rounded-xl border border-[var(--border)] p-2.5 text-xs outline-none focus:border-[var(--accent)]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-[var(--color-heading)] p-2.5 text-xs outline-none focus:border-[var(--accent)]"
               />
               <div className="flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowTagModal(false)}
-                  className="px-3 py-1.5 rounded-xl border text-xs"
+                  className="px-3 py-1.5 rounded-xl border border-[var(--border)] text-xs text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-3 py-1.5 rounded-xl bg-[var(--accent)] text-white text-xs font-semibold"
+                  className="px-3 py-1.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-semibold cursor-pointer"
                 >
                   Create &amp; Select
                 </button>
@@ -1296,35 +1299,35 @@ export function PostEditor({
 
       {/* Revisions History Modal */}
       {showRevisionsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-2">
-                <History className="h-4 w-4 text-indigo-600" /> Revision History
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="bg-[var(--color-card-background)] border border-[var(--border)] rounded-2xl p-6 w-full max-w-lg shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <h3 className="font-display text-sm font-bold text-[var(--color-heading)] flex items-center gap-2">
+                <History className="h-4 w-4 text-[var(--accent)]" /> Revision History
               </h3>
-              <button onClick={() => setShowRevisionsModal(false)}>
-                <X className="h-4 w-4 text-slate-400 hover:text-slate-700" />
+              <button onClick={() => setShowRevisionsModal(false)} className="cursor-pointer">
+                <X className="h-4 w-4 text-[var(--color-muted-text)] hover:text-[var(--color-heading)]" />
               </button>
             </div>
 
             {revisionsLoading ? (
-              <p className="text-xs text-slate-400 text-center py-6">Loading revisions...</p>
+              <p className="text-xs text-[var(--color-muted-text)] text-center py-6">Loading revisions...</p>
             ) : (
               <div className="space-y-3">
                 {revisions.map((rev) => (
                   <div
                     key={rev._id}
-                    className="p-3 rounded-xl border border-slate-200 bg-slate-50/70 flex items-center justify-between gap-4 text-xs"
+                    className="p-3 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] flex items-center justify-between gap-4 text-xs"
                   >
                     <div>
-                      <span className="font-bold text-[var(--foreground)] block">
+                      <span className="font-bold text-[var(--color-heading)] block">
                         Version {rev.version}
                       </span>
-                      <span className="text-[10px] text-slate-500 block">
+                      <span className="text-[10px] text-[var(--color-muted-text)] block">
                         {formatDate(rev.createdAt)} • by {rev.author?.name || "Staff"}
                       </span>
                       {rev.changeNote && (
-                        <span className="text-[10px] text-indigo-700 font-medium block mt-0.5">
+                        <span className="text-[10px] text-[var(--accent)] font-medium block mt-0.5">
                           {rev.changeNote}
                         </span>
                       )}
@@ -1332,7 +1335,7 @@ export function PostEditor({
                     <button
                       type="button"
                       onClick={() => handleRestoreRevision(rev._id)}
-                      className="px-3 py-1.5 rounded-lg border border-indigo-200 bg-white text-indigo-600 font-semibold hover:bg-indigo-50 transition-colors text-[11px]"
+                      className="px-3 py-1.5 rounded-lg border border-[var(--accent)]/30 bg-[var(--color-card-background)] text-[var(--accent)] font-semibold hover:bg-[var(--accent-light)] transition-colors text-[11px] cursor-pointer"
                     >
                       Restore
                     </button>
@@ -1340,7 +1343,7 @@ export function PostEditor({
                 ))}
 
                 {revisions.length === 0 && (
-                  <p className="text-xs text-slate-400 text-center py-6">
+                  <p className="text-xs text-[var(--color-muted-text)] text-center py-6">
                     No revision snapshots recorded yet.
                   </p>
                 )}

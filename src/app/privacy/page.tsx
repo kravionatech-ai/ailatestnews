@@ -20,8 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
     entityType: "page",
     entitySeo: page?.seo,
     path: "/privacy",
-    title: page?.seo?.metaTitle || page?.title || "Privacy Policy | AI Latest News",
-    excerpt: page?.seo?.metaDescription || page?.excerpt || "Our commitment to reader privacy and transparent data practices.",
+    title: page?.seo?.metaTitle || page?.title || "Privacy Policy | Kraviona AI News",
+    excerpt: page?.seo?.metaDescription || page?.excerpt || "Kraviona AI News commitment to reader privacy and transparent data practices.",
   });
 }
 
@@ -45,35 +45,40 @@ export default async function PrivacyPage() {
 
   return (
     <PublicShell navLinks={settings.navigation} footerConfig={settings.footer}>
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--foreground)] mb-8">
-          {page?.title || "Privacy Policy"}
-        </h1>
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="border-b-2 border-[var(--color-heading)] pb-5 mb-8">
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--accent)] mb-2">
+            Legal &amp; Compliance
+          </p>
+          <h1 className="font-editorial text-3xl sm:text-4xl font-bold text-[var(--color-heading)]">
+            {page?.title || "Privacy Policy"}
+          </h1>
+        </div>
 
         {page?.contentHtml ? (
           <div
-            className="prose-article text-sm leading-relaxed space-y-6"
+            className="prose-article text-base leading-relaxed space-y-6 text-[var(--color-body-text)]"
             dangerouslySetInnerHTML={{ __html: page.contentHtml }}
           />
         ) : (
-          <div className="prose-article text-sm leading-relaxed space-y-6">
+          <div className="prose-article text-base leading-relaxed space-y-6 text-[var(--color-body-text)]">
             <p>
-              Last updated: October 2026. AI Latest News is committed to protecting the privacy of our readers and subscribers.
+              Last updated: November 2026. Kraviona AI News is committed to protecting the privacy of our readers and subscribers.
             </p>
 
-            <h3 className="font-bold text-base text-[var(--foreground)] mt-6">1. Information Collection</h3>
+            <h2 className="font-display font-bold text-lg text-[var(--color-heading)] mt-6">1. Information Collection</h2>
             <p>
-              We collect personal information solely when you voluntarily provide it to us, such as your email address when subscribing to our intelligence newsletter or submitting an article comment. We do not sell, rent, or lease reader data to third parties.
+              We collect personal information solely when you voluntarily provide it to us, such as your email address when subscribing to our intelligence newsletter, contacting our newsroom, or submitting an article comment. We never sell, rent, or lease reader data to third parties.
             </p>
 
-            <h3 className="font-bold text-base text-[var(--foreground)] mt-6">2. Analytics &amp; Cookies</h3>
+            <h2 className="font-display font-bold text-lg text-[var(--color-heading)] mt-6">2. Analytics &amp; Cookies</h2>
             <p>
-              We utilize privacy-respecting, aggregated analytics to understand macro traffic patterns, top AI search queries, and reading durations. No personally identifiable tracking cookies are stored without consent.
+              We utilize privacy-respecting, aggregated analytics to understand macro readership patterns, topic engagement, and site reliability. Essential session storage is used solely for authentication and editorial preferences such as dark mode.
             </p>
 
-            <h3 className="font-bold text-base text-[var(--foreground)] mt-6">3. Data Security</h3>
+            <h2 className="font-display font-bold text-lg text-[var(--color-heading)] mt-6">3. Data Security</h2>
             <p>
-              Reader data is stored securely using enterprise-grade encryption in transit and at rest. You may request data erasure at any time by contacting our privacy compliance desk.
+              Reader data is stored securely using industry-standard encryption in transit and at rest. You may request data erasure at any time by contacting our editorial privacy desk.
             </p>
           </div>
         )}

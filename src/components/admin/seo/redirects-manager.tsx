@@ -96,32 +96,32 @@ export function RedirectsManager({ initialRedirects }: RedirectsManagerProps) {
       {/* Feedback banner */}
       {feedback && (
         <div
-          className={`flex items-center gap-3 p-4 rounded-2xl border text-sm font-semibold transition-all ${
+          className={`flex items-center gap-3 p-4 rounded-xl border text-sm font-semibold transition-all ${
             feedback.type === "success"
-              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-              : "bg-rose-50 text-rose-800 border-rose-200"
+              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+              : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-500/30"
           }`}
         >
           {feedback.type === "success" ? (
-            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="h-5 w-5 shrink-0" />
           ) : (
-            <AlertCircle className="h-5 w-5 text-rose-600 shrink-0" />
+            <AlertCircle className="h-5 w-5 shrink-0" />
           )}
           <span>{feedback.message}</span>
         </div>
       )}
 
       {/* Create Redirect Card */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs">
-        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 mb-4">
-          <Plus className="h-4 w-4 text-indigo-600" />
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs">
+        <h2 className="font-display text-base font-bold text-[var(--color-heading)] flex items-center gap-2 mb-4">
+          <Plus className="h-4 w-4 text-[var(--accent)]" />
           Create New URL Redirect
         </h2>
 
         <form onSubmit={handleCreate} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
             <div className="sm:col-span-4">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                 Source Path (From)
               </label>
               <input
@@ -129,13 +129,13 @@ export function RedirectsManager({ initialRedirects }: RedirectsManagerProps) {
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
                 placeholder="/old-path or /category/old-slug"
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono text-slate-900 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2.5 text-xs font-mono text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                 required
               />
             </div>
 
             <div className="sm:col-span-4">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                 Target Destination (To)
               </label>
               <input
@@ -143,19 +143,19 @@ export function RedirectsManager({ initialRedirects }: RedirectsManagerProps) {
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
                 placeholder="/new-path or https://external.com"
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono text-slate-900 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2.5 text-xs font-mono text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
                 Redirect Type
               </label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as "301" | "302")}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-xs font-semibold text-slate-900 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3 py-2.5 text-xs font-semibold text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
               >
                 <option value="301">301 Permanent</option>
                 <option value="302">302 Temporary</option>
@@ -166,7 +166,7 @@ export function RedirectsManager({ initialRedirects }: RedirectsManagerProps) {
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-indigo-700 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="w-full rounded-lg bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-white hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 {isPending ? (
                   <Sparkles className="h-3.5 w-3.5 animate-spin" />
@@ -179,7 +179,7 @@ export function RedirectsManager({ initialRedirects }: RedirectsManagerProps) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--color-muted-text)] mb-1">
               Internal Note / Context (Optional)
             </label>
             <input
@@ -187,30 +187,30 @@ export function RedirectsManager({ initialRedirects }: RedirectsManagerProps) {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="e.g. Migrated post slug during pillar restructuring"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs text-slate-700 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] px-3.5 py-2 text-xs text-[var(--color-heading)] outline-none focus:border-[var(--accent)]"
             />
           </div>
         </form>
       </div>
 
       {/* Redirects Table */}
-      <div className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xs">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] overflow-hidden shadow-xs">
+        <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ArrowRightLeft className="h-4 w-4 text-indigo-600" />
-            <span className="text-sm font-bold text-slate-900">Active Redirect Rules ({initialRedirects.length})</span>
+            <ArrowRightLeft className="h-4 w-4 text-[var(--accent)]" />
+            <span className="font-display text-sm font-bold text-[var(--color-heading)]">Active Redirect Rules ({initialRedirects.length})</span>
           </div>
-          <span className="text-xs text-slate-500">Auto 301 rules are generated on slug edits</span>
+          <span className="text-xs text-[var(--color-muted-text)]">Auto 301 rules are generated on slug edits</span>
         </div>
 
         {initialRedirects.length === 0 ? (
-          <div className="p-12 text-center text-xs text-slate-500">
+          <div className="p-12 text-center text-xs text-[var(--color-muted-text)]">
             No active redirect rules found. Create one above or rename any post/category slug to generate auto-redirects.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold text-[10px]">
+              <thead className="bg-[var(--color-secondary-surface)] border-b border-[var(--border)] text-[var(--color-muted-text)] uppercase tracking-wider font-mono font-bold text-[10px]">
                 <tr>
                   <th className="px-4 py-3">Source (From)</th>
                   <th className="px-4 py-3">Destination (To)</th>
@@ -221,18 +221,20 @@ export function RedirectsManager({ initialRedirects }: RedirectsManagerProps) {
                   <th className="px-4 py-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
+              <tbody className="divide-y divide-[var(--border)] text-[var(--color-body-text)] font-medium">
                 {initialRedirects.map((r) => (
-                  <tr key={r._id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="px-4 py-3 font-mono font-bold text-slate-900">{r.from}</td>
-                    <td className="px-4 py-3 font-mono text-indigo-600">
+                  <tr key={r._id} className="hover:bg-[var(--color-secondary-surface)]/70 transition-colors">
+                    <td className="px-4 py-3 font-mono font-bold text-[var(--color-heading)]">{r.from}</td>
+                    <td className="px-4 py-3 font-mono text-[var(--accent)]">
                       <a href={r.to} target="_blank" rel="noreferrer" className="hover:underline inline-flex items-center gap-1">
                         {r.to} <ExternalLink className="h-3 w-3" />
                       </a>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                        r.type === 301 ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-amber-50 text-amber-700 border border-amber-200"
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${
+                        r.type === 301
+                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                          : "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
                       }`}>
                         {r.type}
                       </span>
@@ -243,18 +245,20 @@ export function RedirectsManager({ initialRedirects }: RedirectsManagerProps) {
                         type="button"
                         onClick={() => handleToggle(r._id)}
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold cursor-pointer ${
-                          r.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-600"
+                          r.isActive
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                            : "bg-[var(--color-secondary-surface)] text-[var(--color-muted-text)]"
                         }`}
                       >
                         {r.isActive ? "Active" : "Disabled"}
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-slate-500 max-w-xs truncate">{r.note || "—"}</td>
+                    <td className="px-4 py-3 text-[var(--color-muted-text)] max-w-xs truncate">{r.note || "—"}</td>
                     <td className="px-4 py-3 text-right">
                       <button
                         type="button"
                         onClick={() => handleDelete(r._id, r.from)}
-                        className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        className="p-1 rounded text-[var(--color-muted-text)] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/15 transition-colors cursor-pointer"
                         title="Delete redirect"
                       >
                         <Trash2 className="h-4 w-4" />
