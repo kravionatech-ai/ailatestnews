@@ -19,6 +19,10 @@ import {
   Copy,
   Check,
   Search,
+  Rss,
+  Link2,
+  Pencil,
+  RotateCcw,
 } from "lucide-react";
 import {
   updateSitemapSettingsAction,
@@ -27,8 +31,16 @@ import {
   previewSitemapXmlAction,
   previewRobotsTxtAction,
   updateItemIndexingAction,
+  upsertCustomSeoEntryAction,
+  toggleCustomSeoEntryAction,
+  deleteCustomSeoEntryAction,
 } from "@/actions/seo-settings";
-import type { ISeoSettings, IRobotsRule } from "@/lib/db/models/seo-settings.model";
+import type {
+  ISeoSettings,
+  IRobotsRule,
+  ICustomSeoEntry,
+  SitemapChangeFrequency,
+} from "@/lib/db/models/seo-settings.model";
 
 interface SeoControlCenterProps {
   initialSettings: ISeoSettings;
@@ -42,6 +54,8 @@ interface SeoControlCenterProps {
     noindexPages: number;
     totalIndexableUrls: number;
     totalUrlsInSitemap: number;
+    customUrlsCount?: number;
+    feedItemsCount?: number;
     newsArticlesCount: number;
     sitemapLastGenerated?: string | Date;
     robotsLastPublished?: string | Date;
@@ -59,13 +73,32 @@ interface SeoControlCenterProps {
   }>;
 }
 
+function toDateTimeLocalInput(val?: string | Date): string {
+  if (!val) return "";
+  const d = new Date(val);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}`;
+}
+
+function computeCanonicalPreview(rawUrl: string, siteUrl: string): string {
+  const base = (siteUrl || "https://ainews.kraviona.com").trim().replace(/\/$/, "");
+  const trimmed = (rawUrl || "").trim();
+  if (!trimmed) return `${base}/your-path`;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  const path = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return path === "/" ? base : `${base}${path}`;
+}
+
 export function SeoControlCenter({
   initialSettings,
   stats: initialStats,
   inventoryItems: initialInventory,
 }: SeoControlCenterProps) {
   const [activeTab, setActiveTab] = useState<
-    "sitemap" | "robots" | "news" | "indexing" | "health"
+    "sitemap" | "custom" | "robots" | "news" | "indexing" | "health"
   >("sitemap");
 
   const [settings, setSettings] = useState<ISeoSettings>(initialSettings);
@@ -73,6 +106,25 @@ export function SeoControlCenter({
   const [inventory, setInventory] = useState(initialInventory);
   const [inventorySearch, setInventorySearch] = useState("");
   const [inventoryTypeFilter, setInventoryTypeFilter] = useState("all");
+
+  // Custom SEO Entries state
+  const [editingCustomId, setEditingCustomId] = useState<string | null>(null);
+  const [customUrl, setCustomUrl] = useState("");
+  const [customTitle, setCustomTitle] = useState("");
+  const [customDescription, setCustomDescription] = useState("");
+  const [customAuthor, setCustomAuthor] = useState("");
+  const [customPubDate, setCustomPubDate] = useState("");
+  const [customChangeFreq, setCustomChangeFreq] = useState<SitemapChangeFrequency>("weekly");
+  const [customPriority, setCustomPriority] = useState<number>(0.8);
+  const [customInSitemap, setCustomInSitemap] = useState(true);
+  const [customInFeed, setCustomInFeed] = useState(true);
+  const [customInNews, setCustomInNews] = useState(false);
+  const [customEnabled, setCustomEnabled] = useState(true);
+  const [customSearch, setCustomSearch] = useState("");
+  const [customTargetFilter, setCustomTargetFilter] = useState<
+    "all" | "sitemap" | "feed" | "news"
+  >("all");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const [isPending, startTransition] = useTransition();
   const [statusMessage, setStatusMessage] = useState<{
@@ -112,7 +164,8 @@ export function SeoControlCenter({
       const res = await updateSitemapSettingsAction(settings.sitemap);
       if (res.success && res.settings) {
         setSettings(res.settings);
-        showStatus("success", "Sitemap configuration saved and sitemap caches revalidated successfully!");
+        if (res.stats) setStats(res.stats);
+        showStatus("success", "Sitemap configuration saved and sitemap/feed caches revalidated!");
       } else {
         showStatus("error", res.error || "Failed to save sitemap settings");
       }
@@ -139,18 +192,145 @@ export function SeoControlCenter({
     });
   };
 
-  const handlePreviewSitemap = (type: "all" | "articles" | "categories" | "tags" | "pages" | "news") => {
+  const handlePreviewSitemap = (
+    type: "all" | "articles" | "categories" | "images" | "tags" | "pages" | "custom" | "news" | "feed"
+  ) => {
     startTransition(async () => {
       const res = await previewSitemapXmlAction(type);
       if (res.success && res.xml) {
         setPreviewModal({
           isOpen: true,
-          title: `Sitemap Preview (${type.toUpperCase()}) — ${res.count} URLs`,
+          title:
+            type === "feed"
+              ? `RSS 2.0 Feed Preview (/feed.xml) — ${res.count} items`
+              : `Sitemap Preview (${type.toUpperCase()}) — ${res.count} URLs`,
           content: res.xml,
           isXml: true,
         });
       } else {
         showStatus("error", res.error || "Failed to generate preview");
+      }
+    });
+  };
+
+  const resetCustomForm = (preset?: {
+    inSitemap?: boolean;
+    inFeed?: boolean;
+    inNews?: boolean;
+  }) => {
+    setEditingCustomId(null);
+    setCustomUrl("");
+    setCustomTitle("");
+    setCustomDescription("");
+    setCustomAuthor("");
+    setCustomPubDate("");
+    setCustomChangeFreq("weekly");
+    setCustomPriority(0.8);
+    setCustomInSitemap(preset?.inSitemap ?? true);
+    setCustomInFeed(preset?.inFeed ?? true);
+    setCustomInNews(preset?.inNews ?? false);
+    setCustomEnabled(true);
+  };
+
+  const handleEditCustomEntry = (entry: ICustomSeoEntry) => {
+    setEditingCustomId(entry.id);
+    setCustomUrl(entry.url || "");
+    setCustomTitle(entry.title || "");
+    setCustomDescription(entry.description || "");
+    setCustomAuthor(entry.authorName || "");
+    setCustomPubDate(toDateTimeLocalInput(entry.publicationDate || entry.lastModified));
+    setCustomChangeFreq(entry.changeFrequency || "weekly");
+    setCustomPriority(typeof entry.priority === "number" ? entry.priority : 0.8);
+    setCustomInSitemap(entry.includeInSitemap !== false);
+    setCustomInFeed(Boolean(entry.includeInFeed));
+    setCustomInNews(Boolean(entry.includeInNewsSitemap));
+    setCustomEnabled(entry.enabled !== false);
+    setConfirmDeleteId(null);
+  };
+
+  const handleSaveCustomEntry = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!customUrl.trim()) {
+      showStatus("error", "Enter a relative path (e.g. /ai-report) or full URL.");
+      return;
+    }
+    if ((customInFeed || customInNews) && !customTitle.trim()) {
+      showStatus(
+        "error",
+        "Headline / Title is required when publishing a custom entry to RSS Feed or Google News."
+      );
+      return;
+    }
+    if (!customInSitemap && !customInFeed && !customInNews) {
+      showStatus("error", "Select at least one output target (Sitemap, RSS Feed, or News).");
+      return;
+    }
+
+    const isoDate = customPubDate ? new Date(customPubDate).toISOString() : undefined;
+
+    startTransition(async () => {
+      const res = await upsertCustomSeoEntryAction({
+        id: editingCustomId || undefined,
+        url: customUrl.trim(),
+        title: customTitle.trim(),
+        description: customDescription.trim(),
+        authorName: customAuthor.trim(),
+        publicationDate: isoDate,
+        lastModified: isoDate,
+        changeFrequency: customChangeFreq,
+        priority: customPriority,
+        includeInSitemap: customInSitemap,
+        includeInFeed: customInFeed,
+        includeInNewsSitemap: customInNews,
+        enabled: customEnabled,
+      });
+
+      if (res.success && res.settings) {
+        setSettings(res.settings);
+        if (res.stats) setStats(res.stats);
+        setNowMs(Date.now());
+        const wasEditing = Boolean(editingCustomId);
+        resetCustomForm();
+        showStatus(
+          "success",
+          wasEditing
+            ? "Custom entry updated across selected sitemaps/feeds and caches revalidated!"
+            : "Custom entry added live to selected sitemaps/feeds!"
+        );
+      } else {
+        showStatus("error", res.error || "Failed to save custom entry");
+      }
+    });
+  };
+
+  const handleToggleCustomEntry = (id: string, nextEnabled: boolean) => {
+    startTransition(async () => {
+      const res = await toggleCustomSeoEntryAction(id, nextEnabled);
+      if (res.success && res.settings) {
+        setSettings(res.settings);
+        if (res.stats) setStats(res.stats);
+        setNowMs(Date.now());
+        showStatus(
+          "success",
+          `Custom entry ${nextEnabled ? "enabled" : "paused"} and feeds refreshed.`
+        );
+      } else {
+        showStatus("error", res.error || "Failed to toggle custom entry");
+      }
+    });
+  };
+
+  const handleDeleteCustomEntry = (id: string) => {
+    startTransition(async () => {
+      const res = await deleteCustomSeoEntryAction(id);
+      if (res.success && res.settings) {
+        setSettings(res.settings);
+        if (res.stats) setStats(res.stats);
+        if (editingCustomId === id) resetCustomForm();
+        setConfirmDeleteId(null);
+        showStatus("success", "Custom entry removed and sitemap/feed caches refreshed.");
+      } else {
+        showStatus("error", res.error || "Failed to delete custom entry");
       }
     });
   };
@@ -294,6 +474,27 @@ export function SeoControlCenter({
     return matchesSearch && matchesType;
   });
 
+  // Filtered custom URLs
+  const customEntries: ICustomSeoEntry[] = settings.sitemap.customUrls || [];
+  const filteredCustomEntries = customEntries.filter((entry) => {
+    const q = customSearch.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      (entry.url || "").toLowerCase().includes(q) ||
+      (entry.title || "").toLowerCase().includes(q) ||
+      (entry.description || "").toLowerCase().includes(q);
+    const matchesTarget =
+      customTargetFilter === "all" ||
+      (customTargetFilter === "sitemap" && entry.includeInSitemap !== false) ||
+      (customTargetFilter === "feed" && Boolean(entry.includeInFeed)) ||
+      (customTargetFilter === "news" && Boolean(entry.includeInNewsSitemap));
+    return matchesSearch && matchesTarget;
+  });
+
+  const newsWindowHours = settings.sitemap.newsTimeWindowHours || 48;
+  const [nowMs, setNowMs] = useState<number>(() => Date.now());
+  const newsCutoffMs = nowMs - newsWindowHours * 60 * 60 * 1000;
+
   return (
     <div className="space-y-6">
       {/* Top Banner & Header */}
@@ -308,7 +509,7 @@ export function SeoControlCenter({
             </span>
           </div>
           <p className="text-xs text-[var(--color-muted-text)] mt-1">
-            Dynamic XML Sitemap, Robots.txt, Google News Sync &amp; Indexing Control Hub
+            Dynamic XML Sitemap, RSS Feed, Robots.txt, Google News Sync &amp; Custom URL Control Hub
           </p>
         </div>
 
@@ -322,6 +523,36 @@ export function SeoControlCenter({
           >
             <Globe className="h-3.5 w-3.5 text-[var(--accent)]" />
             <span>sitemap.xml</span>
+            <ExternalLink className="h-3 w-3 text-[var(--color-muted-text)]" />
+          </a>
+          <a
+            href="/image-sitemap.xml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-semibold text-[var(--color-body-text)] shadow-xs transition"
+          >
+            <Globe className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" />
+            <span>image-sitemap.xml</span>
+            <ExternalLink className="h-3 w-3 text-[var(--color-muted-text)]" />
+          </a>
+          <a
+            href="/sitemap"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-semibold text-[var(--color-body-text)] shadow-xs transition"
+          >
+            <Globe className="h-3.5 w-3.5 text-[var(--color-muted-text)]" />
+            <span>HTML Sitemap</span>
+            <ExternalLink className="h-3 w-3 text-[var(--color-muted-text)]" />
+          </a>
+          <a
+            href="/feed.xml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-semibold text-[var(--color-body-text)] shadow-xs transition"
+          >
+            <Rss className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+            <span>feed.xml</span>
             <ExternalLink className="h-3 w-3 text-[var(--color-muted-text)]" />
           </a>
           <a
@@ -387,6 +618,23 @@ export function SeoControlCenter({
         >
           <Globe className="h-4 w-4" />
           <span>Sitemap Settings</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("custom")}
+          className={`flex items-center gap-2 py-2.5 px-4 rounded-t-xl text-xs font-bold transition border-b-2 whitespace-nowrap cursor-pointer ${
+            activeTab === "custom"
+              ? "border-[var(--accent)] text-[var(--accent)] bg-[var(--accent-light)]"
+              : "border-transparent text-[var(--color-muted-text)] hover:text-[var(--color-heading)] hover:bg-[var(--color-secondary-surface)]"
+          }`}
+        >
+          <Link2 className="h-4 w-4" />
+          <span>Custom URLs &amp; Feed</span>
+          {customEntries.length > 0 && (
+            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--accent)]/15 text-[var(--accent)]">
+              {customEntries.length}
+            </span>
+          )}
         </button>
 
         <button
@@ -473,6 +721,9 @@ export function SeoControlCenter({
               <p className="text-xl font-black text-[var(--color-heading)] mt-1">
                 {stats.totalUrlsInSitemap}
               </p>
+              <span className="text-[11px] text-[var(--color-muted-text)]">
+                {stats.customUrlsCount ?? customEntries.filter((e) => e.enabled !== false && e.includeInSitemap !== false).length} custom • {stats.feedItemsCount ?? 0} in RSS feed
+              </span>
             </div>
 
             <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
@@ -537,6 +788,16 @@ export function SeoControlCenter({
                 <button
                   type="button"
                   disabled={isPending}
+                  onClick={() => handlePreviewSitemap("feed")}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] shadow-xs transition cursor-pointer"
+                >
+                  <Rss className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  <span>Preview RSS Feed</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isPending}
                   onClick={handleSaveSitemap}
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-bold shadow-xs transition cursor-pointer"
                 >
@@ -574,7 +835,7 @@ export function SeoControlCenter({
                 Content Inclusion Toggles
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-3xl">
-                <label className="flex items-center gap-3 p-3 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
+                <label className="sm:col-span-2 flex items-center gap-3 p-3 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
                   <input
                     type="checkbox"
                     checked={settings.sitemap.enabled}
@@ -643,6 +904,28 @@ export function SeoControlCenter({
                 <label className="flex items-center gap-3 p-3 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
                   <input
                     type="checkbox"
+                    checked={settings.sitemap.includeTags}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        sitemap: { ...settings.sitemap, includeTags: e.target.checked },
+                      })
+                    }
+                    className="h-4 w-4 rounded accent-[var(--accent)]"
+                  />
+                  <div>
+                    <span className="text-xs font-bold text-[var(--color-heading)] block">
+                      Include Topic Tags
+                    </span>
+                    <span className="text-[11px] text-[var(--color-muted-text)]">
+                      Syncs active tags (/tag/[slug])
+                    </span>
+                  </div>
+                </label>
+
+                <label className="flex items-center gap-3 p-3 rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/50 hover:bg-[var(--color-secondary-surface)] cursor-pointer transition">
+                  <input
+                    type="checkbox"
                     checked={settings.sitemap.includePages}
                     onChange={(e) =>
                       setSettings({
@@ -657,7 +940,7 @@ export function SeoControlCenter({
                       Include Static Core &amp; Standalone Pages
                     </span>
                     <span className="text-[11px] text-[var(--color-muted-text)]">
-                      Includes /about, /contact, /editorial-policy, /ai-tools
+                      Includes /about, /contact, /editorial-policy, /ai-tools, /zeroai
                     </span>
                   </div>
                 </label>
@@ -672,7 +955,7 @@ export function SeoControlCenter({
                     Large Website Architecture (Sitemap Index)
                   </h3>
                   <p className="text-[11px] text-[var(--color-muted-text)]">
-                    Auto-splits into /sitemap-static.xml, /sitemap-articles.xml, /sitemap-categories.xml
+                    Auto-splits into /sitemap-static.xml, /sitemap-articles.xml, /sitemap-categories.xml, /image-sitemap.xml, /sitemap-tags.xml, /sitemap-custom.xml
                   </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -698,22 +981,46 @@ export function SeoControlCenter({
                   </p>
                   <div className="flex flex-wrap gap-2 text-[var(--color-body-text)]">
                     <button
+                      type="button"
                       onClick={() => handlePreviewSitemap("articles")}
                       className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
                     >
                       /sitemap-articles.xml
                     </button>
                     <button
+                      type="button"
                       onClick={() => handlePreviewSitemap("categories")}
                       className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
                     >
                       /sitemap-categories.xml
                     </button>
                     <button
+                      type="button"
+                      onClick={() => handlePreviewSitemap("images")}
+                      className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
+                    >
+                      /image-sitemap.xml
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePreviewSitemap("tags")}
+                      className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
+                    >
+                      /sitemap-tags.xml
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => handlePreviewSitemap("pages")}
                       className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
                     >
                       /sitemap-static.xml
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePreviewSitemap("custom")}
+                      className="px-2.5 py-1 rounded-lg bg-[var(--color-card-background)] border border-[var(--border)] hover:border-[var(--accent)] font-mono text-[11px] cursor-pointer"
+                    >
+                      /sitemap-custom.xml
                     </button>
                   </div>
                 </div>
@@ -722,13 +1029,23 @@ export function SeoControlCenter({
 
             {/* Excluded URLs Blacklist */}
             <div className="space-y-3 pt-3 border-t border-[var(--border)]">
-              <div>
-                <h3 className="text-xs font-bold text-[var(--color-heading)]">
-                  Custom Excluded URLs &amp; Path Blacklist
-                </h3>
-                <p className="text-[11px] text-[var(--color-muted-text)]">
-                  URLs matching these exact paths or wildcard patterns will never appear in any sitemap.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <h3 className="text-xs font-bold text-[var(--color-heading)]">
+                    Custom Excluded URLs &amp; Path Blacklist
+                  </h3>
+                  <p className="text-[11px] text-[var(--color-muted-text)]">
+                    URLs matching these exact paths or wildcard patterns will never appear in any sitemap or feed.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("custom")}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-secondary-surface)] hover:border-[var(--accent)] text-xs font-bold text-[var(--accent)] transition cursor-pointer self-start sm:self-auto"
+                >
+                  <Link2 className="h-3.5 w-3.5" />
+                  <span>Manage Custom URLs &amp; Feed ({customEntries.length})</span>
+                </button>
               </div>
 
               <div className="flex gap-2 max-w-xl">
@@ -774,6 +1091,519 @@ export function SeoControlCenter({
                 </p>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* TAB 2: CUSTOM URLS & FEED ENTRIES */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      {activeTab === "custom" && (
+        <div className="space-y-6">
+          {/* Top Action & Preview Bar */}
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] p-6 shadow-xs space-y-5">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
+              <div>
+                <h2 className="font-display text-base font-bold text-[var(--color-heading)]">
+                  Custom Sitemap, RSS Feed &amp; News Entries
+                </h2>
+                <p className="text-xs text-[var(--color-muted-text)] mt-0.5">
+                  Manually inject or override entries in <code className="font-mono text-[var(--accent)]">/sitemap.xml</code>,{" "}
+                  <code className="font-mono text-[var(--accent)]">/sitemap-custom.xml</code>,{" "}
+                  <code className="font-mono text-[var(--accent)]">/feed.xml</code>, and{" "}
+                  <code className="font-mono text-[var(--accent)]">/news-sitemap.xml</code>.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  disabled={isPending}
+                  onClick={() => handlePreviewSitemap("custom")}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] shadow-xs transition cursor-pointer"
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                  <span>Custom Sitemap XML</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={isPending}
+                  onClick={() => handlePreviewSitemap("feed")}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] shadow-xs transition cursor-pointer"
+                >
+                  <Rss className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  <span>RSS Feed XML</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={isPending}
+                  onClick={() => handlePreviewSitemap("news")}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] shadow-xs transition cursor-pointer"
+                >
+                  <Newspaper className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>News Sitemap XML</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Add / Edit Custom Entry Form */}
+            <form
+              onSubmit={handleSaveCustomEntry}
+              className="rounded-2xl border border-[var(--border)] bg-[var(--color-secondary-surface)]/40 p-5 space-y-4"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-xs font-bold text-[var(--color-heading)] uppercase tracking-wider">
+                  {editingCustomId ? "Edit Custom Entry" : "Add New Custom Entry"}
+                </h3>
+                {editingCustomId && (
+                  <button
+                    type="button"
+                    onClick={() => resetCustomForm()}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-muted-text)] hover:text-[var(--color-heading)] cursor-pointer"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    <span>Cancel Edit</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-[var(--color-heading)]">
+                    URL or Relative Path <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={customUrl}
+                    onChange={(e) => setCustomUrl(e.target.value)}
+                    placeholder="/special-ai-report-2026 or https://ainews.kraviona.com/..."
+                    className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-mono text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
+                  />
+                  <p className="text-[11px] text-[var(--color-muted-text)] truncate">
+                    Canonical:{" "}
+                    <code className="font-mono text-[var(--accent)]">
+                      {computeCanonicalPreview(customUrl, settings.sitemap.siteUrl)}
+                    </code>
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-[var(--color-heading)]">
+                    Headline / Title{" "}
+                    {(customInFeed || customInNews) ? (
+                      <span className="text-rose-500">*</span>
+                    ) : (
+                      <span className="text-[var(--color-muted-text)] font-normal">(Optional for Sitemap-only)</span>
+                    )}
+                  </label>
+                  <input
+                    type="text"
+                    value={customTitle}
+                    onChange={(e) => setCustomTitle(e.target.value)}
+                    placeholder="e.g. Kraviona State of AI Benchmarks 2026"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-medium text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
+                  />
+                </div>
+
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-xs font-bold text-[var(--color-heading)]">
+                    RSS Summary / Description{" "}
+                    <span className="text-[var(--color-muted-text)] font-normal">(Used in /feed.xml)</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={customDescription}
+                    onChange={(e) => setCustomDescription(e.target.value)}
+                    placeholder="Concise summary for RSS readers..."
+                    className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-[var(--color-heading)]">
+                    Author / Desk Name
+                  </label>
+                  <input
+                    type="text"
+                    value={customAuthor}
+                    onChange={(e) => setCustomAuthor(e.target.value)}
+                    placeholder="Kraviona AI News Editorial Team"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-[var(--color-heading)]">
+                      Publish Date
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={customPubDate}
+                      onChange={(e) => setCustomPubDate(e.target.value)}
+                      className="w-full px-2.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-[var(--color-heading)]">
+                      Changefreq
+                    </label>
+                    <select
+                      value={customChangeFreq}
+                      onChange={(e) => setCustomChangeFreq(e.target.value as SitemapChangeFrequency)}
+                      className="w-full px-2.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-semibold text-[var(--color-heading)] outline-none"
+                    >
+                      <option value="always">always</option>
+                      <option value="hourly">hourly</option>
+                      <option value="daily">daily</option>
+                      <option value="weekly">weekly</option>
+                      <option value="monthly">monthly</option>
+                      <option value="yearly">yearly</option>
+                      <option value="never">never</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-[var(--color-heading)]">
+                      Priority
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={1}
+                      step={0.1}
+                      value={customPriority}
+                      onChange={(e) => {
+                        const n = parseFloat(e.target.value);
+                        setCustomPriority(Number.isFinite(n) ? Math.max(0, Math.min(1, n)) : 0.8);
+                      }}
+                      className="w-full px-2.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-mono text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Target Outputs */}
+              <div className="space-y-2 pt-1">
+                <label className="text-xs font-bold text-[var(--color-heading)] block">
+                  Include In Target Feeds
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <label className="flex items-center gap-2.5 p-3 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={customInSitemap}
+                      onChange={(e) => setCustomInSitemap(e.target.checked)}
+                      className="h-4 w-4 rounded accent-[var(--accent)]"
+                    />
+                    <div>
+                      <span className="text-xs font-bold text-[var(--color-heading)] block">
+                        XML Sitemap
+                      </span>
+                      <span className="text-[11px] text-[var(--color-muted-text)]">
+                        /sitemap.xml &amp; /sitemap-custom.xml
+                      </span>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-2.5 p-3 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={customInFeed}
+                      onChange={(e) => setCustomInFeed(e.target.checked)}
+                      className="h-4 w-4 rounded accent-[var(--accent)]"
+                    />
+                    <div>
+                      <span className="text-xs font-bold text-[var(--color-heading)] block">
+                        RSS 2.0 Feed
+                      </span>
+                      <span className="text-[11px] text-[var(--color-muted-text)]">
+                        /feed.xml (requires title)
+                      </span>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-2.5 p-3 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={customInNews}
+                      onChange={(e) => setCustomInNews(e.target.checked)}
+                      className="h-4 w-4 rounded accent-[var(--accent)]"
+                    />
+                    <div>
+                      <span className="text-xs font-bold text-[var(--color-heading)] block">
+                        Google News Sitemap
+                      </span>
+                      <span className="text-[11px] text-[var(--color-muted-text)]">
+                        /news-sitemap.xml ({newsWindowHours}h window)
+                      </span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                <label className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--color-body-text)] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={customEnabled}
+                    onChange={(e) => setCustomEnabled(e.target.checked)}
+                    className="h-4 w-4 rounded accent-[var(--accent)]"
+                  />
+                  <span>Active (Publish immediately to enabled outputs)</span>
+                </label>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => resetCustomForm()}
+                    className="px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] hover:bg-[var(--color-secondary-surface)] text-xs font-bold text-[var(--color-heading)] transition cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-bold shadow-xs transition cursor-pointer disabled:opacity-60"
+                  >
+                    {editingCustomId ? <Save className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+                    <span>{editingCustomId ? "Update Custom Entry" : "Add Custom Entry"}</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {(
+                  [
+                    { key: "all", label: `All (${customEntries.length})` },
+                    {
+                      key: "sitemap",
+                      label: `Sitemap (${customEntries.filter((e) => e.includeInSitemap !== false).length})`,
+                    },
+                    {
+                      key: "feed",
+                      label: `RSS Feed (${customEntries.filter((e) => e.includeInFeed).length})`,
+                    },
+                    {
+                      key: "news",
+                      label: `News (${customEntries.filter((e) => e.includeInNewsSitemap).length})`,
+                    },
+                  ] as const
+                ).map((pill) => (
+                  <button
+                    key={pill.key}
+                    type="button"
+                    onClick={() => setCustomTargetFilter(pill.key)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                      customTargetFilter === pill.key
+                        ? "bg-[var(--accent-light)] border-[var(--accent)] text-[var(--accent)]"
+                        : "bg-[var(--color-main-background)] border-[var(--border)] text-[var(--color-muted-text)] hover:text-[var(--color-heading)]"
+                    }`}
+                  >
+                    {pill.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative">
+                <Search className="h-3.5 w-3.5 absolute left-3 top-2.5 text-[var(--color-muted-text)]" />
+                <input
+                  type="text"
+                  value={customSearch}
+                  onChange={(e) => setCustomSearch(e.target.value)}
+                  placeholder="Search custom URL or title..."
+                  className="pl-8 pr-3 py-1.5 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-medium text-[var(--color-heading)] placeholder:text-[var(--color-muted-text)] focus:outline-none focus:border-[var(--accent)]"
+                />
+              </div>
+            </div>
+
+            {/* Custom Entries Table */}
+            {filteredCustomEntries.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-[var(--border)] p-8 text-center space-y-2">
+                <Link2 className="h-6 w-6 mx-auto text-[var(--color-muted-text)]" />
+                <p className="text-xs font-bold text-[var(--color-heading)]">
+                  {customEntries.length === 0
+                    ? "No custom sitemap or feed entries configured yet"
+                    : "No custom entries match your current filter"}
+                </p>
+                <p className="text-[11px] text-[var(--color-muted-text)] max-w-md mx-auto">
+                  Use the form above to add landing pages, special reports, partner announcements, or custom URLs directly into your XML sitemaps, RSS feed, or Google News sitemap.
+                </p>
+              </div>
+            ) : (
+              <div className="border border-[var(--border)] rounded-2xl overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[var(--color-secondary-surface)] border-b border-[var(--border)] text-[var(--color-muted-text)] uppercase tracking-wider font-bold text-[10px]">
+                    <tr>
+                      <th className="py-3 px-4">Entry / URL</th>
+                      <th className="py-3 px-3">Targets</th>
+                      <th className="py-3 px-3">Sitemap Meta</th>
+                      <th className="py-3 px-3">Status</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--border)] font-medium">
+                    {filteredCustomEntries.map((entry) => {
+                      const canonical = computeCanonicalPreview(
+                        entry.url,
+                        settings.sitemap.siteUrl
+                      );
+                      const rawDate =
+                        entry.publicationDate || entry.lastModified || entry.updatedAt || entry.createdAt;
+                      const parsedDateMs = rawDate ? new Date(rawDate).getTime() : nowMs;
+                      const outsideNewsWindow =
+                        nowMs > 0 &&
+                        Boolean(entry.includeInNewsSitemap) &&
+                        entry.enabled !== false &&
+                        Number.isFinite(parsedDateMs) &&
+                        parsedDateMs < newsCutoffMs;
+
+                      return (
+                        <tr
+                          key={entry.id}
+                          className="hover:bg-[var(--color-secondary-surface)]/40 transition"
+                        >
+                          <td className="py-3 px-4 space-y-1 max-w-md">
+                            <div className="font-bold text-[var(--color-heading)] truncate">
+                              {entry.title ? (
+                                entry.title
+                              ) : (
+                                <span className="italic text-[var(--color-muted-text)] font-normal">
+                                  (Sitemap URL only — no headline)
+                                </span>
+                              )}
+                            </div>
+                            <a
+                              href={canonical}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 font-mono text-[11px] text-[var(--accent)] hover:underline break-all"
+                            >
+                              <span>{canonical}</span>
+                              <ExternalLink className="h-3 w-3 shrink-0" />
+                            </a>
+                            {entry.description && (
+                              <p className="text-[11px] text-[var(--color-muted-text)] line-clamp-1">
+                                {entry.description}
+                              </p>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-3">
+                            <div className="flex flex-wrap gap-1">
+                              {entry.includeInSitemap !== false && (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-700 dark:text-sky-400">
+                                  Sitemap
+                                </span>
+                              )}
+                              {entry.includeInFeed && (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400">
+                                  RSS Feed
+                                </span>
+                              )}
+                              {entry.includeInNewsSitemap && (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+                                  News
+                                </span>
+                              )}
+                              {outsideNewsWindow && (
+                                <span
+                                  title={`Publication date is older than ${newsWindowHours}h Google News window`}
+                                  className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-700 dark:text-rose-400"
+                                >
+                                  Older than {newsWindowHours}h
+                                </span>
+                              )}
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-3 text-[11px] text-[var(--color-body-text)] whitespace-nowrap">
+                            <div className="font-mono">
+                              {entry.changeFrequency || "weekly"} •{" "}
+                              {typeof entry.priority === "number"
+                                ? entry.priority.toFixed(1)
+                                : "0.8"}
+                            </div>
+                            {rawDate && (
+                              <div className="text-[10px] text-[var(--color-muted-text)]">
+                                {new Date(rawDate).toLocaleDateString("en-IN", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                })}
+                              </div>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-3">
+                            <button
+                              type="button"
+                              disabled={isPending}
+                              onClick={() =>
+                                handleToggleCustomEntry(entry.id, entry.enabled === false)
+                              }
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border transition cursor-pointer ${
+                                entry.enabled !== false
+                                  ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
+                                  : "bg-[var(--color-secondary-surface)] border-[var(--border)] text-[var(--color-muted-text)]"
+                              }`}
+                            >
+                              {entry.enabled !== false ? "Active" : "Paused"}
+                            </button>
+                          </td>
+
+                          <td className="py-3 px-4 text-right whitespace-nowrap">
+                            <div className="inline-flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                disabled={isPending}
+                                onClick={() => handleEditCustomEntry(entry)}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] hover:border-[var(--accent)] text-[11px] font-bold text-[var(--color-heading)] transition cursor-pointer"
+                              >
+                                <Pencil className="h-3 w-3" />
+                                <span>Edit</span>
+                              </button>
+                              {confirmDeleteId === entry.id ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    disabled={isPending}
+                                    onClick={() => handleDeleteCustomEntry(entry.id)}
+                                    className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold transition cursor-pointer"
+                                  >
+                                    Confirm
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setConfirmDeleteId(null)}
+                                    className="px-2 py-1 rounded-lg border border-[var(--border)] text-[11px] font-semibold text-[var(--color-muted-text)] cursor-pointer"
+                                  >
+                                    Cancel
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  type="button"
+                                  disabled={isPending}
+                                  onClick={() => setConfirmDeleteId(entry.id)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[var(--border)] bg-[var(--color-main-background)] hover:border-rose-500/50 hover:text-rose-600 text-[11px] font-bold text-[var(--color-muted-text)] transition cursor-pointer"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                  <span>Delete</span>
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1034,7 +1864,19 @@ export function SeoControlCenter({
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetCustomForm({ inSitemap: true, inFeed: true, inNews: true });
+                    setActiveTab("custom");
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] hover:border-[var(--accent)] text-xs font-bold text-[var(--accent)] shadow-xs transition cursor-pointer"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Add Custom News Entry</span>
+                </button>
+
                 <button
                   type="button"
                   disabled={isPending}
@@ -1351,7 +2193,21 @@ export function SeoControlCenter({
               <p className="text-xl font-black text-[var(--accent)] mt-1">
                 {stats.totalUrlsInSitemap}
               </p>
-              <span className="text-[11px] text-[var(--color-muted-text)]">Dynamic &amp; Canonical</span>
+              <span className="text-[11px] text-[var(--color-muted-text)]">
+                Includes {stats.customUrlsCount ?? 0} custom entries
+              </span>
+            </div>
+
+            <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
+              <span className="text-[11px] font-bold text-[var(--color-muted-text)] uppercase tracking-wider">
+                RSS Feed Items (/feed.xml)
+              </span>
+              <p className="text-xl font-black text-amber-600 dark:text-amber-400 mt-1">
+                {stats.feedItemsCount ?? 0}
+              </p>
+              <span className="text-[11px] text-[var(--color-muted-text)]">
+                Auto-updated with custom &amp; article items
+              </span>
             </div>
 
             <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
@@ -1361,7 +2217,9 @@ export function SeoControlCenter({
               <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
                 {stats.newsArticlesCount}
               </p>
-              <span className="text-[11px] text-[var(--color-muted-text)]">Within last 48 hours</span>
+              <span className="text-[11px] text-[var(--color-muted-text)]">
+                Within last {newsWindowHours} hours
+              </span>
             </div>
 
             <div className="p-4 rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs">
@@ -1390,6 +2248,12 @@ export function SeoControlCenter({
                 </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
+                <span className="font-semibold text-[var(--color-body-text)]">Dynamic RSS 2.0 Syndication Feed (/feed.xml)</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <CheckCircle2 className="h-4 w-4" /> Live ({stats.feedItemsCount ?? 0} items)
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
                 <span className="font-semibold text-[var(--color-body-text)]">Robots.txt Syntax &amp; Directives (/robots.txt)</span>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <CheckCircle2 className="h-4 w-4" /> Passed
@@ -1402,9 +2266,15 @@ export function SeoControlCenter({
                 </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
+                <span className="font-semibold text-[var(--color-body-text)]">CDN &amp; Edge Cache Control (no-store feeds)</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <CheckCircle2 className="h-4 w-4" /> Instant Auto-Update
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">
                 <span className="font-semibold text-[var(--color-body-text)]">Canonical HTTPS Domain Uniformity</span>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <CheckCircle2 className="h-4 w-4" /> https://ainews.kraviona.com
+                  <CheckCircle2 className="h-4 w-4" /> {settings.sitemap.siteUrl}
                 </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-secondary-surface)]/70 text-xs">

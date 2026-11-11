@@ -102,7 +102,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: siteUrl,
     types: {
-      "application/rss+xml": `${siteUrl}/feed.xml`,
+      "application/rss+xml": [
+        {
+          url: `${siteUrl}/feed.xml`,
+          title: `${siteName} — RSS Feed`,
+        },
+      ],
     },
   },
   verification: {
@@ -127,22 +132,42 @@ function JsonLd() {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "NewsMediaOrganization",
+    "@id": `${siteUrl}/#organization`,
     name: siteName,
     url: siteUrl,
-    logo: `${siteUrl}/icon.svg`,
+    logo: {
+      "@type": "ImageObject",
+      url: `${siteUrl}/logo.png`,
+      width: 512,
+      height: 512,
+    },
     description:
       "International AI and technology publication covering artificial intelligence, foundation models, research papers, startups, cybersecurity, and compute infrastructure.",
+    email: "kravionatech@gmail.com",
+    publishingPrinciples: `${siteUrl}/editorial-policy`,
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "editorial",
+      email: "kravionatech@gmail.com",
+      url: `${siteUrl}/contact`,
+    },
     sameAs: [
       "https://twitter.com/kraviona",
       "https://linkedin.com/company/kraviona",
+      "https://github.com/kravionatech-ai",
     ],
   };
 
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
     name: siteName,
     url: siteUrl,
+    inLanguage: "en",
+    publisher: {
+      "@id": `${siteUrl}/#organization`,
+    },
     potentialAction: {
       "@type": "SearchAction",
       target: {

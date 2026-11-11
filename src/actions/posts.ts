@@ -9,6 +9,25 @@ import { triggerSeoRevalidation, pingIndexNow } from "@/lib/seo/revalidate-and-p
 import { getSiteUrl } from "@/lib/seo/fallback";
 import type { ISeoMetadata } from "@/lib/seo/types";
 
+async function resolveTaxonomySlugs(categoryIds: unknown[], tagIds: unknown[]) {
+  const validCatIds = Array.from(new Set(categoryIds.filter(Boolean).map(String)));
+  const validTagIds = Array.from(new Set(tagIds.filter(Boolean).map(String)));
+
+  const [cats, tagDocs] = await Promise.all([
+    validCatIds.length > 0
+      ? Category.find({ _id: { $in: validCatIds } }).select("slug").lean()
+      : Promise.resolve([]),
+    validTagIds.length > 0
+      ? Tag.find({ _id: { $in: validTagIds } }).select("slug").lean()
+      : Promise.resolve([]),
+  ]);
+
+  return {
+    categorySlugs: cats.map((c: { slug?: string }) => c.slug).filter((s): s is string => Boolean(s)),
+    tagSlugs: tagDocs.map((t: { slug?: string }) => t.slug).filter((s): s is string => Boolean(s)),
+  };
+}
+
 export async function createPostAction(formData: FormData) {
   const session = await auth();
   if (!session?.user) {
@@ -136,13 +155,16 @@ export async function createPostAction(formData: FormData) {
     details: { title: post.title, status: post.status, seoScore: seoPayload.seoScore },
   });
 
-  // Fetch category slug for revalidation
-  const cat = await Category.findById(categoryId).select("slug").lean();
+  // Fetch category and tag slugs for full revalidation
+  const { categorySlugs, tagSlugs } = await resolveTaxonomySlugs([categoryId], tags);
   await triggerSeoRevalidation({
     path: `/blog/${post.slug}`,
-    categorySlug: cat?.slug,
+    categorySlugs,
+    tagSlugs,
     forceIndexNow: status === "published",
   });
+  revalidatePath("/admin/posts");
+  revalidatePath("/admin/seo");
 
   return { success: true, post: JSON.parse(JSON.stringify(post)) };
 }
@@ -183,9 +205,11 @@ export async function updatePostAction(id: string, formData: FormData) {
   const scheduledAtRaw = formData.get("scheduledAt") as string;
   const scheduledAt = scheduledAtRaw ? new Date(scheduledAtRaw) : post.scheduledAt;
 
-  // Check if slug changed -> add old slug to redirectFrom (auto 301)
+  // Check if slug, category, or tags changed for comprehensive cache revalidation
   const previousSlug = post.slug;
-  const slugChanged = previousSlug && previousSlug !== slug;
+  const slugChanged = Boolean(previousSlug && previousSlug !== slug);
+  const previousCategoryId = post.category;
+  const previousTagIds = Array.isArray(post.tags) ? [...post.tags] : [];
 
   // Full SEO payload support
   const seoRaw = formData.get("seo") as string;
@@ -282,13 +306,20 @@ export async function updatePostAction(id: string, formData: FormData) {
     details: { title: post.title, status: post.status, slugChanged },
   });
 
-  // Revalidate & IndexNow ping
-  const cat = await Category.findById(categoryId).select("slug").lean();
+  // Revalidate & IndexNow ping across old and new categories, tags, and paths
+  const { categorySlugs, tagSlugs } = await resolveTaxonomySlugs(
+    [categoryId, previousCategoryId],
+    [...tags, ...previousTagIds]
+  );
   await triggerSeoRevalidation({
     path: `/blog/${post.slug}`,
-    categorySlug: cat?.slug,
+    extraPaths: slugChanged ? [`/blog/${previousSlug}`] : [],
+    categorySlugs,
+    tagSlugs,
     forceIndexNow: status === "published",
   });
+  revalidatePath("/admin/posts");
+  revalidatePath("/admin/seo");
 
   return { success: true, post: JSON.parse(JSON.stringify(post)) };
 }
@@ -321,6 +352,9 @@ export async function quickUpdatePostAction(
     return { success: false, error: "Post not found" };
   }
 
+  const previousSlug = post.slug;
+  const previousCategoryId = post.category;
+
   if (data.title) post.title = data.title.trim();
   if (data.slug) post.slug = slugify(data.slug.trim());
   if (data.status) {
@@ -341,6 +375,8 @@ export async function quickUpdatePostAction(
   if (typeof data.noindex === "boolean") {
     post.seo.robots = post.seo.robots || { index: true, follow: true };
     post.seo.robots.index = !data.noindex;
+    post.seo.sitemap = post.seo.sitemap || { include: true, priority: 0.9, changefreq: "daily" };
+    post.seo.sitemap.include = !data.noindex;
   }
   if (data.canonicalUrl !== undefined) {
     post.seo.canonicalUrl = data.canonicalUrl;
@@ -356,12 +392,21 @@ export async function quickUpdatePostAction(
     details: { title: post.title, quickEdit: true },
   });
 
+  const { categorySlugs, tagSlugs } = await resolveTaxonomySlugs(
+    [post.category, previousCategoryId],
+    post.tags || []
+  );
+
+  await triggerSeoRevalidation({
+    path: `/blog/${post.slug}`,
+    extraPaths: previousSlug && previousSlug !== post.slug ? [`/blog/${previousSlug}`] : [],
+    categorySlugs,
+    tagSlugs,
+    forceIndexNow: post.status === "published" && post.seo?.robots?.index !== false,
+  });
+
   revalidatePath("/admin/posts");
-  revalidatePath(`/blog/${post.slug}`);
-  revalidatePath("/sitemap.xml");
-  revalidatePath("/feed.xml");
-  revalidatePath("/");
-  revalidatePath("/blog");
+  revalidatePath("/admin/seo");
 
   return { success: true, post: JSON.parse(JSON.stringify(post)) };
 }
@@ -396,6 +441,11 @@ export async function bulkActionPostsAction(
   if (!ids || ids.length === 0) {
     return { success: false, error: "No posts selected" };
   }
+
+  // Snapshot affected posts & taxonomies before mutation (critical for delete / category / tag changes)
+  const affectedPosts = await Post.find({ _id: { $in: ids } })
+    .select("slug category tags")
+    .lean();
 
   switch (action) {
     case "feature": {
@@ -443,14 +493,14 @@ export async function bulkActionPostsAction(
     case "noindex": {
       await Post.updateMany(
         { _id: { $in: ids } },
-        { $set: { "seo.robots.index": false } }
+        { $set: { "seo.robots.index": false, "seo.sitemap.include": false } }
       );
       break;
     }
     case "index": {
       await Post.updateMany(
         { _id: { $in: ids } },
-        { $set: { "seo.robots.index": true } }
+        { $set: { "seo.robots.index": true, "seo.sitemap.include": true } }
       );
       break;
     }
@@ -476,11 +526,29 @@ export async function bulkActionPostsAction(
     details: { bulkAction: action, count: ids.length, payloadValue },
   });
 
-  revalidatePath("/");
-  revalidatePath("/blog");
+  const extraCategoryIds = action === "category" && payloadValue ? [payloadValue] : [];
+  const extraTagIds =
+    (action === "addTag" || action === "removeTag") && payloadValue ? [payloadValue] : [];
+
+  const { categorySlugs, tagSlugs } = await resolveTaxonomySlugs(
+    [...affectedPosts.map((p) => p.category), ...extraCategoryIds],
+    [...affectedPosts.flatMap((p) => p.tags || []), ...extraTagIds]
+  );
+
+  const postPaths = affectedPosts
+    .map((p) => (p.slug ? `/blog/${p.slug}` : ""))
+    .filter(Boolean);
+
+  await triggerSeoRevalidation({
+    path: postPaths[0],
+    extraPaths: postPaths.slice(1),
+    categorySlugs,
+    tagSlugs,
+    forceIndexNow: action === "publish" || action === "index",
+  });
+
   revalidatePath("/admin/posts");
-  revalidatePath("/sitemap.xml");
-  revalidatePath("/feed.xml");
+  revalidatePath("/admin/seo");
 
   return { success: true };
 }
@@ -565,13 +633,17 @@ export async function restorePostRevisionAction(revisionId: string) {
     details: { restoredFromVersion: revision.version },
   });
 
+  const { categorySlugs, tagSlugs } = await resolveTaxonomySlugs([post.category], post.tags || []);
+  await triggerSeoRevalidation({
+    path: `/blog/${post.slug}`,
+    categorySlugs,
+    tagSlugs,
+    forceIndexNow: post.status === "published" && post.seo?.robots?.index !== false,
+  });
+
   revalidatePath("/admin/posts");
   revalidatePath(`/admin/posts/${post._id}/edit`);
-  revalidatePath(`/blog/${post.slug}`);
-  revalidatePath("/sitemap.xml");
-  revalidatePath("/feed.xml");
-  revalidatePath("/");
-  revalidatePath("/blog");
+  revalidatePath("/admin/seo");
 
   return { success: true };
 }
@@ -589,6 +661,9 @@ export async function deletePostAction(id: string) {
     return { success: false, error: "Post not found" };
   }
 
+  const { categorySlugs, tagSlugs } = await resolveTaxonomySlugs([post.category], post.tags || []);
+  const deletedPath = `/blog/${post.slug}`;
+
   await Post.findByIdAndDelete(id);
 
   await AuditLog.create({
@@ -599,11 +674,15 @@ export async function deletePostAction(id: string) {
     details: { title: post.title },
   });
 
-  revalidatePath("/");
-  revalidatePath("/blog");
+  await triggerSeoRevalidation({
+    path: deletedPath,
+    categorySlugs,
+    tagSlugs,
+    forceIndexNow: false,
+  });
+
   revalidatePath("/admin/posts");
-  revalidatePath("/sitemap.xml");
-  revalidatePath("/feed.xml");
+  revalidatePath("/admin/seo");
 
   return { success: true };
 }

@@ -1,11 +1,16 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { getSiteUrl } from "./fallback";
+import { refreshSeoStatsSnapshot } from "./seo-settings-service";
 
 export interface SeoRevalidationOptions {
-  path: string; // e.g. "/blog/my-post"
+  path?: string; // e.g. "/blog/my-post"
+  extraPaths?: string[];
   categorySlug?: string;
+  categorySlugs?: string[];
   tagSlugs?: string[];
   forceIndexNow?: boolean;
+  pingUrls?: string[];
+  skipStatsRefresh?: boolean;
 }
 
 export interface IndexNowResult {
@@ -14,6 +19,31 @@ export interface IndexNowResult {
   message: string;
   urlPings?: string[];
 }
+
+export const CORE_FEED_AND_SITEMAP_PATHS = [
+  "/sitemap.xml",
+  "/sitemap-static.xml",
+  "/sitemap-articles.xml",
+  "/sitemap-categories.xml",
+  "/sitemap-tags.xml",
+  "/sitemap-pages.xml",
+  "/sitemap-custom.xml",
+  "/image-sitemap.xml",
+  "/news-sitemap.xml",
+  "/sitemap-news.xml",
+  "/feed.xml",
+  "/robots.txt",
+] as const;
+
+export const CORE_PUBLIC_LIST_PATHS = [
+  "/",
+  "/blog",
+  "/archive",
+  "/sitemap",
+  "/model-launches",
+  "/india-ai",
+  "/ai-tools",
+] as const;
 
 /**
  * Ping IndexNow API (Bing, Yandex, Seznam, Naver)
@@ -25,6 +55,14 @@ export async function pingIndexNow(
 ): Promise<IndexNowResult> {
   const isProd = process.env.NODE_ENV === "production";
   const apiKey = process.env.INDEXNOW_KEY;
+
+  if (!urls || urls.length === 0) {
+    return {
+      success: true,
+      message: "IndexNow ping skipped (no URLs supplied)",
+      urlPings: [],
+    };
+  }
 
   if (!isProd && !force) {
     return {
@@ -46,11 +84,19 @@ export async function pingIndexNow(
   const host = new URL(siteUrl).hostname;
 
   try {
+    const uniqueUrls = Array.from(
+      new Set(
+        urls
+          .filter(Boolean)
+          .map((u) => (u.startsWith("http") ? u : `${siteUrl}${u.startsWith("/") ? u : `/${u}`}`))
+      )
+    );
+
     const payload = {
       host,
       key: apiKey,
       keyLocation: `${siteUrl}/${apiKey}.txt`,
-      urlList: urls.map((u) => (u.startsWith("http") ? u : `${siteUrl}${u.startsWith("/") ? u : `/${u}`}`)),
+      urlList: uniqueUrls,
     };
 
     const res = await fetch("https://api.indexnow.org/indexnow", {
@@ -87,67 +133,98 @@ export async function pingIndexNow(
 }
 
 /**
- * Trigger Next.js on-demand ISR revalidation + IndexNow ping
+ * Trigger Next.js on-demand ISR revalidation across pages, sitemaps, feeds + IndexNow ping
  */
 export async function triggerSeoRevalidation({
   path,
+  extraPaths = [],
   categorySlug,
+  categorySlugs = [],
   tagSlugs = [],
   forceIndexNow = false,
-}: SeoRevalidationOptions): Promise<{ revalidated: string[]; indexNow: IndexNowResult }> {
-  const revalidatedPaths: string[] = [];
+  pingUrls,
+  skipStatsRefresh = false,
+}: SeoRevalidationOptions): Promise<{
+  revalidated: string[];
+  indexNow: IndexNowResult;
+  stats?: { totalUrlsCount: number; newsCount: number };
+}> {
+  const revalidatedSet = new Set<string>();
+
+  const safeRevalidatePath = (p: string) => {
+    if (!p || !p.startsWith("/")) return;
+    revalidatePath(p);
+    revalidatedSet.add(p);
+  };
 
   try {
-    // 1. Revalidate the entity itself
+    // 1. Revalidate primary & extra entity paths
     if (path) {
-      revalidatePath(path);
-      revalidatedPaths.push(path);
+      safeRevalidatePath(path);
+    }
+    for (const extra of extraPaths) {
+      safeRevalidatePath(extra);
     }
 
-    // 2. Revalidate sitemap, news sitemap, robots and sub-sitemaps
-    revalidatePath("/sitemap.xml");
-    revalidatePath("/news-sitemap.xml");
-    revalidatePath("/robots.txt");
-    revalidatePath("/sitemap-static.xml");
-    revalidatePath("/sitemap-articles.xml");
-    revalidatePath("/sitemap-categories.xml");
-    revalidatePath("/sitemap-tags.xml");
-    revalidatePath("/sitemap-pages.xml");
-    revalidatePath("/feed.xml");
-    revalidatePath("/archive");
-    revalidateTag("posts", "default");
-    revalidateTag("taxonomies", "default");
-    revalidateTag("sitemap", "default");
-    revalidatedPaths.push("/sitemap.xml", "/news-sitemap.xml", "/robots.txt", "/feed.xml");
+    // 2. Revalidate sitemaps, Google News sitemap, RSS feed, and robots.txt
+    for (const feedPath of CORE_FEED_AND_SITEMAP_PATHS) {
+      safeRevalidatePath(feedPath);
+    }
 
-    // 3. Revalidate home and blog lists
-    revalidatePath("/");
-    revalidatePath("/blog");
-    revalidatedPaths.push("/", "/blog");
+    // 3. Revalidate home, blog listings, archive, and topic hubs
+    for (const publicPath of CORE_PUBLIC_LIST_PATHS) {
+      safeRevalidatePath(publicPath);
+    }
 
-    // 4. Revalidate category hub if applicable
-    if (categorySlug) {
-      const catPath = `/category/${categorySlug}`;
-      revalidatePath(catPath);
-      revalidatedPaths.push(catPath);
+    // 4. Revalidate category hubs
+    const allCategorySlugs = Array.from(
+      new Set([categorySlug, ...categorySlugs].filter((s): s is string => Boolean(s)))
+    );
+    for (const catSlug of allCategorySlugs) {
+      safeRevalidatePath(`/category/${catSlug}`);
     }
 
     // 5. Revalidate tag hubs
-    for (const tagSlug of tagSlugs) {
-      const tagPath = `/tag/${tagSlug}`;
-      revalidatePath(tagPath);
-      revalidatedPaths.push(tagPath);
+    const allTagSlugs = Array.from(new Set(tagSlugs.filter(Boolean)));
+    for (const tagSlug of allTagSlugs) {
+      safeRevalidatePath(`/tag/${tagSlug}`);
     }
+
+    // 6. Revalidate data tags
+    revalidateTag("posts", "default");
+    revalidateTag("taxonomies", "default");
+    revalidateTag("sitemap", "default");
   } catch (err) {
-    console.warn("ISR revalidation warning (allowed in dev):", err);
+    console.warn("ISR revalidation warning (allowed outside request/dev):", err);
   }
 
-  // 6. IndexNow Ping
-  const fullUrl = path.startsWith("http") ? path : `${getSiteUrl()}${path.startsWith("/") ? path : `/${path}`}`;
-  const indexNowResult = await pingIndexNow([fullUrl], forceIndexNow);
+  let stats: { totalUrlsCount: number; newsCount: number } | undefined;
+  if (!skipStatsRefresh) {
+    try {
+      stats = await refreshSeoStatsSnapshot();
+    } catch (err) {
+      console.warn("SEO stats snapshot refresh warning:", err);
+    }
+  }
+
+  // 7. IndexNow Ping (only when URLs provided / path exists)
+  const siteUrl = getSiteUrl();
+  const rawPingTargets =
+    pingUrls && pingUrls.length > 0
+      ? pingUrls
+      : [path, ...extraPaths].filter((u): u is string => Boolean(u));
+
+  const fullUrlsToPing = rawPingTargets.map((target) =>
+    target.startsWith("http")
+      ? target
+      : `${siteUrl}${target.startsWith("/") ? target : `/${target}`}`
+  );
+
+  const indexNowResult = await pingIndexNow(fullUrlsToPing, forceIndexNow);
 
   return {
-    revalidated: revalidatedPaths,
+    revalidated: Array.from(revalidatedSet),
     indexNow: indexNowResult,
+    stats,
   };
 }

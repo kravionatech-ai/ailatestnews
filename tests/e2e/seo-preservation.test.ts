@@ -27,6 +27,7 @@ export const EXPECTED_SITEMAP_ROUTES = [
   "/sitemap-static.xml",
   "/sitemap-articles.xml",
   "/sitemap-categories.xml",
+  "/image-sitemap.xml",
   "/sitemap-tags.xml",
   "/sitemap-pages.xml",
   "/news-sitemap.xml",
@@ -175,12 +176,12 @@ Sitemap: https://ainews.kraviona.com/sitemap.xml
       expect(jsonLd.author["@type"]).toBe("Person");
       expect(jsonLd.author.name).toBe("Dr. Arvind Rao");
       expect(jsonLd.author.url).toContain("/author/arvind-rao");
-      expect(jsonLd.publisher["@type"]).toBe("Organization");
+      expect(["Organization", "NewsMediaOrganization"]).toContain(jsonLd.publisher["@type"]);
       expect(jsonLd.mainEntityOfPage["@type"]).toBe("WebPage");
       expect(jsonLd.mainEntityOfPage["@id"]).toContain("/blog/frontier-llm-reasoning-benchmark-2026");
     });
 
-    it("safely generates fallback author when article author object is undefined", () => {
+    it("attributes cleanly to NewsMediaOrganization when article author object is undefined (no fabricated Person)", () => {
       const postWithoutAuthor = {
         title: "Breaking AI Dispatch",
         slug: "breaking-ai-dispatch",
@@ -189,7 +190,8 @@ Sitemap: https://ainews.kraviona.com/sitemap.xml
 
       const jsonLd = buildJsonLd("post", postWithoutAuthor) as Record<string, any>;
       expect(jsonLd["@type"]).toBe("NewsArticle");
-      expect(jsonLd.author.name).toBe("AI Latest News Editorial Team");
+      expect(jsonLd.author["@type"]).toBe("NewsMediaOrganization");
+      expect(jsonLd.author.name).toBe("Kraviona AI News");
     });
 
     it("interpolates SEO template variables cleanly without double spaces or trailing separators", () => {

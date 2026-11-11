@@ -1,5 +1,32 @@
 import mongoose, { Schema, type Document, type Model, type Types } from "mongoose";
 
+export type SitemapChangeFrequency =
+  | "always"
+  | "hourly"
+  | "daily"
+  | "weekly"
+  | "monthly"
+  | "yearly"
+  | "never";
+
+export interface ICustomSeoEntry {
+  id: string;
+  url: string;
+  title?: string;
+  description?: string;
+  authorName?: string;
+  lastModified?: Date | string;
+  publicationDate?: Date | string;
+  changeFrequency: SitemapChangeFrequency;
+  priority: number;
+  includeInSitemap: boolean;
+  includeInFeed: boolean;
+  includeInNewsSitemap: boolean;
+  enabled: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+}
+
 export interface IRobotsRule {
   userAgent: string;
   allow: string[];
@@ -19,6 +46,7 @@ export interface ISitemapSettings {
   newsPublicationLanguage: string;
   newsTimeWindowHours: number;
   excludedUrls: string[];
+  customUrls?: ICustomSeoEntry[];
   enableSplitSitemaps: boolean;
   maxUrlsPerSitemap: number;
   lastGeneratedAt?: Date;
@@ -59,6 +87,31 @@ const RobotsRuleSchema = new Schema<IRobotsRule>(
   { _id: false }
 );
 
+const CustomSeoEntrySchema = new Schema<ICustomSeoEntry>(
+  {
+    id: { type: String, required: true, trim: true },
+    url: { type: String, required: true, trim: true },
+    title: { type: String, trim: true, maxlength: 300, default: "" },
+    description: { type: String, trim: true, maxlength: 1000, default: "" },
+    authorName: { type: String, trim: true, maxlength: 120, default: "" },
+    lastModified: { type: Date },
+    publicationDate: { type: Date },
+    changeFrequency: {
+      type: String,
+      enum: ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"],
+      default: "weekly",
+    },
+    priority: { type: Number, default: 0.8, min: 0.0, max: 1.0 },
+    includeInSitemap: { type: Boolean, default: true },
+    includeInFeed: { type: Boolean, default: false },
+    includeInNewsSitemap: { type: Boolean, default: false },
+    enabled: { type: Boolean, default: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
+
 const SitemapSettingsSchema = new Schema<ISitemapSettings>(
   {
     enabled: { type: Boolean, default: true },
@@ -71,11 +124,12 @@ const SitemapSettingsSchema = new Schema<ISitemapSettings>(
     includeTags: { type: Boolean, default: true },
     includePages: { type: Boolean, default: true },
     includeNewsSitemap: { type: Boolean, default: true },
-    newsPublicationName: { type: String, default: "AI Latest News" },
+    newsPublicationName: { type: String, default: "Kraviona AI News" },
     newsPublicationLanguage: { type: String, default: "en" },
     newsTimeWindowHours: { type: Number, default: 48, min: 1, max: 168 },
     excludedUrls: { type: [String], default: [] },
-    enableSplitSitemaps: { type: Boolean, default: false },
+    customUrls: { type: [CustomSeoEntrySchema], default: [] },
+    enableSplitSitemaps: { type: Boolean, default: true },
     maxUrlsPerSitemap: { type: Number, default: 50000, min: 100, max: 50000 },
     lastGeneratedAt: { type: Date },
     totalUrlsCount: { type: Number, default: 0 },
@@ -103,6 +157,7 @@ const RobotsSettingsSchema = new Schema<IRobotsSettings>(
       type: [String],
       default: () => [
         `${process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}/sitemap.xml`,
+        `${process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}/image-sitemap.xml`,
       ],
     },
     includeNewsSitemapInRobots: { type: Boolean, default: true },

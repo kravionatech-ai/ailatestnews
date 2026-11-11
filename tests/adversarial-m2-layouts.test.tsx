@@ -678,11 +678,11 @@ describe("Adversarial Verification Suite: Milestone 2 Article Layouts & Router",
 
       const html = renderToStaticMarkup(jsx);
 
-      // JSON-LD should fallback gracefully
-      expect(html).toContain('"name":"AI Latest News Editorial Team"');
-      expect(html).toContain('"jobTitle":"Technology Journalist & Systems Engineer"');
+      // JSON-LD should fallback cleanly to publisher organization without fabricating Person/jobTitle/1970 epoch dates
+      expect(html).toContain('"name":"Kraviona AI News"');
+      expect(html).not.toContain('"jobTitle":"Technology Journalist & Systems Engineer"');
+      expect(html).not.toContain("1970-01-01T00:00:00.000Z");
       expect(html).toContain("/logo.png");
-      expect(html).toContain('"datePublished":"1970-01-01T00:00:00.000Z"');
 
       // Breadcrumb should only have 3 items (Home, Articles, Title) because category is null
       expect(html).toContain('"@type":"BreadcrumbList"');
@@ -781,7 +781,7 @@ describe("Adversarial Verification Suite: Milestone 2 Article Layouts & Router",
         params: Promise.resolve({ slug: "unknown-meta-post" }),
       });
 
-      expect(meta.title).toBe("Post Not Found | AI Latest News");
+      expect(meta.title).toBe("Post Not Found | Kraviona AI News");
     });
 
     it("generateMetadata produces complete OpenGraph and Twitter metadata for valid post", async () => {

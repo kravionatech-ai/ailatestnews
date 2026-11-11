@@ -49,7 +49,7 @@ export async function generateMetadata({
   const data = await getPostBySlug(slug, isPreview, previewToken);
 
   if (!data?.post) {
-    return { title: "Post Not Found | AI Latest News" };
+    return { title: "Post Not Found | Kraviona AI News" };
   }
 
   const post = data.post;
@@ -104,10 +104,71 @@ export default async function SinglePostPage({
     "standard-editorial";
 
   const siteUrl = getSiteUrl();
-  const publishDate = post.publishedAt
-    ? new Date(post.publishedAt)
-    : new Date(post.createdAt || 0);
-  const updatedDate = post.updatedAt ? new Date(post.updatedAt) : publishDate;
+  const rawPubDate = post.publishedAt || post.createdAt;
+  const parsedPubDate = rawPubDate ? new Date(rawPubDate) : null;
+  const validPublishIso =
+    parsedPubDate && !isNaN(parsedPubDate.getTime())
+      ? parsedPubDate.toISOString()
+      : undefined;
+
+  const rawModDate = post.updatedAt || rawPubDate;
+  const parsedModDate = rawModDate ? new Date(rawModDate) : null;
+  const validModifiedIso =
+    parsedModDate && !isNaN(parsedModDate.getTime())
+      ? parsedModDate.toISOString()
+      : validPublishIso;
+
+  const rawAuthorName = post.author?.name?.trim();
+  const rawAuthorRole = post.author?.role?.trim();
+  const isGenericAuthRole =
+    !rawAuthorRole || /^(admin|user|subscriber)$/i.test(rawAuthorRole);
+  const isOrgAuthor =
+    Boolean(rawAuthorName) &&
+    /(editorial\s*team|newsroom|editorial\s*desk)/i.test(rawAuthorName!);
+  const authorSameAs = [
+    post.author?.website,
+    post.author?.socialLinks?.twitter,
+    post.author?.socialLinks?.github,
+    post.author?.socialLinks?.linkedin,
+  ].filter(Boolean);
+
+  const authorSchema = rawAuthorName
+    ? isOrgAuthor
+      ? {
+          "@type": "Organization",
+          name: rawAuthorName,
+          ...(post.author?.slug ? { url: `${siteUrl}/author/${post.author.slug}` } : {}),
+        }
+      : {
+          "@type": "Person",
+          name: rawAuthorName,
+          ...(post.author?.slug ? { url: `${siteUrl}/author/${post.author.slug}` } : {}),
+          ...(!isGenericAuthRole ? { jobTitle: rawAuthorRole } : {}),
+          ...(post.author?.bio ? { description: post.author.bio } : {}),
+          ...(post.author?.image
+            ? {
+                image: {
+                  "@type": "ImageObject",
+                  url: post.author.image,
+                },
+              }
+            : {}),
+          ...(authorSameAs.length > 0 ? { sameAs: authorSameAs } : {}),
+        }
+    : {
+        "@type": "NewsMediaOrganization",
+        "@id": `${siteUrl}/#organization`,
+        name: "Kraviona AI News",
+        url: siteUrl,
+      };
+
+  const tagKeywords =
+    Array.isArray(post.tags) && post.tags.length > 0
+      ? post.tags
+          .map((t: { name?: string }) => t?.name?.trim())
+          .filter(Boolean)
+          .join(", ")
+      : undefined;
 
   // 1. JSON-LD Article Schema (NewsArticle vs TechArticle)
   const schemaType = post.seo?.schemaType || "NewsArticle";
@@ -115,21 +176,32 @@ export default async function SinglePostPage({
     "@context": "https://schema.org",
     "@type": schemaType,
     headline: post.seo?.metaTitle || post.title,
-    description: post.seo?.metaDescription || post.excerpt,
-    image: post.coverImage ? [post.coverImage] : [`${siteUrl}/logo.png`],
-    datePublished: publishDate.toISOString(),
-    dateModified: updatedDate.toISOString(),
-    author: {
-      "@type": "Person",
-      name: post.author?.name || "AI Latest News Editorial Team",
-      url: post.author?.slug
-        ? `${siteUrl}/author/${post.author.slug}`
-        : `${siteUrl}/about`,
-      jobTitle: post.author?.role || "Technology Journalist & Systems Engineer",
-    },
+    ...(post.seo?.metaDescription || post.excerpt
+      ? { description: post.seo?.metaDescription || post.excerpt }
+      : {}),
+    url: `${siteUrl}/blog/${post.slug}`,
+    inLanguage: post.locale || "en",
+    isAccessibleForFree: true,
+    ...(post.coverImage
+      ? {
+          image: [
+            {
+              "@type": "ImageObject",
+              url: post.coverImage,
+              ...(post.coverImageCaption || post.coverImageAlt
+                ? { caption: post.coverImageCaption || post.coverImageAlt }
+                : {}),
+            },
+          ],
+        }
+      : {}),
+    ...(validPublishIso ? { datePublished: validPublishIso } : {}),
+    ...(validModifiedIso ? { dateModified: validModifiedIso } : {}),
+    author: authorSchema,
     publisher: {
       "@type": "NewsMediaOrganization",
-      name: "AI Latest News",
+      "@id": `${siteUrl}/#organization`,
+      name: "Kraviona AI News",
       url: siteUrl,
       logo: {
         "@type": "ImageObject",
@@ -138,6 +210,9 @@ export default async function SinglePostPage({
         height: 512,
       },
     },
+    ...(post.category?.name ? { articleSection: post.category.name } : {}),
+    ...(tagKeywords ? { keywords: tagKeywords } : {}),
+    isPartOf: { "@id": `${siteUrl}/#website` },
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `${siteUrl}/blog/${post.slug}`,

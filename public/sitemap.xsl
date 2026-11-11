@@ -2,19 +2,20 @@
 <xsl:stylesheet version="2.0"
   xmlns:html="http://www.w3.org/TR/REC-html40"
   xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
-        <title>XML Sitemap | AI Latest News</title>
+        <title>XML Sitemap | Kraviona AI News</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style type="text/css">
           body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #090d16;
-            color: #e2e8f0;
+            background: #101820;
+            color: #F5F4EF;
             margin: 0;
             padding: 30px 20px;
           }
@@ -23,88 +24,99 @@
             margin: 0 auto;
           }
           .header {
-            background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            background: #16222E;
+            border: 1px solid #263B50;
+            border-top: 4px solid #D94F35;
             border-radius: 12px;
             padding: 24px 28px;
             margin-bottom: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
           }
           h1 {
             margin: 0 0 8px 0;
-            font-size: 26px;
+            font-size: 24px;
             color: #ffffff;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: -0.02em;
           }
           p.desc {
             margin: 0 0 16px 0;
-            color: #94a3b8;
+            color: #9CA3AF;
             font-size: 14px;
+            line-height: 1.5;
           }
           .badge {
             display: inline-block;
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            background: rgba(217, 79, 53, 0.16);
+            color: #F28B76;
+            border: 1px solid rgba(217, 79, 53, 0.35);
             padding: 4px 12px;
             border-radius: 9999px;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
           }
           table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            background: #0f172a;
-            border: 1px solid #1e293b;
+            background: #141E29;
+            border: 1px solid #263B50;
             border-radius: 12px;
             overflow: hidden;
           }
           th {
-            background: #1e293b;
-            color: #cbd5e1;
+            background: #1A2836;
+            color: #CBD5E1;
             text-align: left;
             padding: 12px 16px;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 600;
+            letter-spacing: 0.06em;
+            font-weight: 700;
           }
           td {
             padding: 12px 16px;
-            border-top: 1px solid #1e293b;
+            border-top: 1px solid #223344;
             font-size: 13px;
-            color: #cbd5e1;
+            color: #E4E2DC;
           }
           tr:hover td {
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(217, 79, 53, 0.06);
           }
           a {
-            color: #60a5fa;
+            color: #93C5FD;
             text-decoration: none;
             word-break: break-all;
           }
           a:hover {
-            color: #93c5fd;
+            color: #FFFFFF;
             text-decoration: underline;
           }
           .priority {
             display: inline-block;
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.16);
             color: #34d399;
             padding: 2px 8px;
             border-radius: 6px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 12px;
+          }
+          .images-badge {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.16);
+            color: #38bdf8;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
             font-size: 12px;
           }
           .freq {
-            color: #94a3b8;
+            color: #9CA3AF;
             font-size: 12px;
             text-transform: capitalize;
           }
           .date {
-            color: #94a3b8;
+            color: #9CA3AF;
             font-size: 12px;
             white-space: nowrap;
           }
@@ -112,53 +124,105 @@
             margin-top: 24px;
             text-align: center;
             font-size: 12px;
-            color: #64748b;
+            color: #8B949E;
           }
         </style>
       </head>
       <body>
         <div class="container">
-          <div class="header">
-            <h1>XML Sitemap</h1>
-            <p class="desc">
-              This XML Sitemap is generated in real-time by AI Latest News to help search engines like Google and Bing discover and index content efficiently.
-            </p>
-            <span class="badge">
-              Total URLs: <xsl:value-of select="count(sitemap:urlset/sitemap:url)"/>
-            </span>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 55%;">URL</th>
-                <th style="width: 10%;">Priority</th>
-                <th style="width: 15%;">Change Freq</th>
-                <th style="width: 20%;">Last Modified (UTC)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <xsl:for-each select="sitemap:urlset/sitemap:url">
-                <tr>
-                  <td>
-                    <a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a>
-                  </td>
-                  <td>
-                    <span class="priority"><xsl:value-of select="sitemap:priority"/></span>
-                  </td>
-                  <td>
-                    <span class="freq"><xsl:value-of select="sitemap:changefreq"/></span>
-                  </td>
-                  <td>
-                    <span class="date"><xsl:value-of select="sitemap:lastmod"/></span>
-                  </td>
-                </tr>
-              </xsl:for-each>
-            </tbody>
-          </table>
+          <xsl:choose>
+            <xsl:when test="sitemap:sitemapindex">
+              <div class="header">
+                <h1>XML Sitemap Index</h1>
+                <p class="desc">
+                  Dynamic sitemap index generated by Kraviona AI News (ainews.kraviona.com) directing search engine crawlers to articles, categories, images, and core pages.
+                </p>
+                <span class="badge">
+                  Child Sitemaps: <xsl:value-of select="count(sitemap:sitemapindex/sitemap:sitemap)"/>
+                </span>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 70%;">Child Sitemap Location</th>
+                    <th style="width: 30%;">Last Modified (UTC)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <xsl:for-each select="sitemap:sitemapindex/sitemap:sitemap">
+                    <tr>
+                      <td>
+                        <a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a>
+                      </td>
+                      <td>
+                        <span class="date"><xsl:value-of select="sitemap:lastmod"/></span>
+                      </td>
+                    </tr>
+                  </xsl:for-each>
+                </tbody>
+              </table>
+            </xsl:when>
+            <xsl:otherwise>
+              <div class="header">
+                <h1>XML Sitemap</h1>
+                <p class="desc">
+                  Generated in real-time by Kraviona AI News to help Google, Bing, and news aggregators discover verified indexable content efficiently.
+                </p>
+                <span class="badge">
+                  Total URLs: <xsl:value-of select="count(sitemap:urlset/sitemap:url)"/>
+                </span>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 55%;">URL</th>
+                    <th style="width: 12%;">
+                      <xsl:choose>
+                        <xsl:when test="sitemap:urlset/sitemap:url/image:image">Images</xsl:when>
+                        <xsl:otherwise>Priority</xsl:otherwise>
+                      </xsl:choose>
+                    </th>
+                    <th style="width: 13%;">Change Freq</th>
+                    <th style="width: 20%;">Last Modified (UTC)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <xsl:for-each select="sitemap:urlset/sitemap:url">
+                    <tr>
+                      <td>
+                        <a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a>
+                      </td>
+                      <td>
+                        <xsl:choose>
+                          <xsl:when test="image:image">
+                            <span class="images-badge"><xsl:value-of select="count(image:image)"/> image(s)</span>
+                          </xsl:when>
+                          <xsl:when test="sitemap:priority">
+                            <span class="priority"><xsl:value-of select="sitemap:priority"/></span>
+                          </xsl:when>
+                          <xsl:otherwise>—</xsl:otherwise>
+                        </xsl:choose>
+                      </td>
+                      <td>
+                        <span class="freq">
+                          <xsl:choose>
+                            <xsl:when test="sitemap:changefreq"><xsl:value-of select="sitemap:changefreq"/></xsl:when>
+                            <xsl:otherwise>—</xsl:otherwise>
+                          </xsl:choose>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="date"><xsl:value-of select="sitemap:lastmod"/></span>
+                      </td>
+                    </tr>
+                  </xsl:for-each>
+                </tbody>
+              </table>
+            </xsl:otherwise>
+          </xsl:choose>
 
           <div class="footer">
-            Generated dynamically by Kraviona AI News System
+            Kraviona AI News · <a href="/sitemap">Browse HTML Sitemap</a>
           </div>
         </div>
       </body>

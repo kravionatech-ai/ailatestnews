@@ -7,6 +7,8 @@ import {
   getOrInitSeoSettings,
   getAllSitemapCollections,
   getGoogleNewsArticles,
+  getRssFeedItems,
+  deduplicateSitemapEntries,
 } from "@/lib/seo/seo-settings-service";
 
 export const dynamic = "force-dynamic";
@@ -36,17 +38,20 @@ export default async function AdminSeoPage({ searchParams }: AdminSeoPageProps) 
     Tag.find().select("_id name slug description seo updatedAt").sort({ name: 1 }).lean(),
   ]);
 
-  const [sitemapCollections, newsArticles] = await Promise.all([
+  const [sitemapCollections, newsArticles, feedItems] = await Promise.all([
     getAllSitemapCollections(settings),
     getGoogleNewsArticles(settings),
+    getRssFeedItems(settings, 30),
   ]);
 
-  const totalUrlsInSitemap =
-    sitemapCollections.staticRoutes.length +
-    sitemapCollections.postRoutes.length +
-    sitemapCollections.categoryRoutes.length +
-    sitemapCollections.tagRoutes.length +
-    sitemapCollections.pageRoutes.length;
+  const totalUrlsInSitemap = deduplicateSitemapEntries([
+    ...sitemapCollections.staticRoutes,
+    ...sitemapCollections.postRoutes,
+    ...sitemapCollections.categoryRoutes,
+    ...sitemapCollections.tagRoutes,
+    ...sitemapCollections.pageRoutes,
+    ...sitemapCollections.customRoutes,
+  ]).length;
 
   const publishedPostsCount = posts.filter((p: any) => p.status === "published").length;
   const draftPostsCount = posts.filter((p: any) => p.status === "draft").length;
@@ -65,8 +70,11 @@ export default async function AdminSeoPage({ searchParams }: AdminSeoPageProps) 
       sitemapCollections.staticRoutes.length +
       sitemapCollections.postRoutes.length +
       sitemapCollections.categoryRoutes.length +
-      sitemapCollections.pageRoutes.length,
+      sitemapCollections.pageRoutes.length +
+      sitemapCollections.customRoutes.length,
     totalUrlsInSitemap,
+    customUrlsCount: sitemapCollections.customRoutes.length,
+    feedItemsCount: feedItems.length,
     newsArticlesCount: newsArticles.length,
     sitemapLastGenerated: settings.sitemap.lastGeneratedAt,
     robotsLastPublished: settings.robots.lastPublishedAt,

@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { getOrInitSeoSettings, buildRobotsTxt } from "@/lib/seo/seo-settings-service";
+import {
+  getOrInitSeoSettings,
+  buildRobotsTxt,
+  NO_CACHE_TEXT_HEADERS,
+} from "@/lib/seo/seo-settings-service";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -11,17 +15,14 @@ export async function GET() {
 
     return new NextResponse(content, {
       status: 200,
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=120",
-      },
+      headers: NO_CACHE_TEXT_HEADERS,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[Robots.txt Generation Error]", err);
     const fallback = `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/admin/\nDisallow: /login/\nDisallow: /dashboard/\nDisallow: /private/\n\nSitemap: https://ainews.kraviona.com/sitemap.xml\n`;
     return new NextResponse(fallback, {
       status: 200,
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
+      headers: NO_CACHE_TEXT_HEADERS,
     });
   }
 }

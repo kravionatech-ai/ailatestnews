@@ -84,7 +84,7 @@ export async function getPublishedPosts({
         .skip(skip)
         .limit(limit)
         .select("title slug excerpt coverImage coverImageAlt readingTime views featured publishedAt createdAt category author tags")
-        .populate("author", "name email image slug bio")
+        .populate("author", "name image slug bio")
         .populate("category", "name slug")
         .populate("tags", "name slug")
         .lean(),
@@ -149,7 +149,7 @@ export const getPostBySlug = cache(async function getPostBySlug(
     }
 
     const post = await Post.findOne(query)
-      .populate("author", "name email image slug bio socialLinks")
+      .populate("author", "name image slug bio role website socialLinks")
       .populate("category", "name slug description")
       .populate("tags", "name slug")
       .lean();

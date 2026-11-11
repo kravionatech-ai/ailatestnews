@@ -3,8 +3,8 @@ import type { EntityType, ISeoMetadata, ISeoTemplateVariables } from "./types";
 import { connectDB } from "@/lib/db/connection";
 import Setting from "@/lib/db/models/setting.model";
 
-const DEFAULT_SITE_NAME = "AI Latest News";
-const DEFAULT_TAGLINE = "AI news, tools and guides, explained for India";
+const DEFAULT_SITE_NAME = "Kraviona AI News";
+const DEFAULT_TAGLINE = "AI, Technology, Research and Innovation Intelligence";
 const DEFAULT_SEPARATOR = "|";
 const DEFAULT_OG_IMAGE =
   "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80";
@@ -137,7 +137,7 @@ export async function buildEntityMetadata(
   opts: BuildMetadataOptions
 ): Promise<Metadata> {
   const settings = await getGlobalSeoSettings();
-  const siteUrl = settings.siteUrl || getSiteUrl();
+  const siteUrl = (settings.siteUrl || getSiteUrl()).replace(/\/$/, "");
   const siteName = settings.siteName || DEFAULT_SITE_NAME;
   const separator = settings.separator || DEFAULT_SEPARATOR;
 
@@ -189,6 +189,7 @@ export async function buildEntityMetadata(
     opts.entitySeo?.ogImage?.trim() ||
     opts.coverImage?.trim() ||
     settings.defaultOgImage ||
+    `${siteUrl}/api/og?title=${encodeURIComponent(ogTitle)}` ||
     DEFAULT_OG_IMAGE;
 
   // 5. Robots Fallback (Index, Follow, etc.)
@@ -247,6 +248,14 @@ export async function buildEntityMetadata(
     alternates: {
       canonical: finalCanonical,
       languages: Object.keys(alternatesLanguages).length > 0 ? alternatesLanguages : undefined,
+      types: {
+        "application/rss+xml": [
+          {
+            url: `${siteUrl}/feed.xml`,
+            title: `${siteName} — RSS Feed`,
+          },
+        ],
+      },
     },
     robots,
     openGraph: {
@@ -303,26 +312,51 @@ export function buildJsonLd(
   const schemaType = seo?.schemaType || (entityType === "post" ? "NewsArticle" : "WebPage");
 
   if (entityType === "post") {
+    const resolvedImage = seo?.ogImage || (entityData.coverImage as string | undefined);
+    const publishedDate = entityData.publishedAt || entityData.createdAt;
+    const modifiedDate = entityData.updatedAt || publishedDate;
+    const authorObj = entityData.author as { name?: string; slug?: string } | null | undefined;
+    const authorSchema = authorObj?.name
+      ? {
+          "@type": "Person",
+          name: authorObj.name,
+          ...(authorObj.slug ? { url: `${siteUrl}/author/${authorObj.slug}` } : {}),
+        }
+      : {
+          "@type": "NewsMediaOrganization",
+          "@id": `${siteUrl}/#organization`,
+          name: DEFAULT_SITE_NAME,
+          url: siteUrl,
+        };
+
     return {
       "@context": "https://schema.org",
       "@type": schemaType,
       headline: seo?.metaTitle || entityData.title,
       description: seo?.metaDescription || entityData.excerpt,
-      image: [seo?.ogImage || entityData.coverImage || DEFAULT_OG_IMAGE],
-      datePublished: entityData.publishedAt || entityData.createdAt,
-      dateModified: entityData.updatedAt || entityData.publishedAt,
-      author: {
-        "@type": "Person",
-        name: (entityData.author as { name?: string })?.name || "AI Latest News Editorial Team",
-        url: `${siteUrl}/author/${(entityData.author as { slug?: string })?.slug || "editorial-team"}`,
-      },
+      ...(resolvedImage
+        ? {
+            image: [
+              {
+                "@type": "ImageObject",
+                url: resolvedImage,
+              },
+            ],
+          }
+        : {}),
+      ...(publishedDate ? { datePublished: publishedDate } : {}),
+      ...(modifiedDate ? { dateModified: modifiedDate } : {}),
+      author: authorSchema,
       publisher: {
-        "@type": "Organization",
+        "@type": "NewsMediaOrganization",
+        "@id": `${siteUrl}/#organization`,
         name: DEFAULT_SITE_NAME,
         url: siteUrl,
         logo: {
           "@type": "ImageObject",
-          url: `${siteUrl}/icon.png`,
+          url: `${siteUrl}/logo.png`,
+          width: 512,
+          height: 512,
         },
       },
       mainEntityOfPage: {

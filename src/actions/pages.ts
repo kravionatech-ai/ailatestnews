@@ -389,8 +389,10 @@ export async function updatePageAction(id: string, formData: FormData) {
   });
 
   const pagePath = slug === "home" ? "/" : `/${slug}`;
+  const oldPagePath = oldSlug && oldSlug !== slug ? (oldSlug === "home" ? "/" : `/${oldSlug}`) : undefined;
   await triggerSeoRevalidation({
     path: pagePath,
+    extraPaths: oldPagePath ? [oldPagePath] : [],
     forceIndexNow: status === "published",
   });
 
@@ -423,8 +425,14 @@ export async function deletePageAction(id: string) {
     details: { title: page.title, slug: page.slug },
   });
 
+  const pagePath = page.slug === "home" ? "/" : `/${page.slug}`;
+  await triggerSeoRevalidation({
+    path: pagePath,
+    forceIndexNow: false,
+  });
+
   revalidatePath("/admin/pages");
-  revalidatePath("/sitemap.xml");
+  revalidatePath("/admin/seo");
   return { success: true };
 }
 
@@ -433,6 +441,10 @@ export async function bulkDeletePagesAction(ids: string[]) {
   if (!session?.user) return { success: false, error: "Unauthorized" };
 
   await connectDB();
+  const pagesToDelete = await Page.find({ _id: { $in: ids }, slug: { $ne: "home" } })
+    .select("slug")
+    .lean();
+
   // Ensure home page is never deleted
   await Page.deleteMany({ _id: { $in: ids }, slug: { $ne: "home" } });
 
@@ -443,7 +455,17 @@ export async function bulkDeletePagesAction(ids: string[]) {
     details: { bulkAction: "delete", count: ids.length },
   });
 
+  const deletedPaths = pagesToDelete
+    .map((p: { slug?: string }) => (p.slug ? `/${p.slug}` : ""))
+    .filter(Boolean);
+
+  await triggerSeoRevalidation({
+    path: deletedPaths[0],
+    extraPaths: deletedPaths.slice(1),
+    forceIndexNow: false,
+  });
+
   revalidatePath("/admin/pages");
-  revalidatePath("/sitemap.xml");
+  revalidatePath("/admin/seo");
   return { success: true };
 }

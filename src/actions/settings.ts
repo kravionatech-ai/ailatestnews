@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db/connection";
 import { Setting, AuditLog } from "@/lib/db/models";
 import { auth } from "@/lib/auth/auth";
 import { invalidateSettingsCache } from "@/lib/db/queries/settings";
+import { triggerSeoRevalidation } from "@/lib/seo/revalidate-and-ping";
 
 export async function saveGlobalSettingsAction(formData: FormData) {
   try {
@@ -190,12 +191,14 @@ export async function saveGlobalSettingsAction(formData: FormData) {
       details: { siteName, siteUrl },
     });
 
-    // Revalidate affected cache paths
+    // Revalidate affected cache paths & XML sitemaps/feeds
+    await triggerSeoRevalidation({
+      path: "/",
+      forceIndexNow: false,
+    });
     revalidatePath("/", "layout");
     revalidatePath("/admin/settings");
-    revalidatePath("/sitemap.xml");
-    revalidatePath("/robots.txt");
-    revalidatePath("/feed.xml");
+    revalidatePath("/admin/seo");
 
     return {
       success: true,

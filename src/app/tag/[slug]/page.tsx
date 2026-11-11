@@ -153,7 +153,7 @@ export default async function TagPage({ params }: TagPageProps) {
 
         {/* Content & Sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          <main className="lg:col-span-8 space-y-8">
+          <div className="lg:col-span-8 space-y-8">
             {leadPost && (
               <section className="space-y-4">
                 <div className="flex items-center justify-between border-b-2 border-[var(--color-heading)] pb-2">
@@ -193,7 +193,7 @@ export default async function TagPage({ params }: TagPageProps) {
                 </div>
               ) : null}
             </section>
-          </main>
+          </div>
 
           <aside className="lg:col-span-4 space-y-6">
             {/* Trending */}

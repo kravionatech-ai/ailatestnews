@@ -61,6 +61,8 @@ export type {
   ISitemapSettings,
   IRobotsSettings,
   IRobotsRule,
+  ICustomSeoEntry,
+  SitemapChangeFrequency,
 } from "./seo-settings.model";
 
 export { default as DesignConfig } from "./design-config.model";

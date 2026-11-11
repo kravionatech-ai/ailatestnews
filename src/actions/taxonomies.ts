@@ -71,10 +71,14 @@ export async function createCategoryAction(formData: FormData) {
     details: { name, slug },
   });
 
+  await triggerSeoRevalidation({
+    path: `/category/${slug}`,
+    categorySlug: slug,
+    forceIndexNow: true,
+  });
+
   revalidatePath("/admin/taxonomies");
-  revalidatePath("/sitemap.xml");
-  revalidatePath("/");
-  revalidatePath("/sitemap.xml");
+  revalidatePath("/admin/seo");
   return { success: true, category: JSON.parse(JSON.stringify(category)) };
 }
 
@@ -149,15 +153,13 @@ export async function updateCategoryAction(id: string, formData: FormData) {
 
   await triggerSeoRevalidation({
     path: `/category/${slug}`,
-    categorySlug: slug,
+    extraPaths: oldSlug && oldSlug !== slug ? [`/category/${oldSlug}`] : [],
+    categorySlugs: oldSlug && oldSlug !== slug ? [slug, oldSlug] : [slug],
     forceIndexNow: true,
   });
 
   revalidatePath("/admin/taxonomies");
-  revalidatePath("/sitemap.xml");
-  revalidatePath(`/category/${slug}`);
-  revalidatePath("/");
-  revalidatePath("/sitemap.xml");
+  revalidatePath("/admin/seo");
 
   return { success: true, category: JSON.parse(JSON.stringify(category)) };
 }
@@ -189,9 +191,14 @@ export async function deleteCategoryAction(id: string) {
     details: { name: category.name, slug: category.slug },
   });
 
+  await triggerSeoRevalidation({
+    path: `/category/${category.slug}`,
+    categorySlug: category.slug,
+    forceIndexNow: false,
+  });
+
   revalidatePath("/admin/taxonomies");
-  revalidatePath("/sitemap.xml");
-  revalidatePath("/sitemap.xml");
+  revalidatePath("/admin/seo");
   return { success: true };
 }
 
@@ -238,8 +245,14 @@ export async function createTagAction(formData: FormData) {
     details: { name, slug },
   });
 
+  await triggerSeoRevalidation({
+    path: `/tag/${slug}`,
+    tagSlugs: [slug],
+    forceIndexNow: true,
+  });
+
   revalidatePath("/admin/taxonomies");
-  revalidatePath("/sitemap.xml");
+  revalidatePath("/admin/seo");
   return { success: true, tag: JSON.parse(JSON.stringify(tag)) };
 }
 
@@ -267,6 +280,7 @@ export async function updateTagAction(id: string, formData: FormData) {
     }
   }
 
+  const previousSlug = tag.slug;
   tag.name = name;
   tag.slug = slug;
   tag.description = description;
@@ -282,9 +296,15 @@ export async function updateTagAction(id: string, formData: FormData) {
     details: { name, slug },
   });
 
+  await triggerSeoRevalidation({
+    path: `/tag/${slug}`,
+    extraPaths: previousSlug && previousSlug !== slug ? [`/tag/${previousSlug}`] : [],
+    tagSlugs: previousSlug && previousSlug !== slug ? [slug, previousSlug] : [slug],
+    forceIndexNow: true,
+  });
+
   revalidatePath("/admin/taxonomies");
-  revalidatePath("/sitemap.xml");
-  revalidatePath(`/tag/${slug}`);
+  revalidatePath("/admin/seo");
 
   return { success: true, tag: JSON.parse(JSON.stringify(tag)) };
 }
@@ -309,9 +329,14 @@ export async function deleteTagAction(id: string) {
     details: { name: tag.name, slug: tag.slug },
   });
 
+  await triggerSeoRevalidation({
+    path: `/tag/${tag.slug}`,
+    tagSlugs: [tag.slug],
+    forceIndexNow: false,
+  });
+
   revalidatePath("/admin/taxonomies");
-  revalidatePath("/sitemap.xml");
-  revalidatePath("/sitemap.xml");
+  revalidatePath("/admin/seo");
   return { success: true };
 }
 
@@ -367,9 +392,15 @@ export async function mergeTagsAction(sourceTagId: string, targetTagId: string) 
     },
   });
 
+  await triggerSeoRevalidation({
+    path: `/tag/${targetTag.slug}`,
+    extraPaths: [`/tag/${sourceTag.slug}`],
+    tagSlugs: [targetTag.slug, sourceTag.slug],
+    forceIndexNow: true,
+  });
+
   revalidatePath("/admin/taxonomies");
-  revalidatePath("/sitemap.xml");
-  revalidatePath(`/tag/${targetTag.slug}`);
+  revalidatePath("/admin/seo");
 
   return {
     success: true,

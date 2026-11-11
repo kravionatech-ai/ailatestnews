@@ -33,6 +33,11 @@ export async function generateMetadata({
       description: `Explore AI intelligence reports, model evaluations, and technology analysis matching "${cleanQ}" on Kraviona AI News.`,
       alternates: {
         canonical: `${siteUrl}/search?q=${encodeURIComponent(cleanQ)}`,
+        types: {
+          "application/rss+xml": [
+            { url: `${siteUrl}/feed.xml`, title: "Kraviona AI News — RSS Feed" },
+          ],
+        },
       },
       robots: { index: false, follow: true },
     };
@@ -44,6 +49,11 @@ export async function generateMetadata({
       "Search the Kraviona AI News archive for artificial intelligence coverage, model launches, research papers, startups, cybersecurity, and compute infrastructure.",
     alternates: {
       canonical: `${siteUrl}/search`,
+      types: {
+        "application/rss+xml": [
+          { url: `${siteUrl}/feed.xml`, title: "Kraviona AI News — RSS Feed" },
+        ],
+      },
     },
     robots: { index: true, follow: true },
   };

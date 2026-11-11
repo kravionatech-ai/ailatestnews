@@ -3,6 +3,7 @@ import {
   getOrInitSeoSettings,
   getGoogleNewsArticles,
   buildGoogleNewsXml,
+  NO_CACHE_XML_HEADERS,
 } from "@/lib/seo/seo-settings-service";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export async function GET() {
 </urlset>`;
       return new NextResponse(disabledXml, {
         status: 200,
-        headers: { "Content-Type": "application/xml; charset=utf-8" },
+        headers: NO_CACHE_XML_HEADERS,
       });
     }
 
@@ -30,12 +31,9 @@ export async function GET() {
 
     return new NextResponse(xmlContent, {
       status: 200,
-      headers: {
-        "Content-Type": "application/xml; charset=utf-8",
-        "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=120",
-      },
+      headers: NO_CACHE_XML_HEADERS,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[Google News Sitemap Error]", err);
     const fallbackXml = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Temporary error loading news articles -->
@@ -44,7 +42,7 @@ export async function GET() {
 </urlset>`;
     return new NextResponse(fallbackXml, {
       status: 200,
-      headers: { "Content-Type": "application/xml; charset=utf-8" },
+      headers: NO_CACHE_XML_HEADERS,
     });
   }
 }

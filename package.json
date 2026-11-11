@@ -13,6 +13,7 @@
     "seed:local": "tsx scripts/seed.ts",
     "seed:prod": "tsx scripts/seed-prod.ts",
     "daily-news:auto": "tsx --env-file=.env.local scripts/daily-news-automation.ts",
+    "workspace:sync": "tsx --env-file=.env.local scripts/sync-posts-to-google-workspace.ts",
     "test": "vitest",
     "test:e2e": "playwright test",
     "test:coverage": "vitest --coverage",

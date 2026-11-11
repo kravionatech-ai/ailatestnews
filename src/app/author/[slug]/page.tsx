@@ -48,25 +48,65 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
   ]);
 
   const siteUrl = getSiteUrl();
+  const rawAuthorRole = author.role?.trim();
+  const isGenericAuthRole =
+    !rawAuthorRole || /^(admin|user|subscriber)$/i.test(rawAuthorRole);
+  const isOrgAuthor = /(editorial\s*team|newsroom|editorial\s*desk)/i.test(
+    author.name || ""
+  );
+  const authorSameAs = [
+    author.website,
+    author.socialLinks?.twitter,
+    author.socialLinks?.github,
+    author.socialLinks?.linkedin,
+  ].filter(Boolean);
 
-  // JSON-LD ProfilePage schema
+  // JSON-LD ProfilePage + BreadcrumbList schema (strictly DB-backed, no fabricated titles)
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    mainEntity: {
-      "@type": "Person",
-      name: author.name,
-      jobTitle: author.role || "Technology Journalist & Technical Editor",
-      description: author.bio,
-      image: author.image,
-      url: `${siteUrl}/author/${slug}`,
-      sameAs: [
-        author.website,
-        author.socialLinks?.twitter,
-        author.socialLinks?.github,
-        author.socialLinks?.linkedin,
-      ].filter(Boolean),
-    },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Articles",
+            item: `${siteUrl}/blog`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: author.name,
+            item: `${siteUrl}/author/${slug}`,
+          },
+        ],
+      },
+      {
+        "@type": "ProfilePage",
+        url: `${siteUrl}/author/${slug}`,
+        mainEntity: {
+          "@type": isOrgAuthor ? "Organization" : "Person",
+          name: author.name,
+          ...(!isOrgAuthor && !isGenericAuthRole ? { jobTitle: rawAuthorRole } : {}),
+          ...(author.bio ? { description: author.bio } : {}),
+          ...(author.image
+            ? {
+                image: {
+                  "@type": "ImageObject",
+                  url: author.image,
+                },
+              }
+            : {}),
+          url: `${siteUrl}/author/${slug}`,
+          ...(authorSameAs.length > 0 ? { sameAs: authorSameAs } : {}),
+          ...(!isOrgAuthor
+            ? { worksFor: { "@id": `${siteUrl}/#organization` } }
+            : {}),
+        },
+      },
+    ],
   };
 
   return (
@@ -103,16 +143,19 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
           )}
 
           <div className="flex-1 space-y-2.5">
-            <span className="inline-block rounded-md bg-[var(--color-secondary-surface)] border border-[var(--border)] px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--accent)]">
-              {author.role || "Contributing Journalist"}
-            </span>
+            {!isGenericAuthRole && (
+              <span className="inline-block rounded-md bg-[var(--color-secondary-surface)] border border-[var(--border)] px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--accent)]">
+                {rawAuthorRole}
+              </span>
+            )}
             <h1 className="font-editorial text-3xl sm:text-4xl font-bold text-[var(--color-heading)]">
               {author.name}
             </h1>
-            <p className="text-sm text-[var(--color-body-text)] max-w-2xl leading-relaxed">
-              {author.bio ||
-                "Senior technology journalist and researcher covering foundation models, AI engineering systems, and global innovation intelligence."}
-            </p>
+            {author.bio && (
+              <p className="text-sm text-[var(--color-body-text)] max-w-2xl leading-relaxed">
+                {author.bio}
+              </p>
+            )}
 
             <div className="mt-4 flex items-center justify-center sm:justify-start gap-2 pt-2">
               {author.website && (

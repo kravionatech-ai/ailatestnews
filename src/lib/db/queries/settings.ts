@@ -61,6 +61,7 @@ export const getGlobalSettings = cache(async function getGlobalSettings(): Promi
             { label: "Cloud & Computing", href: "/category/cloud-and-computing" },
             { label: "ZeroAI Detector", href: "/zeroai" },
             { label: "Article Archive", href: "/archive" },
+            { label: "HTML Sitemap", href: "/sitemap" },
             { label: "Search Portal", href: "/search" },
           ],
         },

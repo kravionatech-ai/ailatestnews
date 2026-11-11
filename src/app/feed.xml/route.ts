@@ -1,50 +1,47 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db/connection";
-import { Post } from "@/lib/db/models";
 import { getGlobalSeoSettings, getSiteUrl } from "@/lib/seo/fallback";
+import {
+  getOrInitSeoSettings,
+  getRssFeedItems,
+  buildRssFeedXml,
+  NO_CACHE_XML_HEADERS,
+} from "@/lib/seo/seo-settings-service";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
-  const siteUrl = getSiteUrl();
-  const settings = await getGlobalSeoSettings();
+  try {
+    const [seoSettings, globalSettings] = await Promise.all([
+      getOrInitSeoSettings(),
+      getGlobalSeoSettings(),
+    ]);
 
-  await connectDB();
-  const posts = await Post.find({ status: "published" })
-    .select("title slug publishedAt excerpt author")
-    .sort({ publishedAt: -1 })
-    .limit(20)
-    .populate("author", "name")
-    .lean();
+    const siteUrl = (seoSettings.sitemap?.siteUrl || globalSettings.siteUrl || getSiteUrl()).replace(
+      /\/$/,
+      ""
+    );
+    const feedItems = await getRssFeedItems(seoSettings, 30);
 
-  const xml = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>${settings.siteName === "AI Latest News" ? "Kraviona AI News" : settings.siteName} — RSS Feed</title>
-    <link>${siteUrl}</link>
-    <description>${settings.tagline || "AI, Technology, Research and Innovation Intelligence."}</description>
-    <language>en</language>
-    <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml" />
-    ${posts
-      .map(
-        (post) => `
-    <item>
-      <title><![CDATA[${post.title}]]></title>
-      <link>${siteUrl}/blog/${post.slug}</link>
-      <guid>${siteUrl}/blog/${post.slug}</guid>
-      <pubDate>${post.publishedAt ? new Date(post.publishedAt).toUTCString() : new Date().toUTCString()}</pubDate>
-      <description><![CDATA[${post.excerpt}]]></description>
-      <author><![CDATA[${(post.author as unknown as { name?: string })?.name || "Kraviona AI News Editorial Team"}]]></author>
-    </item>`
-      )
-      .join("")}
-  </channel>
-</rss>`;
+    const xml = buildRssFeedXml(feedItems, {
+      siteName: globalSettings.siteName,
+      siteUrl,
+      tagline: globalSettings.tagline,
+      language: seoSettings.sitemap?.newsPublicationLanguage || "en",
+    });
 
-  return new NextResponse(xml, {
-    headers: {
-      "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, s-maxage=3600",
-    },
-  });
+    return new NextResponse(xml, {
+      status: 200,
+      headers: NO_CACHE_XML_HEADERS,
+    });
+  } catch (err: unknown) {
+    console.error("[RSS Feed Generation Error]", err);
+    const fallbackXml = buildRssFeedXml([], {
+      siteUrl: getSiteUrl(),
+    });
+    return new NextResponse(fallbackXml, {
+      status: 200,
+      headers: NO_CACHE_XML_HEADERS,
+    });
+  }
 }

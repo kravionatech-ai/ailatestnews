@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
+  // Ensure canonical links, RSS autodiscovery, and SEO meta tags always render inside <head> rather than streaming into <body>
+  htmlLimitedBots: /.*/,
 
   images: {
     formats: ["image/avif", "image/webp"],
@@ -44,15 +46,18 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/(icon.svg|manifest.webmanifest|robots.txt)",
+        source: "/(icon.svg|manifest.webmanifest)",
         headers: [
           { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
         ],
       },
       {
-        source: "/sitemap.xml",
+        source:
+          "/(sitemap.xml|sitemap-static.xml|sitemap-articles.xml|sitemap-categories.xml|sitemap-tags.xml|sitemap-pages.xml|sitemap-custom.xml|image-sitemap.xml|news-sitemap.xml|sitemap-news.xml|feed.xml|robots.txt)",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, stale-while-revalidate=300" },
+          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate, max-age=0" },
+          { key: "CDN-Cache-Control", value: "no-store" },
+          { key: "Vercel-CDN-Cache-Control", value: "no-store" },
         ],
       },
       {

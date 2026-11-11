@@ -18,6 +18,8 @@ interface SeoManagementViewProps {
     noindexPages: number;
     totalIndexableUrls: number;
     totalUrlsInSitemap: number;
+    customUrlsCount?: number;
+    feedItemsCount?: number;
     newsArticlesCount: number;
     sitemapLastGenerated?: string | Date;
     robotsLastPublished?: string | Date;
