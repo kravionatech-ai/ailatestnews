@@ -43,6 +43,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
         { label: "AI Agents", href: "/category/ai-agents" },
         { label: "Machine Learning", href: "/category/machine-learning" },
         { label: "Cloud & Computing", href: "/category/cloud-and-computing" },
+        { label: "ZeroAI Detector", href: "/zeroai" },
         { label: "Article Archive", href: "/archive" },
         { label: "Search Portal", href: "/search" },
       ],

@@ -33,6 +33,7 @@ export const getGlobalSettings = cache(async function getGlobalSettings(): Promi
       { label: "Startups", href: "/category/startups", order: 6 },
       { label: "Cybersecurity", href: "/category/cybersecurity", order: 7 },
       { label: "Technology", href: "/category/technology", order: 8 },
+      { label: "ZeroAI", href: "/zeroai", order: 9 },
     ],
     footer: {
       aboutText:
@@ -58,6 +59,7 @@ export const getGlobalSettings = cache(async function getGlobalSettings(): Promi
             { label: "AI Agents", href: "/category/ai-agents" },
             { label: "Machine Learning", href: "/category/machine-learning" },
             { label: "Cloud & Computing", href: "/category/cloud-and-computing" },
+            { label: "ZeroAI Detector", href: "/zeroai" },
             { label: "Article Archive", href: "/archive" },
             { label: "Search Portal", href: "/search" },
           ],

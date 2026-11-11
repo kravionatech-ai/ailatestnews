@@ -106,6 +106,12 @@ export function getCoreStaticSitemapEntries(siteUrl: string, latestPostDate?: Da
       priority: "0.8",
     },
     {
+      url: `${siteUrl}/zeroai`,
+      lastModified: SYSTEM_BUILD_TIMESTAMP,
+      changeFrequency: "weekly",
+      priority: "0.8",
+    },
+    {
       url: `${siteUrl}/about`,
       lastModified: SYSTEM_BUILD_TIMESTAMP,
       changeFrequency: "monthly",

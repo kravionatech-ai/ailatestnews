@@ -43,6 +43,7 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
     { label: "Startups", href: "/category/startups", order: 6 },
     { label: "Cybersecurity", href: "/category/cybersecurity", order: 7 },
     { label: "Technology", href: "/category/technology", order: 8 },
+    { label: "ZeroAI", href: "/zeroai", order: 9 },
   ];
 
   const defaultFooter = {
@@ -66,6 +67,7 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
         title: "Directories",
         links: [
           { label: "AI Tools Directory", href: "/ai-tools" },
+          { label: "ZeroAI Detector", href: "/zeroai" },
           { label: "Model Launches Timeline", href: "/model-launches" },
           { label: "India AI Hub", href: "/india-ai" },
           { label: "Article Archive", href: "/archive" },

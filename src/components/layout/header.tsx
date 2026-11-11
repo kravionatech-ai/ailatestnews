@@ -13,6 +13,7 @@ import {
   Newspaper,
   Flame,
   ArrowUpRight,
+  Sparkles,
 } from "lucide-react";
 import { CommandPalette } from "../search/command-palette";
 import { useTheme } from "../providers/theme-provider";
@@ -40,6 +41,7 @@ const KRAVIONA_NAV_LINKS: NavItem[] = [
   { label: "Startups", href: "/category/startups", order: 6 },
   { label: "Cybersecurity", href: "/category/cybersecurity", order: 7 },
   { label: "Technology", href: "/category/technology", order: 8 },
+  { label: "ZeroAI", href: "/zeroai", order: 9 },
 ];
 
 const DEFAULT_TRENDING_TOPICS = [
@@ -96,10 +98,13 @@ export function Header({
     return () => window.removeEventListener("readingQueueUpdated", updateCount);
   }, []);
 
-  // Ensure nav links reflect Kraviona's primary editorial architecture
+  // Ensure nav links reflect Kraviona's primary editorial architecture and include ZeroAI
   const rawLinks =
     propNavLinks && propNavLinks.length >= 7 ? propNavLinks : KRAVIONA_NAV_LINKS;
-  const navLinks = [...rawLinks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const withZeroAi = rawLinks.some((l) => l.href === "/zeroai")
+    ? rawLinks
+    : [...rawLinks, { label: "ZeroAI", href: "/zeroai", order: 99 }];
+  const navLinks = [...withZeroAi].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   const tickerItems =
     headlines && headlines.length > 0 ? headlines : FALLBACK_HEADLINES;
@@ -209,16 +214,20 @@ export function Header({
               const isActive =
                 pathname === link.href ||
                 (link.href !== "/" && Boolean(pathname?.startsWith(link.href)));
+              const isZeroAi = link.href === "/zeroai";
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-2.5 py-1.5 rounded-md text-[13px] font-semibold tracking-tight transition-all whitespace-nowrap ${
+                  className={`inline-flex items-center gap-1 px-2 2xl:px-2.5 py-1.5 rounded-md text-[12.5px] 2xl:text-[13px] font-semibold tracking-tight transition-all whitespace-nowrap ${
                     isActive
                       ? "bg-[#101820] text-white dark:bg-[#E05A42] dark:text-white"
+                      : isZeroAi
+                      ? "border border-[var(--accent)]/30 bg-[var(--accent-light)]/50 text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
                       : "text-[var(--color-heading)]/85 hover:text-[var(--accent)] hover:bg-[var(--color-secondary-surface)]"
                   }`}
                 >
+                  {isZeroAi && <Sparkles className="h-3 w-3 shrink-0" />}
                   {link.label}
                 </Link>
               );
@@ -295,16 +304,20 @@ export function Header({
               const isActive =
                 pathname === link.href ||
                 (link.href !== "/" && Boolean(pathname?.startsWith(link.href)));
+              const isZeroAi = link.href === "/zeroai";
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
                     isActive
                       ? "bg-[#101820] text-white dark:bg-[#E05A42]"
+                      : isZeroAi
+                      ? "border border-[var(--accent)]/30 bg-[var(--accent-light)]/50 text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
                       : "text-[var(--color-heading)] hover:text-[var(--accent)]"
                   }`}
                 >
+                  {isZeroAi && <Sparkles className="h-3 w-3 shrink-0" />}
                   {link.label}
                 </Link>
               );
@@ -332,17 +345,21 @@ export function Header({
                 const isActive =
                   pathname === link.href ||
                   (link.href !== "/" && Boolean(pathname?.startsWith(link.href)));
+                const isZeroAi = link.href === "/zeroai";
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`rounded-lg px-3 py-2.5 text-xs font-bold transition-colors ${
+                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2.5 text-xs font-bold transition-colors ${
                       isActive
                         ? "bg-[#101820] text-white dark:bg-[#E05A42]"
+                        : isZeroAi
+                        ? "border border-[var(--accent)]/35 bg-[var(--accent-light)]/50 text-[var(--accent)]"
                         : "bg-[var(--color-main-background)] text-[var(--color-heading)] hover:text-[var(--accent)]"
                     }`}
                   >
+                    {isZeroAi && <Sparkles className="h-3.5 w-3.5 shrink-0" />}
                     {link.label}
                   </Link>
                 );

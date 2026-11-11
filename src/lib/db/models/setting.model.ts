@@ -213,10 +213,13 @@ const SettingSchema = new Schema<IGlobalSettings>(
       default: () => [
         { label: "Home", href: "/", order: 1 },
         { label: "AI News", href: "/category/ai-news", order: 2 },
-        { label: "Model Launches", href: "/category/model-launches", order: 3 },
-        { label: "AI Tools", href: "/category/ai-tools", order: 4 },
-        { label: "India AI", href: "/category/india-ai", order: 5 },
-        { label: "Guides", href: "/category/guides-and-comparisons", order: 6 },
+        { label: "AI Models", href: "/category/model-launches", order: 3 },
+        { label: "AI Research", href: "/category/ai-research", order: 4 },
+        { label: "AI Tools", href: "/category/ai-tools", order: 5 },
+        { label: "Startups", href: "/category/startups", order: 6 },
+        { label: "Cybersecurity", href: "/category/cybersecurity", order: 7 },
+        { label: "Technology", href: "/category/technology", order: 8 },
+        { label: "ZeroAI", href: "/zeroai", order: 9 },
       ],
     },
     footer: {
