@@ -252,11 +252,13 @@ export default async function SinglePostPage({
         template={selectedTemplate}
       />
 
-      {/* Continuous Reading Slide-up Drawer */}
-      <UpNextSlideup
-        currentSlug={post.slug}
-        nextPost={nextPost || relatedPosts?.[0] || null}
-      />
+      {/* Continuous Reading Slide-up Drawer (for templates without embedded slideup) */}
+      {selectedTemplate === "minimal-reading" && (
+        <UpNextSlideup
+          currentSlug={post.slug}
+          nextPost={nextPost || relatedPosts?.[0] || null}
+        />
+      )}
     </PublicShell>
   );
 }

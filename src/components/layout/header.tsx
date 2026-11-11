@@ -118,7 +118,10 @@ export function Header({
         <div className="mx-auto flex max-w-[var(--max-content-width,1320px)] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 h-9">
           {/* Left: Current Date + Live Ticker */}
           <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
-            <span className="hidden sm:inline-flex items-center font-mono text-[10px] tracking-tight text-[#8B949E] shrink-0">
+            <span
+              suppressHydrationWarning
+              className="hidden sm:inline-flex items-center font-mono text-[10px] tracking-tight text-[#8B949E] shrink-0"
+            >
               {todayFormatted}
             </span>
             <span className="hidden sm:inline text-white/15 shrink-0">|</span>
@@ -316,7 +319,10 @@ export function Header({
               <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--color-muted-text)]">
                 Intelligence Desks
               </span>
-              <span className="font-mono text-[10px] text-[var(--color-muted-text)]">
+              <span
+                suppressHydrationWarning
+                className="font-mono text-[10px] text-[var(--color-muted-text)]"
+              >
                 {todayFormatted}
               </span>
             </div>

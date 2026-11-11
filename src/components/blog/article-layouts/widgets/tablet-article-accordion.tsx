@@ -5,7 +5,7 @@ import { List, ChevronDown, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-import type { TocItem } from "./table-of-contents";
+import type { TocItem } from "./toc-utils";
 
 export function TabletArticleAccordion({
   className = "",

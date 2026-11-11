@@ -152,7 +152,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
         {/* Bottom Colophon */}
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs gap-4 text-[#8B949E]">
           <p>
-            © {new Date().getFullYear()}{" "}
+            © <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
             {copyrightText || "Kraviona AI News (ainews.kraviona.com). All rights reserved."}
           </p>
           <p className="font-mono text-[11px] text-[#8B949E]">

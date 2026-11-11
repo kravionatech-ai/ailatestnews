@@ -1,5 +1,6 @@
 export * from "./breadcrumbs";
 export * from "./author-card";
+export * from "./toc-utils";
 export * from "./table-of-contents";
 export * from "./tablet-article-accordion";
 export * from "./editorial-standards";
