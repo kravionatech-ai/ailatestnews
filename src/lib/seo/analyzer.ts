@@ -1,5 +1,22 @@
 import type { ISeoAnalysisResult, ISeoScoreRule } from "./types";
 import { slugify, stripHtml } from "@/lib/utils";
+import { getLegacyHosts, getSiteHostname } from "./domain";
+
+function getInternalHostAlternation(): string {
+  const activeHost = getSiteHostname();
+  const bareActive = activeHost.replace(/^www\./, "");
+  const hosts = new Set<string>([
+    activeHost,
+    bareActive,
+    `www.${bareActive}`,
+    "kraviona.com",
+    ...getLegacyHosts(),
+  ]);
+  return Array.from(hosts)
+    .filter(Boolean)
+    .map((h) => h.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("|");
+}
 
 export interface AnalyzeContentInput {
   title?: string;
@@ -379,7 +396,9 @@ export function analyzeSeoContent(input: AnalyzeContentInput): ISeoAnalysisResul
   }
 
   // 9. Internal Links
-  const internalLinks = (cleanHtml.match(/href=["'](\/|https?:\/\/(?:ainews\.kraviona\.com|kraviona\.com))/gi) || []).length;
+  const internalHostPattern = getInternalHostAlternation();
+  const internalRegex = new RegExp(`href=["'](\\/|https?:\\/\\/(?:${internalHostPattern})(?=[/"'\\s?#]|$))`, "gi");
+  const internalLinks = (cleanHtml.match(internalRegex) || []).length;
   if (internalLinks >= 2) {
     checklist.push({
       id: "internal_links",
@@ -411,7 +430,8 @@ export function analyzeSeoContent(input: AnalyzeContentInput): ISeoAnalysisResul
   }
 
   // 10. External Reference Links
-  const externalLinks = (cleanHtml.match(/href=["']https?:\/\/(?!(?:ainews\.kraviona\.com|kraviona\.com))/gi) || []).length;
+  const externalRegex = new RegExp(`href=["']https?:\\/\\/(?!(?:${internalHostPattern})(?=[/"'\\s?#]|$))`, "gi");
+  const externalLinks = (cleanHtml.match(externalRegex) || []).length;
   if (externalLinks >= 1) {
     checklist.push({
       id: "external_links",

@@ -10,12 +10,21 @@
  *   3. Set REDIRECT_SOURCE_DOMAINS=ainews.kraviona.com,www.ainews.kraviona.com,kraviona.site,www.kraviona.site
  */
 
-export const DEFAULT_PRODUCTION_SITE_URL = "https://kraviona.site";
+export const DEFAULT_PRODUCTION_SITE_URL = "https://www.kraviona.site";
 export const DEFAULT_LOCAL_SITE_URL = "http://localhost:3000";
 
 export const HISTORICAL_MIGRATION_HOSTS = [
   "ainews.kraviona.com",
   "kraviona.site",
+] as const;
+
+/**
+ * Permanently retired hosts that must NEVER be returned as the active canonical
+ * origin even if a stale Vercel dashboard env var still points to them.
+ */
+export const RETIRED_ENV_FALLBACK_HOSTS = [
+  "ainews.kraviona.com",
+  "www.ainews.kraviona.com",
 ] as const;
 
 export const DEFAULT_GOOGLE_SITE_VERIFICATION =
@@ -162,27 +171,106 @@ export function getLocalSiteUrl(): string {
 }
 
 /**
+ * Determine whether a hostname is permanently retired by environment configuration
+ * (NEXT_PUBLIC_LEGACY_DOMAINS) or historical retirement list.
+ */
+export function isRetiredEnvHost(
+  hostname?: string | null,
+  customLegacyDomainsRaw?: string
+): boolean {
+  const normalized = normalizeHostname(hostname);
+  if (!normalized || isLocalhostHost(normalized)) return false;
+
+  const envRaw =
+    customLegacyDomainsRaw !== undefined
+      ? customLegacyDomainsRaw
+      : (typeof process !== "undefined" ? process.env?.NEXT_PUBLIC_LEGACY_DOMAINS : undefined) || "";
+
+  const configured = envRaw
+    .split(",")
+    .map((h) => normalizeHostname(h))
+    .filter(Boolean);
+
+  const retiredSet = new Set<string>();
+  for (const host of [...RETIRED_ENV_FALLBACK_HOSTS, ...configured]) {
+    if (!host || isLocalhostHost(host)) continue;
+    const bare = host.replace(/^www\./, "");
+    retiredSet.add(bare);
+    retiredSet.add(`www.${bare}`);
+  }
+
+  return retiredSet.has(normalized);
+}
+
+/**
+ * Determine whether two hostnames share the same registrable root with only a www. difference.
+ */
+export function isCanonicalSiblingHost(
+  hostname: string,
+  targetSiteUrl: string = getSiteUrl()
+): boolean {
+  const normalized = normalizeHostname(hostname);
+  const targetHost = getSiteHostname(targetSiteUrl);
+  if (!normalized || !targetHost || normalized === targetHost) return false;
+  return normalized.replace(/^www\./, "") === targetHost.replace(/^www\./, "");
+}
+
+/**
+ * Resolve Vercel's custom production domain when configured (never returns *.vercel.app or localhost).
+ */
+export function getVercelProductionSiteUrl(): string | null {
+  const raw =
+    (typeof process !== "undefined"
+      ? process.env?.VERCEL_PROJECT_PRODUCTION_URL ||
+        process.env?.NEXT_PUBLIC_VERCEL_PRODUCTION_URL
+      : undefined) || "";
+  const host = normalizeHostname(raw);
+  if (
+    !host ||
+    isLocalhostHost(host) ||
+    host.endsWith(".vercel.app") ||
+    isRetiredEnvHost(host)
+  ) {
+    return null;
+  }
+  return `https://${host}`;
+}
+
+/**
  * Canonical production URL used for all SEO metadata, canonicals, JSON-LD,
  * XML sitemaps, robots.txt, RSS feeds, and external pings.
- * Never returns localhost or transient preview *.vercel.app URLs when a canonical
- * production domain is known.
+ * Never returns localhost, retired legacy domains, or transient *.vercel.app URLs
+ * when a canonical production domain is known.
  */
 export function getProductionSiteUrl(): string {
+  const vercelProdUrl = getVercelProductionSiteUrl();
+
   const explicitProd = parseValidSiteUrl(process.env.NEXT_PUBLIC_PRODUCTION_SITE_URL);
-  if (explicitProd && !isLocalhostHost(explicitProd.hostname)) {
+  if (
+    explicitProd &&
+    !isLocalhostHost(explicitProd.hostname) &&
+    !isRetiredEnvHost(explicitProd.hostname)
+  ) {
     return `${explicitProd.protocol}//${explicitProd.host}`.replace(/\/+$/, "");
   }
 
   const configuredSiteUrl = parseValidSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
-  if (configuredSiteUrl && !isLocalhostHost(configuredSiteUrl.hostname)) {
+  if (
+    configuredSiteUrl &&
+    !isLocalhostHost(configuredSiteUrl.hostname) &&
+    !isRetiredEnvHost(configuredSiteUrl.hostname)
+  ) {
+    const configuredHost = configuredSiteUrl.hostname.toLowerCase();
+    // If Vercel serves www.<domain> as 200 primary and 308-redirects apex <domain> -> www,
+    // match Vercel's active primary host so canonicals and sitemaps never point to a 308 redirect.
+    if (vercelProdUrl && isCanonicalSiblingHost(configuredHost, vercelProdUrl)) {
+      return vercelProdUrl;
+    }
     return `${configuredSiteUrl.protocol}//${configuredSiteUrl.host}`.replace(/\/+$/, "");
   }
 
-  const vercelProdHost = normalizeHostname(
-    typeof process !== "undefined" ? process.env?.VERCEL_PROJECT_PRODUCTION_URL : undefined
-  );
-  if (vercelProdHost && !isLocalhostHost(vercelProdHost)) {
-    return `https://${vercelProdHost}`;
+  if (vercelProdUrl) {
+    return vercelProdUrl;
   }
 
   return DEFAULT_PRODUCTION_SITE_URL;
@@ -213,6 +301,7 @@ export function getLegacyHosts(
   customLegacyDomainsRaw?: string
 ): string[] {
   const activeHost = getSiteHostname(activeSiteUrl);
+  const activeRoot = activeHost.replace(/^www\./, "");
   const envRaw =
     customLegacyDomainsRaw !== undefined
       ? customLegacyDomainsRaw
@@ -234,8 +323,8 @@ export function getLegacyHosts(
     const bare = host.replace(/^www\./, "");
     const withWww = `www.${bare}`;
 
-    // Skip the currently active canonical host and avoid marking root domains as legacy unless listed
-    if (bare !== activeHost) {
+    // Skip the currently active canonical root so same-site apex/www siblings are not treated as retired domains
+    if (bare !== activeRoot) {
       expanded.add(bare);
       expanded.add(withWww);
     }
@@ -262,8 +351,8 @@ export function isLegacyHost(
 
 /**
  * Resolve effective site URL when reading from MongoDB settings documents.
- * Automatically overrides stale legacy domains or localhost values stored in DB
- * with the current configured canonical production URL.
+ * Automatically overrides stale legacy domains, apex/www canonical siblings,
+ * or localhost values stored in DB with the current canonical production URL.
  */
 export function resolveEffectiveSiteUrl(
   dbSiteUrl?: string | null,
@@ -274,7 +363,11 @@ export function resolveEffectiveSiteUrl(
   if (!parsedDb) return fallbackCanonical;
 
   const dbHost = parsedDb.hostname.toLowerCase();
-  if (isLocalhostHost(dbHost) || isLegacyHost(dbHost, fallbackCanonical)) {
+  if (
+    isLocalhostHost(dbHost) ||
+    isLegacyHost(dbHost, fallbackCanonical) ||
+    isCanonicalSiblingHost(dbHost, fallbackCanonical)
+  ) {
     return fallbackCanonical;
   }
 
@@ -282,8 +375,8 @@ export function resolveEffectiveSiteUrl(
 }
 
 /**
- * Rewrite an absolute URL whose host is a retired legacy domain or localhost
- * to targetSiteUrl, preserving pathname, query string, and hash.
+ * Rewrite an absolute URL whose host is a retired legacy domain, canonical apex/www sibling,
+ * or localhost to targetSiteUrl, preserving pathname, query string, and hash.
  * Leaves external URLs (Cloudinary, Unsplash, third-party articles) untouched.
  */
 export function rewriteLegacyOriginUrl(
@@ -304,7 +397,11 @@ export function rewriteLegacyOriginUrl(
   if (!parsed) return trimmed;
 
   const host = parsed.hostname.toLowerCase();
-  if (isLegacyHost(host, target) || isLocalhostHost(host)) {
+  if (
+    isLegacyHost(host, target) ||
+    isLocalhostHost(host) ||
+    isCanonicalSiblingHost(host, target)
+  ) {
     const suffix =
       parsed.pathname === "/" && !parsed.search && !parsed.hash
         ? ""
@@ -319,8 +416,23 @@ function escapeRegExp(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function getRewriteCandidateHosts(target: string): string[] {
+  const targetHost = getSiteHostname(target);
+  const set = new Set<string>(getLegacyHosts(target));
+  if (targetHost && !isLocalhostHost(targetHost)) {
+    const sibling = targetHost.startsWith("www.")
+      ? targetHost.replace(/^www\./, "")
+      : `www.${targetHost}`;
+    if (sibling !== targetHost) {
+      set.add(sibling);
+    }
+  }
+  set.delete(targetHost);
+  return Array.from(set);
+}
+
 /**
- * Rewrite internal links pointing to retired legacy domains inside HTML content
+ * Rewrite internal links pointing to retired legacy domains or apex/www siblings inside HTML content
  * (e.g. legacy internal hrefs stored in older MongoDB articles).
  */
 export function rewriteLegacyHtmlUrls(
@@ -329,10 +441,10 @@ export function rewriteLegacyHtmlUrls(
 ): string {
   if (!html) return "";
   const target = normalizeSiteUrl(targetSiteUrl);
-  const legacyHosts = getLegacyHosts(target);
-  if (legacyHosts.length === 0) return html;
+  const rewriteHosts = getRewriteCandidateHosts(target);
+  if (rewriteHosts.length === 0) return html;
 
-  const hostAlternation = legacyHosts.map(escapeRegExp).join("|");
+  const hostAlternation = rewriteHosts.map(escapeRegExp).join("|");
   const pattern = new RegExp(
     `https?:\\/\\/(?:${hostAlternation})(?::\\d+)?(?=[\\/"'\\s?#)<]|$)`,
     "gi"
@@ -352,13 +464,13 @@ export function replaceLegacyHostText(
   if (!text) return "";
   const target = normalizeSiteUrl(targetSiteUrl);
   const targetHost = getSiteHostname(target);
-  const legacyHosts = getLegacyHosts(target);
-  if (legacyHosts.length === 0) return text;
+  const rewriteHosts = getRewriteCandidateHosts(target);
+  if (rewriteHosts.length === 0) return text;
 
   let output = rewriteLegacyHtmlUrls(text, target);
-  const hostAlternation = legacyHosts.map(escapeRegExp).join("|");
-  const barePattern = new RegExp(`\\b(?:${hostAlternation})\\b`, "gi");
-  output = output.replace(barePattern, targetHost);
+  const hostAlternation = rewriteHosts.map(escapeRegExp).join("|");
+  const barePattern = new RegExp(`(^|[^@\\w.-])(${hostAlternation})(?=$|[^\\w.-])`, "gi");
+  output = output.replace(barePattern, (_m, prefix: string) => `${prefix}${targetHost}`);
   return output;
 }
 
@@ -371,7 +483,7 @@ export function rewriteLegacyRobotsTxt(
 ): string {
   if (!robotsContent) return "";
   const target = normalizeSiteUrl(targetSiteUrl);
-  const rewritten = rewriteLegacyHtmlUrls(robotsContent, target);
+  const rewritten = replaceLegacyHostText(robotsContent, target);
   const seenSitemaps = new Set<string>();
   const dedupedLines: string[] = [];
 

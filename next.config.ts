@@ -1,11 +1,26 @@
 import type { NextConfig } from "next";
 
+const rawVercelProdHost = (process.env.VERCEL_PROJECT_PRODUCTION_URL || "")
+  .trim()
+  .toLowerCase();
+const customVercelProdHost =
+  rawVercelProdHost &&
+  !rawVercelProdHost.endsWith(".vercel.app") &&
+  rawVercelProdHost !== "localhost"
+    ? rawVercelProdHost
+    : "";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
   // Ensure canonical links, RSS autodiscovery, and SEO meta tags always render inside <head> rather than streaming into <body>
   htmlLimitedBots: /.*/,
+  env: {
+    ...(customVercelProdHost
+      ? { NEXT_PUBLIC_VERCEL_PRODUCTION_URL: customVercelProdHost }
+      : {}),
+  },
 
   images: {
     formats: ["image/avif", "image/webp"],

@@ -148,6 +148,12 @@ export function normalizeSeoSettingsForDisplay(raw: ISeoSettings): ISeoSettings 
   const effectiveSiteUrl = resolveEffectiveSiteUrl(cloned.sitemap?.siteUrl);
   if (cloned.sitemap) {
     cloned.sitemap.siteUrl = effectiveSiteUrl;
+    if (Array.isArray(cloned.sitemap.customUrls)) {
+      cloned.sitemap.customUrls = cloned.sitemap.customUrls.map((entry) => ({
+        ...entry,
+        url: entry.url ? rewriteLegacyOriginUrl(entry.url, effectiveSiteUrl) : entry.url,
+      }));
+    }
   }
   if (cloned.robots) {
     cloned.robots.sitemaps = Array.from(
@@ -1021,16 +1027,17 @@ export function buildRssFeedXml(
     : new Date().toUTCString();
 
   const itemXml = items
-    .map(
-      (item) => `    <item>
+    .map((item) => {
+      const normalizedItemUrl = rewriteLegacyOriginUrl(item.url, siteUrl);
+      return `    <item>
       <title>${safeCdata(item.title)}</title>
-      <link>${escapeXml(item.url)}</link>
-      <guid isPermaLink="true">${escapeXml(item.url)}</guid>
+      <link>${escapeXml(normalizedItemUrl)}</link>
+      <guid isPermaLink="true">${escapeXml(normalizedItemUrl)}</guid>
       <pubDate>${escapeXml(new Date(item.publicationDate).toUTCString())}</pubDate>
       <description>${safeCdata(item.description)}</description>
       <dc:creator>${safeCdata(item.authorName)}</dc:creator>${item.categoryName ? `\n      <category>${safeCdata(item.categoryName)}</category>` : ""}
-    </item>`
-    )
+    </item>`;
+    })
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>

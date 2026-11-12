@@ -1561,37 +1561,6 @@ async function main() {
       throw new Error(`Live post verification failed: ${verifyUrl} did not return HTTP 200 OK.`);
     }
 
-    const ainewsVerifyUrl = `https://ainews.kraviona.com/blog/${slug}`;
-    if (ainewsVerifyUrl !== verifyUrl) {
-      console.log(`\n🔍 Verifying HTTP 200 on ainews.kraviona.com: ${ainewsVerifyUrl}`);
-      let ainewsVerified = false;
-      for (let attempt = 1; attempt <= 8; attempt++) {
-        try {
-          console.log(`   → ainews.kraviona.com HTTP check attempt ${attempt}/8...`);
-          const res = await fetch(ainewsVerifyUrl, {
-            method: "GET",
-            headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AINewsVerificationBot/1.0" },
-            signal: AbortSignal.timeout(15_000),
-          });
-          if (res.status === 200) {
-            console.log(`   ✅ Live URL returned HTTP 200 OK! (${ainewsVerifyUrl})`);
-            ainewsVerified = true;
-            break;
-          } else {
-            console.warn(`   ⚠️  HTTP status ${res.status}. Waiting 5s before retry...`);
-            await new Promise((r) => setTimeout(r, 5000));
-          }
-        } catch (e) {
-          console.warn(`   ⚠️  Attempt ${attempt} network error: ${(e as Error).message}`);
-          await new Promise((r) => setTimeout(r, 5000));
-        }
-      }
-
-      if (!ainewsVerified) {
-        throw new Error(`Live post verification failed: ${ainewsVerifyUrl} did not return HTTP 200 OK.`);
-      }
-    }
-
     for (const xmlEndpoint of ["/sitemap.xml", "/news-sitemap.xml", "/feed.xml"]) {
       try {
         const xmlRes = await fetch(`${siteUrl}${xmlEndpoint}`, {

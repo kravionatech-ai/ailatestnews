@@ -69,25 +69,39 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
       process.env.NEXT_PUBLIC_SITE_URL = "http://localhost:3000";
       process.env.NEXT_PUBLIC_LOCAL_SITE_URL = "http://localhost:3000";
       delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+      delete process.env.NEXT_PUBLIC_VERCEL_PRODUCTION_URL;
 
       expect(isLocalhostHost("localhost")).toBe(true);
       expect(isLocalhostUrl("http://localhost:3000")).toBe(true);
-      expect(isLocalhostUrl("https://kraviona.site")).toBe(false);
+      expect(isLocalhostUrl("https://www.kraviona.site")).toBe(false);
 
       expect(getLocalSiteUrl()).toBe(DEFAULT_LOCAL_SITE_URL);
-      expect(getProductionSiteUrl()).toBe("https://kraviona.site");
-      expect(getSiteUrl()).toBe("https://kraviona.site");
-      expect(getSiteHostname()).toBe("kraviona.site");
+      expect(getProductionSiteUrl()).toBe("https://www.kraviona.site");
+      expect(getSiteUrl()).toBe("https://www.kraviona.site");
+      expect(getSiteHostname()).toBe("www.kraviona.site");
     });
 
-    it("reads NEXT_PUBLIC_SITE_URL dynamically for production deployments", () => {
-      process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site/";
-      expect(getSiteUrl()).toBe("https://kraviona.site");
-      expect(getSiteHostname()).toBe("kraviona.site");
+    it("reads NEXT_PUBLIC_SITE_URL dynamically and aligns with Vercel primary host", () => {
+      delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+      delete process.env.NEXT_PUBLIC_VERCEL_PRODUCTION_URL;
+
+      process.env.NEXT_PUBLIC_SITE_URL = "https://www.kraviona.site/";
+      expect(getSiteUrl()).toBe("https://www.kraviona.site");
+      expect(getSiteHostname()).toBe("www.kraviona.site");
 
       process.env.NEXT_PUBLIC_SITE_URL = "https://ailatestnews.in/";
       expect(getSiteUrl()).toBe("https://ailatestnews.in");
       expect(getSiteHostname()).toBe("ailatestnews.in");
+
+      // Stale Vercel env var pointing to retired ainews.kraviona.com is ignored automatically
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
+      process.env.VERCEL_PROJECT_PRODUCTION_URL = "www.kraviona.site";
+      expect(getSiteUrl()).toBe("https://www.kraviona.site");
+
+      // Apex vs www alignment when Vercel 308-redirects apex -> www.kraviona.site
+      process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site";
+      process.env.VERCEL_PROJECT_PRODUCTION_URL = "www.kraviona.site";
+      expect(getSiteUrl()).toBe("https://www.kraviona.site");
     });
   });
 

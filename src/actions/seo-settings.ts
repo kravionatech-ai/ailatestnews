@@ -36,6 +36,8 @@ import {
   getSiteUrl,
   normalizeSiteUrl,
   resolveEffectiveSiteUrl,
+  rewriteLegacyOriginUrl,
+  rewriteLegacyRobotsTxt,
 } from "@/lib/seo/domain";
 import { triggerSeoRevalidation } from "@/lib/seo/revalidate-and-ping";
 
@@ -170,8 +172,10 @@ export async function updateSitemapSettingsAction(formData: {
     const adminUser = await requireAdminSession();
     await connectDB();
 
-    // Sanitize siteUrl
-    const cleanSiteUrl = normalizeSiteUrl(formData.siteUrl, getSiteUrl());
+    // Sanitize siteUrl and block accidentally re-saving retired legacy hosts
+    const cleanSiteUrl = resolveEffectiveSiteUrl(
+      normalizeSiteUrl(formData.siteUrl, getSiteUrl())
+    );
 
     // Sanitize excluded URLs
     const cleanExcluded = (formData.excludedUrls || [])
@@ -223,7 +227,7 @@ export async function updateSitemapSettingsAction(formData: {
 
     return {
       success: true,
-      settings: JSON.parse(JSON.stringify(refreshedSettings)),
+      settings: normalizeSeoSettingsForDisplay(refreshedSettings),
       stats,
     };
   } catch (err: unknown) {
@@ -258,7 +262,7 @@ export async function upsertCustomSeoEntryAction(input: UpsertCustomSeoEntryInpu
     await connectDB();
 
     const settings = await getOrInitSeoSettings();
-    const siteUrl = (settings.sitemap.siteUrl || getSiteUrl()).replace(/\/$/, "");
+    const siteUrl = resolveEffectiveSiteUrl(settings.sitemap.siteUrl);
 
     const resolvedUrl = resolveCanonicalEntryUrl(input.url, siteUrl);
     if (!resolvedUrl) {
@@ -439,7 +443,7 @@ export async function toggleCustomSeoEntryAction(id: string, enabled: boolean) {
 
     return {
       success: true,
-      settings: JSON.parse(JSON.stringify(refreshedSettings)),
+      settings: normalizeSeoSettingsForDisplay(refreshedSettings),
       stats,
     };
   } catch (err: unknown) {
@@ -486,7 +490,7 @@ export async function deleteCustomSeoEntryAction(id: string) {
 
     return {
       success: true,
-      settings: JSON.parse(JSON.stringify(refreshedSettings)),
+      settings: normalizeSeoSettingsForDisplay(refreshedSettings),
       stats,
     };
   } catch (err: unknown) {
@@ -535,15 +539,25 @@ export async function updateRobotsSettingsAction(data: {
       crawlDelay: r.crawlDelay && r.crawlDelay > 0 ? Number(r.crawlDelay) : undefined,
     }));
 
-    // Clean sitemaps list
-    const sanitizedSitemaps = (data.sitemaps || [])
-      .map((s) => s.trim())
-      .filter((s) => s.startsWith("http://") || s.startsWith("https://"));
+    const effectiveSiteUrl = resolveEffectiveSiteUrl(settings.sitemap.siteUrl);
+
+    // Clean sitemaps list and rewrite any legacy/sibling origins
+    const sanitizedSitemaps = Array.from(
+      new Set(
+        (data.sitemaps || [])
+          .map((s) => rewriteLegacyOriginUrl(s.trim(), effectiveSiteUrl))
+          .filter((s) => s.startsWith("http://") || s.startsWith("https://"))
+      )
+    );
+
+    const normalizedRawContent = data.rawContent
+      ? rewriteLegacyRobotsTxt(data.rawContent, effectiveSiteUrl).slice(0, 10000).trim()
+      : "";
 
     settings.robots = {
       enabled: Boolean(data.enabled),
       customRawEnabled: Boolean(data.customRawEnabled),
-      rawContent: (data.rawContent || "").slice(0, 10000),
+      rawContent: normalizedRawContent,
       rules:
         sanitizedRules.length > 0
           ? sanitizedRules
@@ -557,7 +571,7 @@ export async function updateRobotsSettingsAction(data: {
       sitemaps:
         sanitizedSitemaps.length > 0
           ? sanitizedSitemaps
-          : [`${resolveEffectiveSiteUrl(settings.sitemap.siteUrl)}/sitemap.xml`],
+          : [`${effectiveSiteUrl}/sitemap.xml`],
       includeNewsSitemapInRobots: Boolean(data.includeNewsSitemapInRobots),
       lastPublishedAt: new Date(),
     };
@@ -576,7 +590,7 @@ export async function updateRobotsSettingsAction(data: {
     revalidatePath("/robots.txt");
     revalidatePath("/admin/seo");
 
-    return { success: true, settings: JSON.parse(JSON.stringify(settings)) };
+    return { success: true, settings: normalizeSeoSettingsForDisplay(settings) };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Failed to update robots.txt configuration";
     console.error("[updateRobotsSettingsAction Error]", msg);

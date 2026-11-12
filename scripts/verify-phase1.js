@@ -44,7 +44,7 @@ async function verifyPhase1() {
   const indexNowRes = await fetch("http://localhost:3000/api/admin/seo/indexnow", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://kraviona.site").replace(/\/+$/, "")}/blog/test` }),
+    body: JSON.stringify({ url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.kraviona.site").replace(/\/+$/, "")}/blog/test` }),
   });
   const indexNowData = await indexNowRes.json();
   console.log("4. IndexNow Endpoint:", indexNowData.message ? `✅ PASS (${indexNowData.message})` : "❌ FAIL");

@@ -54,7 +54,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SITE_URL: z
       .string()
       .url("NEXT_PUBLIC_SITE_URL must be a valid URL")
-      .default("https://kraviona.site"),
+      .default("https://www.kraviona.site"),
     NEXT_PUBLIC_LOCAL_SITE_URL: z
       .string()
       .url("NEXT_PUBLIC_LOCAL_SITE_URL must be a valid URL")
