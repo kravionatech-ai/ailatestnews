@@ -21,6 +21,7 @@ import { createAuthorAction, updateAuthorAction, deleteAuthorAction } from "@/ac
 import { SeoEditorPanel } from "@/components/admin/seo/seo-editor-panel";
 import type { ISeoMetadata } from "@/lib/seo/types";
 import { slugify } from "@/lib/utils";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 interface AuthorItem {
   _id: string;
@@ -509,7 +510,7 @@ export function AuthorsManager({ initialAuthors }: { initialAuthors: AuthorItem[
                     title={name}
                     slug={`author/${slug}`}
                     excerpt={bio}
-                    baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
+                    baseUrl={getSiteUrl()}
                   />
                 </div>
               )}

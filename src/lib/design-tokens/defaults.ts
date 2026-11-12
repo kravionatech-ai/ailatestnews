@@ -1,4 +1,5 @@
 import { DesignTokens } from "./types";
+import { getSiteHostname } from "@/lib/seo/domain";
 
 export const DEFAULT_DESIGN_TOKENS: DesignTokens = {
   colors: {
@@ -47,7 +48,7 @@ export const DEFAULT_DESIGN_TOKENS: DesignTokens = {
     backgroundColor: "#080D19",
     textColor: "#94A3B8",
     showSocialLinks: true,
-    copyrightText: "AI Latest News (ainews.kraviona.com). All rights reserved.",
+    copyrightText: `Kraviona AI News (${getSiteHostname()}). All rights reserved.`,
     aboutText:
       "India's authoritative AI publication tracking foundational model releases, LLM benchmarks, Indian AI breakthroughs (Sarvam, Krutrim, BharatGPT), and hands-on tooling comparisons in clear, in-depth English.",
   },

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { getSiteUrl } from "@/lib/seo/domain";
 import {
   Save,
   Send,
@@ -1050,7 +1051,7 @@ export function PostEditor({
           contentHtml={contentHtml}
           coverImage={coverImage}
           excerpt={excerpt}
-          baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
+          baseUrl={getSiteUrl()}
         />
       )}
 

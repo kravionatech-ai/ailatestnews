@@ -144,7 +144,7 @@ export class PublishingWorkflowEngine {
   // Save changes to draft
   public saveDraft(
     updater: (draft: { tokens: DesignTokens; homepageSections: HomepageSectionConfig[] }) => void,
-    user = "editor@ainews.kraviona.com"
+    user = "editor@kraviona.site"
   ) {
     const draftClone = {
       tokens: JSON.parse(JSON.stringify(this.config.draft.tokens)),
@@ -161,7 +161,7 @@ export class PublishingWorkflowEngine {
   }
 
   // Publish current draft to production
-  public publish(publishedBy = "admin@ainews.kraviona.com", changeNote?: string) {
+  public publish(publishedBy = "admin@kraviona.site", changeNote?: string) {
     const nextVersion = this.config.published.version + 1;
     const now = new Date();
 
@@ -194,7 +194,7 @@ export class PublishingWorkflowEngine {
   }
 
   // Rollback to a specific historical version
-  public rollback(targetVersion: number, rollbackBy = "admin@ainews.kraviona.com") {
+  public rollback(targetVersion: number, rollbackBy = "admin@kraviona.site") {
     const targetSnapshot = this.config.history.find((s) => s.version === targetVersion);
     if (!targetSnapshot) {
       throw new Error(`Rollback failed: Version ${targetVersion} does not exist in history`);
@@ -301,12 +301,12 @@ describe("E2E Publishing Workflow & Version Control (Tiers 1-4)", () => {
       engine.saveDraft((draft) => {
         draft.tokens.colors.primaryDark = "#000000";
       });
-      engine.publish("admin@ainews.kraviona.com", "Switched primary dark to pure black");
+      engine.publish("admin@kraviona.site", "Switched primary dark to pure black");
 
       const history = engine.getHistory();
       expect(history.length).toBe(2);
       expect(history[1].version).toBe(2);
-      expect(history[1].publishedBy).toBe("admin@ainews.kraviona.com");
+      expect(history[1].publishedBy).toBe("admin@kraviona.site");
       expect(history[1].changeNote).toBe("Switched primary dark to pure black");
       expect(history[1].tokens.colors.primaryDark).toBe("#000000");
     });

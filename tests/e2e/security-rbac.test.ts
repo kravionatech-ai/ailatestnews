@@ -167,7 +167,7 @@ export function evaluateMiddlewareSecurity(req: SimulatedRequest): SimulatedResp
 describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
   const superAdminUser: UserSession = {
     userId: "usr-super-1",
-    email: "super@ainews.kraviona.com",
+    email: "super@kraviona.site",
     name: "Super Administrator",
     role: "super_admin",
     isActive: true,
@@ -175,7 +175,7 @@ describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
 
   const adminUser: UserSession = {
     userId: "usr-admin-1",
-    email: "admin@ainews.kraviona.com",
+    email: "admin@kraviona.site",
     name: "Site Administrator",
     role: "admin",
     isActive: true,
@@ -183,7 +183,7 @@ describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
 
   const editorUser: UserSession = {
     userId: "usr-editor-1",
-    email: "editor@ainews.kraviona.com",
+    email: "editor@kraviona.site",
     name: "Section Editor",
     role: "editor",
     isActive: true,
@@ -191,7 +191,7 @@ describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
 
   const authorUser: UserSession = {
     userId: "usr-author-1",
-    email: "author@ainews.kraviona.com",
+    email: "author@kraviona.site",
     name: "Contributing Author",
     role: "author",
     isActive: true,
@@ -361,7 +361,7 @@ describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
 
   describe("Tier 4: Cross-Origin Framing & Clickjacking Defense", () => {
     it("validates that SAMEORIGIN policy allows same-origin preview while blocking 3rd-party frames", () => {
-      const allowedOrigin = "https://ainews.kraviona.com";
+      const allowedOrigin = "https://kraviona.site";
       const attackerOrigin = "https://evil-clickjack.org";
 
       const isFrameAllowed = (parentOrigin: string, childOrigin: string, header: string): boolean => {

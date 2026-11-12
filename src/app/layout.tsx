@@ -6,6 +6,12 @@ import { getActiveDesignTokens } from "@/lib/design-tokens/service";
 import { generateCssVariables } from "@/lib/design-tokens/css-generator";
 import { DEFAULT_DESIGN_TOKENS } from "@/lib/design-tokens/defaults";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import {
+  getGaId,
+  getGoogleSiteVerification,
+  getGtmId,
+  getSiteUrl,
+} from "@/lib/seo/domain";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,9 +37,11 @@ const lora = Lora({
   variable: "--font-lora",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ainews.kraviona.com";
+const siteUrl = getSiteUrl();
 const siteName = "Kraviona AI News";
-const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-RC5GPJKKW2";
+const gtmId = getGtmId();
+const gaId = getGaId();
+const googleVerification = getGoogleSiteVerification();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -111,7 +119,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "yYmrp2HizDB-EGRruieHxpCxHFLCqmFsQblkGULJHtc",
+    google: googleVerification,
   },
 };
 
@@ -242,24 +250,28 @@ export default async function RootLayout({
         <JsonLd />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="manifest" href="/manifest.webmanifest" />
-        {gaId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${gaId}');
-              `}
-            </Script>
-          </>
+        {gtmId && (
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
+          />
+        )}
+        {(gtmId || gaId) && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());${gaId ? `\ngtag('config', '${gaId}');` : ""}`,
+            }}
+          />
         )}
       </head>
       <body className="min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--foreground)] selection:bg-[var(--accent)] selection:text-white">
+        {gaId && (
+          <Script
+            id="google-analytics-gtag"
+            src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+            strategy="afterInteractive"
+          />
+        )}
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

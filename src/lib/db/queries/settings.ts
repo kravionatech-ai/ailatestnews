@@ -2,6 +2,13 @@ import { cache } from "react";
 import { connectDB } from "../connection";
 import { Setting } from "../models";
 import type { IGlobalSettings } from "../models/setting.model";
+import {
+  getSiteHostname,
+  getSiteUrl,
+  replaceLegacyHostText,
+  resolveEffectiveSiteUrl,
+  rewriteLegacyOriginUrl,
+} from "@/lib/seo/domain";
 
 // In-memory cache with 60-second TTL to avoid redundant MongoDB Atlas network roundtrips
 let cachedSettings: Partial<IGlobalSettings> | null = null;
@@ -18,11 +25,14 @@ export const getGlobalSettings = cache(async function getGlobalSettings(): Promi
     return cachedSettings;
   }
 
+  const canonicalSiteUrl = getSiteUrl();
+  const canonicalHost = getSiteHostname(canonicalSiteUrl);
+
   // Fallback defaults if no record exists yet or connection unavailable
   const fallback: Partial<IGlobalSettings> = {
     siteName: "Kraviona AI News",
     tagline: "AI, Technology, Research and Innovation Intelligence",
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com",
+    siteUrl: canonicalSiteUrl,
     separator: "|",
     navigation: [
       { label: "Home", href: "/", order: 1 },
@@ -38,7 +48,7 @@ export const getGlobalSettings = cache(async function getGlobalSettings(): Promi
     footer: {
       aboutText:
         "Kraviona AI News delivers independent, deeply researched intelligence on artificial intelligence, foundation models, scientific papers, developer tools, startups, cybersecurity, and compute infrastructure.",
-      copyrightText: "Kraviona AI News (ainews.kraviona.com). All rights reserved.",
+      copyrightText: `Kraviona AI News (${canonicalHost}). All rights reserved.`,
       sections: [
         {
           title: "Categories",
@@ -84,7 +94,30 @@ export const getGlobalSettings = cache(async function getGlobalSettings(): Promi
     await connectDB();
     const settings = await Setting.findOne().lean();
     if (settings) {
-      const parsed = JSON.parse(JSON.stringify(settings));
+      const parsed = JSON.parse(JSON.stringify(settings)) as Partial<IGlobalSettings>;
+      const effectiveSiteUrl = resolveEffectiveSiteUrl(parsed.siteUrl, canonicalSiteUrl);
+      parsed.siteUrl = effectiveSiteUrl;
+      if (parsed.defaultOgImage) {
+        parsed.defaultOgImage = rewriteLegacyOriginUrl(parsed.defaultOgImage, effectiveSiteUrl);
+      }
+      if (parsed.organization) {
+        parsed.organization.url = resolveEffectiveSiteUrl(
+          parsed.organization.url,
+          effectiveSiteUrl
+        );
+        if (parsed.organization.logo) {
+          parsed.organization.logo = rewriteLegacyOriginUrl(
+            parsed.organization.logo,
+            effectiveSiteUrl
+          );
+        }
+      }
+      if (parsed.footer?.copyrightText) {
+        parsed.footer.copyrightText = replaceLegacyHostText(
+          parsed.footer.copyrightText,
+          effectiveSiteUrl
+        );
+      }
       cachedSettings = parsed;
       cacheExpiresAt = now + 60_000; // 60 seconds
       return parsed;

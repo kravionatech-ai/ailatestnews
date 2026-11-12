@@ -6,6 +6,7 @@ import { Setting, AuditLog } from "@/lib/db/models";
 import { auth } from "@/lib/auth/auth";
 import { invalidateSettingsCache } from "@/lib/db/queries/settings";
 import { triggerSeoRevalidation } from "@/lib/seo/revalidate-and-ping";
+import { getSiteUrl, normalizeSiteUrl } from "@/lib/seo/domain";
 
 export async function saveGlobalSettingsAction(formData: FormData) {
   try {
@@ -20,10 +21,9 @@ export async function saveGlobalSettingsAction(formData: FormData) {
     const tagline =
       (formData.get("tagline") as string)?.trim() ||
       "AI news, tools and guides, explained for India";
-    const siteUrl =
-      (formData.get("siteUrl") as string)?.trim() ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://ainews.kraviona.com";
+    const siteUrl = normalizeSiteUrl(
+      (formData.get("siteUrl") as string)?.trim() || getSiteUrl()
+    );
     const separator = (formData.get("separator") as string)?.trim() || "|";
     const defaultOgImage =
       (formData.get("defaultOgImage") as string)?.trim() ||

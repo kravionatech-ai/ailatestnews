@@ -41,23 +41,26 @@ import * as sitemapNewsRedirectRoute from "@/app/sitemap-news.xml/route";
 import * as robotsRoute from "@/app/robots.txt/route";
 
 describe("SEO Sitemap, News & RSS Feed Engine", () => {
-  const siteUrl = "https://ainews.kraviona.com";
+  const siteUrl = "https://kraviona.site";
 
   describe("resolveCanonicalEntryUrl", () => {
     it("resolves root and relative paths against siteUrl", () => {
-      expect(resolveCanonicalEntryUrl("/", siteUrl)).toBe("https://ainews.kraviona.com");
+      expect(resolveCanonicalEntryUrl("/", siteUrl)).toBe("https://kraviona.site");
       expect(resolveCanonicalEntryUrl("/ai-report-2026", siteUrl)).toBe(
-        "https://ainews.kraviona.com/ai-report-2026"
+        "https://kraviona.site/ai-report-2026"
       );
       expect(resolveCanonicalEntryUrl("benchmarks/llm", `${siteUrl}/`)).toBe(
-        "https://ainews.kraviona.com/benchmarks/llm"
+        "https://kraviona.site/benchmarks/llm"
       );
     });
 
-    it("preserves valid http/https absolute URLs", () => {
+    it("preserves valid http/https absolute URLs and rewrites legacy origins", () => {
       expect(
-        resolveCanonicalEntryUrl("https://ainews.kraviona.com/blog/test?ref=rss", siteUrl)
-      ).toBe("https://ainews.kraviona.com/blog/test?ref=rss");
+        resolveCanonicalEntryUrl("https://kraviona.site/blog/test?ref=rss", siteUrl)
+      ).toBe("https://kraviona.site/blog/test?ref=rss");
+      expect(
+        resolveCanonicalEntryUrl("https://ainews.kraviona.com/blog/legacy?ref=rss", siteUrl)
+      ).toBe("https://kraviona.site/blog/legacy?ref=rss");
     });
 
     it("rejects empty strings and unsafe URL schemes", () => {
@@ -81,7 +84,7 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
     it("does not double-escape titles or publication names in buildGoogleNewsXml", () => {
       const xml = buildGoogleNewsXml([
         {
-          url: "https://ainews.kraviona.com/blog/apple-gemini-update?a=1&b=2",
+          url: "https://kraviona.site/blog/apple-gemini-update?a=1&b=2",
           title: `Apple's AI & "Gemini" <2.5>`,
           publicationDate: "2026-11-11T08:00:00.000Z",
           publicationName: "Kraviona AI & Tech",
@@ -91,7 +94,7 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
 
       expect(xml).toContain(`<news:title>Apple&apos;s AI &amp; &quot;Gemini&quot; &lt;2.5&gt;</news:title>`);
       expect(xml).toContain(`<news:name>Kraviona AI &amp; Tech</news:name>`);
-      expect(xml).toContain(`<loc>https://ainews.kraviona.com/blog/apple-gemini-update?a=1&amp;b=2</loc>`);
+      expect(xml).toContain(`<loc>https://kraviona.site/blog/apple-gemini-update?a=1&amp;b=2</loc>`);
       expect(xml).not.toContain("&amp;amp;");
       expect(xml).not.toContain("&amp;apos;");
       expect(xml).not.toContain("&amp;quot;");
@@ -145,7 +148,7 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
       },
       {
         id: "4",
-        url: "https://ainews.kraviona.com/feed-only-item",
+        url: "https://kraviona.site/feed-only-item",
         title: "Feed Only Item",
         changeFrequency: "weekly",
         priority: 0.7,
@@ -160,7 +163,7 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
       const routes = buildCustomSitemapRoutes(baseEntries, siteUrl, ["/secret/*"]);
       expect(routes).toHaveLength(1);
       expect(routes[0]).toEqual({
-        url: "https://ainews.kraviona.com/special-report",
+        url: "https://kraviona.site/special-report",
         lastModified: "2026-11-11T06:00:00.000Z",
         changeFrequency: "daily",
         priority: "1.0", // rounded cleanly to 1 decimal place
@@ -170,13 +173,13 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
     it("deduplicates URLs letting later overrides win", () => {
       const merged = deduplicateSitemapEntries([
         {
-          url: "https://ainews.kraviona.com/special-report",
+          url: "https://kraviona.site/special-report",
           lastModified: "2026-11-01T00:00:00.000Z",
           changeFrequency: "monthly",
           priority: "0.5",
         },
         {
-          url: "https://ainews.kraviona.com/special-report",
+          url: "https://kraviona.site/special-report",
           lastModified: "2026-11-11T06:00:00.000Z",
           changeFrequency: "daily",
           priority: "1.0",
@@ -254,11 +257,11 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
       });
 
       expect(customNews).toHaveLength(1);
-      expect(customNews[0]?.url).toBe("https://ainews.kraviona.com/breaking-ai-brief");
+      expect(customNews[0]?.url).toBe("https://kraviona.site/breaking-ai-brief");
 
       const merged = mergeNewsItems([
         {
-          url: "https://ainews.kraviona.com/blog/older-post",
+          url: "https://kraviona.site/blog/older-post",
           title: "Older Auto Post",
           publicationDate: "2026-11-10T10:00:00.000Z",
           publicationName: "Kraviona AI News",
@@ -302,8 +305,8 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
       expect(rssXml).toContain(`<rss version="2.0"`);
       expect(rssXml).toContain(`xmlns:dc="http://purl.org/dc/elements/1.1/"`);
       expect(rssXml).toContain(`<title>Kraviona AI News — RSS Feed</title>`);
-      expect(rssXml).toContain(`<atom:link href="https://ainews.kraviona.com/feed.xml"`);
-      expect(rssXml).toContain(`<guid isPermaLink="true">https://ainews.kraviona.com/guide-2026</guid>`);
+      expect(rssXml).toContain(`<atom:link href="https://kraviona.site/feed.xml"`);
+      expect(rssXml).toContain(`<guid isPermaLink="true">https://kraviona.site/guide-2026</guid>`);
       expect(rssXml).toContain(`<dc:creator><![CDATA[Editorial Desk]]></dc:creator>`);
       expect(rssXml).not.toContain(`<author>`);
       expect(rssXml).toContain(`]]]]><![CDATA[>`);
@@ -444,25 +447,25 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
 
       const collections = await getAllSitemapCollections(mockSettings);
       expect(collections.postRoutes.map((r) => r.url)).toEqual([
-        "https://ainews.kraviona.com/blog/fresh-news-with-amp",
-        "https://ainews.kraviona.com/blog/published-no-published-at",
+        "https://kraviona.site/blog/fresh-news-with-amp",
+        "https://kraviona.site/blog/published-no-published-at",
       ]);
       expect(collections.pageRoutes.map((r) => r.url)).toEqual([
-        "https://ainews.kraviona.com/enterprise-ai-guide",
+        "https://kraviona.site/enterprise-ai-guide",
       ]);
       expect(collections.customRoutes.map((r) => r.url)).toEqual([
-        "https://ainews.kraviona.com/custom-launch",
+        "https://kraviona.site/custom-launch",
       ]);
 
       const newsItems = await getGoogleNewsArticles(mockSettings);
       expect(newsItems.map((i) => i.url)).toContain(
-        "https://ainews.kraviona.com/blog/published-no-published-at"
+        "https://kraviona.site/blog/published-no-published-at"
       );
       expect(newsItems.map((i) => i.url)).toContain(
-        "https://ainews.kraviona.com/custom-launch"
+        "https://kraviona.site/custom-launch"
       );
       expect(newsItems.map((i) => i.url)).not.toContain(
-        "https://ainews.kraviona.com/blog/excluded-post"
+        "https://kraviona.site/blog/excluded-post"
       );
 
       const newsXml = buildGoogleNewsXml(newsItems);
@@ -471,13 +474,13 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
 
       const feedItems = await getRssFeedItems(mockSettings, 10);
       expect(feedItems.map((f) => f.url)).toContain(
-        "https://ainews.kraviona.com/blog/fresh-news-with-amp"
+        "https://kraviona.site/blog/fresh-news-with-amp"
       );
       expect(feedItems.map((f) => f.url)).toContain(
-        "https://ainews.kraviona.com/custom-launch"
+        "https://kraviona.site/custom-launch"
       );
       expect(feedItems.map((f) => f.url)).not.toContain(
-        "https://ainews.kraviona.com/blog/noindex-post"
+        "https://kraviona.site/blog/noindex-post"
       );
     });
   });
@@ -511,7 +514,7 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
 
     it("includes /sitemap in static routes and preserves RSS autodiscovery in buildEntityMetadata", async () => {
       const staticRoutes = getCoreStaticSitemapEntries(siteUrl);
-      expect(staticRoutes.map((r) => r.url)).toContain("https://ainews.kraviona.com/sitemap");
+      expect(staticRoutes.map((r) => r.url)).toContain("https://kraviona.site/sitemap");
 
       vi.spyOn(Setting, "findOne").mockReturnValueOnce(
         {
@@ -541,7 +544,7 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
 
       expect(htmlImages).toHaveLength(2);
       expect(htmlImages[0]).toEqual({
-        loc: "https://ainews.kraviona.com/uploads/chart.png",
+        loc: "https://kraviona.site/uploads/chart.png",
         caption: "Benchmark Chart",
         title: "Chart Title",
       });
@@ -589,7 +592,7 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
       expect(entries).toHaveLength(1);
       expect(entries[0]?.images.map((i) => i.loc)).toEqual([
         "https://res.cloudinary.com/demo/image/upload/hero.jpg",
-        "https://ainews.kraviona.com/uploads/diagram.png",
+        "https://kraviona.site/uploads/diagram.png",
       ]);
 
       const xml = buildImageSitemapXml(entries);
@@ -604,13 +607,13 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
     });
 
     it("matches excluded URLs by exact path, suffix, or wildcard", () => {
-      expect(isUrlExcluded("https://ainews.kraviona.com/blog/secret-draft", ["/blog/secret-*"])).toBe(
+      expect(isUrlExcluded("https://kraviona.site/blog/secret-draft", ["/blog/secret-*"])).toBe(
         true
       );
-      expect(isUrlExcluded("https://ainews.kraviona.com/private-page", ["/private-page"])).toBe(
+      expect(isUrlExcluded("https://kraviona.site/private-page", ["/private-page"])).toBe(
         true
       );
-      expect(isUrlExcluded("https://ainews.kraviona.com/blog/public", ["/private-page"])).toBe(
+      expect(isUrlExcluded("https://kraviona.site/blog/public", ["/private-page"])).toBe(
         false
       );
     });

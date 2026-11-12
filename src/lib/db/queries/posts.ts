@@ -2,6 +2,11 @@ import { cache } from "react";
 import { connectDB } from "../connection";
 import { Post, Category, Tag, User } from "../models";
 import { auth } from "@/lib/auth/auth";
+import {
+  getSiteUrl,
+  rewriteLegacyHtmlUrls,
+  rewriteLegacyOriginUrl,
+} from "@/lib/seo/domain";
 
 export interface GetPostsOptions {
   page?: number;
@@ -200,8 +205,42 @@ export const getPostBySlug = cache(async function getPostBySlug(
         .lean(),
     ]);
 
+    const siteUrl = getSiteUrl();
+    const serializedPost = JSON.parse(JSON.stringify(post));
+    if (typeof serializedPost.contentHtml === "string") {
+      serializedPost.contentHtml = rewriteLegacyHtmlUrls(serializedPost.contentHtml, siteUrl);
+    }
+    if (serializedPost.coverImage) {
+      serializedPost.coverImage = rewriteLegacyOriginUrl(serializedPost.coverImage, siteUrl);
+    }
+    if (serializedPost.seo) {
+      if (serializedPost.seo.canonicalUrl) {
+        serializedPost.seo.canonicalUrl = rewriteLegacyOriginUrl(
+          serializedPost.seo.canonicalUrl,
+          siteUrl
+        );
+      }
+      if (serializedPost.seo.ogImage) {
+        serializedPost.seo.ogImage = rewriteLegacyOriginUrl(serializedPost.seo.ogImage, siteUrl);
+      }
+      if (serializedPost.seo.schemaOverrides) {
+        serializedPost.seo.schemaOverrides = rewriteLegacyHtmlUrls(
+          serializedPost.seo.schemaOverrides,
+          siteUrl
+        );
+      }
+      if (Array.isArray(serializedPost.seo.hreflang)) {
+        serializedPost.seo.hreflang = serializedPost.seo.hreflang.map(
+          (item: { lang?: string; url?: string }) => ({
+            ...item,
+            ...(item.url ? { url: rewriteLegacyOriginUrl(item.url, siteUrl) } : {}),
+          })
+        );
+      }
+    }
+
     return {
-      post: JSON.parse(JSON.stringify(post)),
+      post: serializedPost,
       relatedPosts: JSON.parse(JSON.stringify(relatedPosts)),
       latestPosts: JSON.parse(JSON.stringify(latestPosts)),
       prevPost: prevPost ? JSON.parse(JSON.stringify(prevPost)) : null,

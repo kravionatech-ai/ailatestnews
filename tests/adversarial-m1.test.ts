@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/db/connection";
 import { DesignConfig, IDesignConfigSnapshot, IDesignConfigDocument } from "@/lib/db/models/design-config.model";
-import { middleware } from "@/middleware";
+import { proxy as middleware } from "@/proxy";
 import { DEFAULT_DESIGN_TOKENS } from "@/lib/design-tokens/defaults";
 import { DEFAULT_HOMEPAGE_SECTIONS } from "@/lib/design-tokens/sections";
 
@@ -629,13 +629,13 @@ describe("Milestone 1 Adversarial Empirical Verification Suite", () => {
   describe("5. Preview Security & Edge Middleware Route Guards", () => {
     it("returns HTTP 401 JSON for unauthenticated requests to /api/admin/* endpoints", async () => {
       const adminEndpoints = [
-        "https://ainews.kraviona.com/api/admin/media",
-        "https://ainews.kraviona.com/api/admin/media/upload",
-        "https://ainews.kraviona.com/api/admin/seo/ai-generate",
-        "https://ainews.kraviona.com/api/admin/seo/indexnow",
-        "https://ainews.kraviona.com/api/admin/analytics",
-        "https://ainews.kraviona.com/api/admin/design-config/preview",
-        "https://ainews.kraviona.com/api/admin/any-arbitrary-subroute",
+        "https://kraviona.site/api/admin/media",
+        "https://kraviona.site/api/admin/media/upload",
+        "https://kraviona.site/api/admin/seo/ai-generate",
+        "https://kraviona.site/api/admin/seo/indexnow",
+        "https://kraviona.site/api/admin/analytics",
+        "https://kraviona.site/api/admin/design-config/preview",
+        "https://kraviona.site/api/admin/any-arbitrary-subroute",
       ];
 
       for (const url of adminEndpoints) {
@@ -658,7 +658,7 @@ describe("Milestone 1 Adversarial Empirical Verification Suite", () => {
       ];
 
       for (const tokenVal of testCases) {
-        const req = new NextRequest("https://ainews.kraviona.com/api/admin/media", {
+        const req = new NextRequest("https://kraviona.site/api/admin/media", {
           headers: {
             cookie: `authjs.session-token=${tokenVal}`,
           },
@@ -671,7 +671,7 @@ describe("Milestone 1 Adversarial Empirical Verification Suite", () => {
     });
 
     it("redirects unauthenticated requests to /admin UI with callbackUrl", () => {
-      const req = new NextRequest("https://ainews.kraviona.com/admin/design-studio");
+      const req = new NextRequest("https://kraviona.site/admin/design-studio");
       const res = middleware(req);
 
       expect(res.status).toBe(307);
@@ -681,20 +681,20 @@ describe("Milestone 1 Adversarial Empirical Verification Suite", () => {
 
     it("blocks unauthorized live preview attempts without valid secret or session", () => {
       // 1. Attacker requests preview without secret or session
-      const req1 = new NextRequest("https://ainews.kraviona.com/?preview=draft");
+      const req1 = new NextRequest("https://kraviona.site/?preview=draft");
       const res1 = middleware(req1);
       expect(res1.status).toBe(200);
       expect(res1.headers.get("X-Robots-Tag")).toBeNull();
 
       // 2. Attacker provides incorrect preview secret
-      const req2 = new NextRequest("https://ainews.kraviona.com/?preview=draft&secret=invalid-secret-key");
+      const req2 = new NextRequest("https://kraviona.site/?preview=draft&secret=invalid-secret-key");
       const res2 = middleware(req2);
       expect(res2.headers.get("X-Robots-Tag")).toBeNull();
 
       // 3. Attacker provides empty secret param
-      const req3 = new NextRequest("https://ainews.kraviona.com/?preview=draft&secret=");
+      const req3 = new NextRequest("https://kraviona.site/?preview=draft&secret=");
       const res3 = middleware(req3);
-      expect(res2.headers.get("X-Robots-Tag")).toBeNull();
+      expect(res3.headers.get("X-Robots-Tag")).toBeNull();
     });
 
     it("authorizes preview mode and sets noindex robots tag when valid preview secret matches env", () => {
@@ -702,7 +702,7 @@ describe("Milestone 1 Adversarial Empirical Verification Suite", () => {
       process.env.DESIGN_PREVIEW_SECRET = "super-secret-preview-token-777";
 
       try {
-        const req = new NextRequest("https://ainews.kraviona.com/?preview=draft&secret=super-secret-preview-token-777");
+        const req = new NextRequest("https://kraviona.site/?preview=draft&secret=super-secret-preview-token-777");
         const res = middleware(req);
 
         // Preview authorized: robots tag must prevent indexing
@@ -714,9 +714,9 @@ describe("Milestone 1 Adversarial Empirical Verification Suite", () => {
 
     it("strictly injects SAMEORIGIN framing and anti-clickjacking headers on reader and authenticated admin responses", () => {
       const testCases = [
-        { url: "https://ainews.kraviona.com/", cookie: "" },
-        { url: "https://ainews.kraviona.com/blog/sample-ai-post", cookie: "" },
-        { url: "https://ainews.kraviona.com/admin/design-studio", cookie: "authjs.session-token=valid-token" },
+        { url: "https://kraviona.site/", cookie: "" },
+        { url: "https://kraviona.site/blog/sample-ai-post", cookie: "" },
+        { url: "https://kraviona.site/admin/design-studio", cookie: "authjs.session-token=valid-token" },
       ];
 
       for (const { url, cookie } of testCases) {

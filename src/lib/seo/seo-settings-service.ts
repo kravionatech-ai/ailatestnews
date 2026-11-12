@@ -10,7 +10,14 @@ import {
   type ICustomSeoEntry,
   type SitemapChangeFrequency,
 } from "@/lib/db/models";
-import { getSiteUrl } from "./fallback";
+import {
+  getSiteUrl,
+  normalizeSiteUrl,
+  replaceLegacyHostText,
+  resolveEffectiveSiteUrl,
+  rewriteLegacyOriginUrl,
+  rewriteLegacyRobotsTxt,
+} from "./domain";
 
 export interface SitemapItem {
   url: string;
@@ -104,7 +111,7 @@ export function resolveCanonicalEntryUrl(rawUrl: string, siteUrl: string): strin
   const trimmed = (rawUrl || "").trim();
   if (!trimmed) return null;
 
-  const base = (siteUrl || getSiteUrl()).trim().replace(/\/$/, "");
+  const base = normalizeSiteUrl(siteUrl || getSiteUrl());
   const lower = trimmed.toLowerCase();
 
   // Reject unsafe schemes explicitly
@@ -114,7 +121,7 @@ export function resolveCanonicalEntryUrl(rawUrl: string, siteUrl: string): strin
 
   let candidate: string;
   if (lower.startsWith("http://") || lower.startsWith("https://")) {
-    candidate = trimmed;
+    candidate = rewriteLegacyOriginUrl(trimmed, base);
   } else {
     const path = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
     candidate = path === "/" ? base : `${base}${path}`;
@@ -131,6 +138,33 @@ export function resolveCanonicalEntryUrl(rawUrl: string, siteUrl: string): strin
   } catch {
     return null;
   }
+}
+
+/**
+ * Normalize an ISeoSettings object for Admin UI display without writing back to MongoDB.
+ */
+export function normalizeSeoSettingsForDisplay(raw: ISeoSettings): ISeoSettings {
+  const cloned = JSON.parse(JSON.stringify(raw)) as ISeoSettings;
+  const effectiveSiteUrl = resolveEffectiveSiteUrl(cloned.sitemap?.siteUrl);
+  if (cloned.sitemap) {
+    cloned.sitemap.siteUrl = effectiveSiteUrl;
+  }
+  if (cloned.robots) {
+    cloned.robots.sitemaps = Array.from(
+      new Set(
+        (cloned.robots.sitemaps || [])
+          .map((s) => rewriteLegacyOriginUrl(s, effectiveSiteUrl))
+          .filter(Boolean)
+      )
+    );
+    if (cloned.robots.rawContent) {
+      cloned.robots.rawContent = rewriteLegacyRobotsTxt(
+        cloned.robots.rawContent,
+        effectiveSiteUrl
+      ).trim();
+    }
+  }
+  return cloned;
 }
 
 /**
@@ -360,7 +394,7 @@ export function deduplicateSitemapEntries(entries: SitemapItem[]): SitemapItem[]
  */
 export async function getAllSitemapCollections(settings: ISeoSettings) {
   await connectDB();
-  const siteUrl = (settings.sitemap.siteUrl || getSiteUrl()).replace(/\/$/, "");
+  const siteUrl = resolveEffectiveSiteUrl(settings.sitemap.siteUrl);
   const excluded = settings.sitemap.excludedUrls || [];
 
   const [posts, categories, tags, pages] = await Promise.all([
@@ -632,7 +666,7 @@ export async function getImageSitemapEntries(settings: ISeoSettings): Promise<Im
   }
 
   await connectDB();
-  const siteUrl = (settings.sitemap.siteUrl || getSiteUrl()).replace(/\/$/, "");
+  const siteUrl = resolveEffectiveSiteUrl(settings.sitemap.siteUrl);
   const excluded = settings.sitemap.excludedUrls || [];
 
   const posts = await Post.find({ status: "published" })
@@ -789,7 +823,7 @@ export function mergeNewsItems(items: NewsSitemapItem[]): NewsSitemapItem[] {
  */
 export async function getGoogleNewsArticles(settings: ISeoSettings): Promise<NewsSitemapItem[]> {
   await connectDB();
-  const siteUrl = (settings.sitemap.siteUrl || getSiteUrl()).replace(/\/$/, "");
+  const siteUrl = resolveEffectiveSiteUrl(settings.sitemap.siteUrl);
   const configuredHours = settings.sitemap.newsTimeWindowHours || 48;
   const timeWindowHours = Math.min(Math.max(1, configuredHours), 48);
   const cutoffDate = new Date(Date.now() - timeWindowHours * 60 * 60 * 1000);
@@ -912,7 +946,7 @@ export function buildCustomFeedItems(
  */
 export async function getRssFeedItems(settings: ISeoSettings, limit = 30): Promise<RssFeedItem[]> {
   await connectDB();
-  const siteUrl = (settings.sitemap.siteUrl || getSiteUrl()).replace(/\/$/, "");
+  const siteUrl = resolveEffectiveSiteUrl(settings.sitemap.siteUrl);
   const excluded = settings.sitemap.excludedUrls || [];
 
   const posts = await Post.find({ status: "published" })
@@ -972,12 +1006,15 @@ export function buildRssFeedXml(
     language?: string;
   }
 ): string {
-  const siteUrl = (meta.siteUrl || getSiteUrl()).replace(/\/$/, "");
+  const siteUrl = resolveEffectiveSiteUrl(meta.siteUrl);
   const displayName =
     !meta.siteName || meta.siteName === "AI Latest News"
       ? "Kraviona AI News"
       : meta.siteName;
-  const tagline = meta.tagline || "AI, Technology, Research and Innovation Intelligence";
+  const tagline = replaceLegacyHostText(
+    meta.tagline || "AI, Technology, Research and Innovation Intelligence",
+    siteUrl
+  );
   const language = meta.language || "en";
   const lastBuildDate = items[0]?.publicationDate
     ? new Date(items[0].publicationDate).toUTCString()
@@ -1055,11 +1092,11 @@ export async function refreshSeoStatsSnapshot(existingSettings?: ISeoSettingsDoc
  */
 export function buildRobotsTxt(settings: ISeoSettings): string {
   const robots = settings.robots;
-  const siteUrl = (settings.sitemap.siteUrl || getSiteUrl()).replace(/\/$/, "");
+  const siteUrl = resolveEffectiveSiteUrl(settings.sitemap.siteUrl);
 
   // If custom raw content is enabled by administrator
   if (robots.customRawEnabled && robots.rawContent?.trim()) {
-    return robots.rawContent.trim() + "\n";
+    return rewriteLegacyRobotsTxt(robots.rawContent, siteUrl);
   }
 
   // If robots is entirely disabled, allow everything gracefully
@@ -1083,20 +1120,29 @@ export function buildRobotsTxt(settings: ISeoSettings): string {
     lines.push(""); // empty line between blocks
   }
 
-  // Sitemaps list
-  const sitemaps =
+  // Sitemaps list (normalized from any retired legacy host and deduplicated)
+  const rawSitemaps =
     robots.sitemaps && robots.sitemaps.length > 0
       ? robots.sitemaps
       : [`${siteUrl}/sitemap.xml`];
 
-  for (const sitemapUrl of sitemaps) {
-    if (sitemapUrl) lines.push(`Sitemap: ${sitemapUrl}`);
+  const normalizedSitemaps: string[] = [];
+  const seenSitemaps = new Set<string>();
+  for (const sitemapUrl of rawSitemaps) {
+    const rewritten = rewriteLegacyOriginUrl(sitemapUrl, siteUrl);
+    if (!rewritten) continue;
+    const key = rewritten.toLowerCase();
+    if (seenSitemaps.has(key)) continue;
+    seenSitemaps.add(key);
+    normalizedSitemaps.push(rewritten);
+    lines.push(`Sitemap: ${rewritten}`);
   }
 
   // Optional Image Sitemap inclusion
   if (settings.sitemap.includeArticles !== false) {
     const imageSitemapUrl = `${siteUrl}/image-sitemap.xml`;
-    if (!sitemaps.includes(imageSitemapUrl)) {
+    if (!seenSitemaps.has(imageSitemapUrl.toLowerCase())) {
+      seenSitemaps.add(imageSitemapUrl.toLowerCase());
       lines.push(`Sitemap: ${imageSitemapUrl}`);
     }
   }
@@ -1104,7 +1150,8 @@ export function buildRobotsTxt(settings: ISeoSettings): string {
   // Optional Google News sitemap inclusion
   if (robots.includeNewsSitemapInRobots && settings.sitemap.includeNewsSitemap) {
     const newsSitemapUrl = `${siteUrl}/news-sitemap.xml`;
-    if (!sitemaps.includes(newsSitemapUrl)) {
+    if (!seenSitemaps.has(newsSitemapUrl.toLowerCase())) {
+      seenSitemaps.add(newsSitemapUrl.toLowerCase());
       lines.push(`Sitemap: ${newsSitemapUrl}`);
     }
   }

@@ -29,8 +29,14 @@ import {
   buildRobotsTxt,
   resolveCanonicalEntryUrl,
   normalizeChangeFrequency,
+  normalizeSeoSettingsForDisplay,
 } from "@/lib/seo/seo-settings-service";
-import { getGlobalSeoSettings, getSiteUrl } from "@/lib/seo/fallback";
+import { getGlobalSeoSettings } from "@/lib/seo/fallback";
+import {
+  getSiteUrl,
+  normalizeSiteUrl,
+  resolveEffectiveSiteUrl,
+} from "@/lib/seo/domain";
 import { triggerSeoRevalidation } from "@/lib/seo/revalidate-and-ping";
 
 /**
@@ -131,7 +137,7 @@ export async function getSeoSettingsAction() {
 
     return {
       success: true,
-      settings: JSON.parse(JSON.stringify(settings)),
+      settings: normalizeSeoSettingsForDisplay(settings),
       stats,
     };
   } catch (err: unknown) {
@@ -165,10 +171,7 @@ export async function updateSitemapSettingsAction(formData: {
     await connectDB();
 
     // Sanitize siteUrl
-    let cleanSiteUrl = (formData.siteUrl || "https://ainews.kraviona.com").trim().replace(/\/$/, "");
-    if (!cleanSiteUrl.startsWith("http://") && !cleanSiteUrl.startsWith("https://")) {
-      cleanSiteUrl = `https://${cleanSiteUrl}`;
-    }
+    const cleanSiteUrl = normalizeSiteUrl(formData.siteUrl, getSiteUrl());
 
     // Sanitize excluded URLs
     const cleanExcluded = (formData.excludedUrls || [])
@@ -554,7 +557,7 @@ export async function updateRobotsSettingsAction(data: {
       sitemaps:
         sanitizedSitemaps.length > 0
           ? sanitizedSitemaps
-          : [`${settings.sitemap.siteUrl || "https://ainews.kraviona.com"}/sitemap.xml`],
+          : [`${resolveEffectiveSiteUrl(settings.sitemap.siteUrl)}/sitemap.xml`],
       includeNewsSitemapInRobots: Boolean(data.includeNewsSitemapInRobots),
       lastPublishedAt: new Date(),
     };
@@ -662,9 +665,8 @@ export async function previewSitemapXmlAction(
 
     if (type === "feed") {
       const globalSettings = await getGlobalSeoSettings();
-      const siteUrl = (settings.sitemap.siteUrl || globalSettings.siteUrl || getSiteUrl()).replace(
-        /\/$/,
-        ""
+      const siteUrl = resolveEffectiveSiteUrl(
+        settings.sitemap.siteUrl || globalSettings.siteUrl
       );
       const items = await getRssFeedItems(settings, 30);
       const xml = buildRssFeedXml(items, {

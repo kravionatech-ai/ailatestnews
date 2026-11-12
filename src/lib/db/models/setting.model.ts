@@ -1,4 +1,5 @@
 import mongoose, { Schema, type Document, type Model } from "mongoose";
+import { getSiteHostname, getSiteUrl } from "@/lib/seo/domain";
 
 export interface ISeoTemplateConfig {
   titleTemplate: string;
@@ -100,7 +101,7 @@ const SettingSchema = new Schema<IGlobalSettings>(
     tagline: { type: String, default: "AI news, tools and guides, explained for India" },
     siteUrl: {
       type: String,
-      default: process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com",
+      default: () => getSiteUrl(),
     },
     separator: { type: String, default: "|" },
     defaultOgImage: {
@@ -166,7 +167,7 @@ const SettingSchema = new Schema<IGlobalSettings>(
     organization: {
       name: { type: String, default: "AI Latest News" },
       logo: { type: String, default: "" },
-      url: { type: String, default: "https://ainews.kraviona.com" },
+      url: { type: String, default: () => getSiteUrl() },
       description: {
         type: String,
         default: "Independent publication covering artificial intelligence, foundation models, and sovereign computing with an India lens.",
@@ -230,7 +231,7 @@ const SettingSchema = new Schema<IGlobalSettings>(
       },
       copyrightText: {
         type: String,
-        default: "AI Latest News (ainews.kraviona.com). All rights reserved.",
+        default: () => `Kraviona AI News (${getSiteHostname()}). All rights reserved.`,
       },
       sections: {
         type: [

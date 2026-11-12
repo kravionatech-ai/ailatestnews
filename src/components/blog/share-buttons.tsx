@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Link as LinkIcon, Check, Share2 } from "lucide-react";
 import { TwitterIcon, LinkedinIcon } from "@/components/ui/icons";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 export function ShareButtons({ title, slug }: { title: string; slug: string }) {
   const [copied, setCopied] = useState(false);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl = getSiteUrl();
   const postUrl = `${siteUrl}/blog/${slug}`;
 
   const copyToClipboard = () => {

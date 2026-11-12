@@ -8,6 +8,7 @@
 
 import mongoose from "mongoose";
 import { User, Category, Tag, Post } from "../src/lib/db/models";
+import { getSiteUrl } from "../src/lib/seo/domain";
 
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/ailatestnews-dev";
@@ -763,7 +764,7 @@ export async function runImport(publishDirectly = false) {
         metaDescription: item.seo.metaDescription,
         focusKeyword: item.seo.focusKeyword,
         secondaryKeywords: item.seo.secondaryKeywords,
-        canonicalUrl: `https://ainews.kraviona.com/blog/${item.slug}`,
+        canonicalUrl: `${getSiteUrl()}/blog/${item.slug}`,
         robots: {
           index: publishDirectly,
           follow: true,

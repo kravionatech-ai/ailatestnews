@@ -1,4 +1,5 @@
 import mongoose, { Schema, type Document, type Model, type Types } from "mongoose";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 export type SitemapChangeFrequency =
   | "always"
@@ -117,7 +118,7 @@ const SitemapSettingsSchema = new Schema<ISitemapSettings>(
     enabled: { type: Boolean, default: true },
     siteUrl: {
       type: String,
-      default: process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com",
+      default: () => getSiteUrl(),
     },
     includeArticles: { type: Boolean, default: true },
     includeCategories: { type: Boolean, default: true },
@@ -155,10 +156,10 @@ const RobotsSettingsSchema = new Schema<IRobotsSettings>(
     },
     sitemaps: {
       type: [String],
-      default: () => [
-        `${process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}/sitemap.xml`,
-        `${process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}/image-sitemap.xml`,
-      ],
+      default: () => {
+        const base = getSiteUrl();
+        return [`${base}/sitemap.xml`, `${base}/image-sitemap.xml`];
+      },
     },
     includeNewsSitemapInRobots: { type: Boolean, default: true },
     lastPublishedAt: { type: Date },

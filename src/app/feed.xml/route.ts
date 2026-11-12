@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getGlobalSeoSettings, getSiteUrl } from "@/lib/seo/fallback";
+import { getGlobalSeoSettings } from "@/lib/seo/fallback";
+import { getSiteUrl, resolveEffectiveSiteUrl } from "@/lib/seo/domain";
 import {
   getOrInitSeoSettings,
   getRssFeedItems,
@@ -17,9 +18,8 @@ export async function GET() {
       getGlobalSeoSettings(),
     ]);
 
-    const siteUrl = (seoSettings.sitemap?.siteUrl || globalSettings.siteUrl || getSiteUrl()).replace(
-      /\/$/,
-      ""
+    const siteUrl = resolveEffectiveSiteUrl(
+      seoSettings.sitemap?.siteUrl || globalSettings.siteUrl
     );
     const feedItems = await getRssFeedItems(seoSettings, 30);
 

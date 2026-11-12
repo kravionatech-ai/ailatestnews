@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { createPageAction, updatePageAction } from "@/actions/pages";
 import { slugify } from "@/lib/utils";
+import { getSiteUrl } from "@/lib/seo/domain";
 import { SeoEditorPanel } from "@/components/admin/seo/seo-editor-panel";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { analyzeSeoContent } from "@/lib/seo/analyzer";
@@ -949,7 +950,7 @@ export function PageEditor({ initialData }: PageEditorProps) {
           slug={slug}
           contentHtml={contentHtml}
           excerpt={excerpt}
-          baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
+          baseUrl={getSiteUrl()}
         />
       )}
 

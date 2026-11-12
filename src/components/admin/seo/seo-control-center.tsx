@@ -41,6 +41,7 @@ import type {
   ICustomSeoEntry,
   SitemapChangeFrequency,
 } from "@/lib/db/models/seo-settings.model";
+import { getSiteUrl, normalizeSiteUrl } from "@/lib/seo/domain";
 
 interface SeoControlCenterProps {
   initialSettings: ISeoSettings;
@@ -84,7 +85,7 @@ function toDateTimeLocalInput(val?: string | Date): string {
 }
 
 function computeCanonicalPreview(rawUrl: string, siteUrl: string): string {
-  const base = (siteUrl || "https://ainews.kraviona.com").trim().replace(/\/$/, "");
+  const base = normalizeSiteUrl(siteUrl, getSiteUrl());
   const trimmed = (rawUrl || "").trim();
   if (!trimmed) return `${base}/your-path`;
   if (/^https?:\/\//i.test(trimmed)) return trimmed;
@@ -821,7 +822,7 @@ export function SeoControlCenter({
                     sitemap: { ...settings.sitemap, siteUrl: e.target.value },
                   })
                 }
-                placeholder="https://ainews.kraviona.com"
+                placeholder={getSiteUrl()}
                 className="w-full max-w-xl px-3.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--color-main-background)] text-xs font-mono text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
               />
               <p className="text-[11px] text-[var(--color-muted-text)]">
@@ -1176,7 +1177,7 @@ export function SeoControlCenter({
                     type="text"
                     value={customUrl}
                     onChange={(e) => setCustomUrl(e.target.value)}
-                    placeholder="/special-ai-report-2026 or https://ainews.kraviona.com/..."
+                    placeholder={`/special-ai-report-2026 or ${getSiteUrl()}/...`}
                     className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--color-card-background)] text-xs font-mono text-[var(--color-heading)] focus:outline-none focus:border-[var(--accent)]"
                   />
                   <p className="text-[11px] text-[var(--color-muted-text)] truncate">
@@ -1836,7 +1837,7 @@ export function SeoControlCenter({
                       robots: { ...settings.robots, rawContent: e.target.value },
                     })
                   }
-                  placeholder={`User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: https://ainews.kraviona.com/sitemap.xml`}
+                  placeholder={`User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${getSiteUrl()}/sitemap.xml`}
                   className="w-full p-4 rounded-2xl border border-[var(--border)] bg-[#101820] font-mono text-xs text-emerald-400 focus:outline-none focus:border-[var(--accent)] leading-relaxed"
                 />
                 <p className="text-[11px] text-[var(--color-muted-text)]">

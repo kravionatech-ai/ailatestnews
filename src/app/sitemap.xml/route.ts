@@ -9,6 +9,7 @@ import {
   NO_CACHE_XML_HEADERS,
 } from "@/lib/seo/seo-settings-service";
 import SeoSettings from "@/lib/db/models/seo-settings.model";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -129,11 +130,12 @@ export async function GET() {
     SeoSettings.updateOne({}, { $set: { "sitemap.lastError": msg } }).catch(() => {});
 
     // Fail safely without publishing malformed XML
+    const siteUrl = getSiteUrl();
     const fallbackXml = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Sitemap generation encountered a temporary database or runtime error. Safe fallback rendered. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ainews.kraviona.com</loc>
+    <loc>${siteUrl}</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

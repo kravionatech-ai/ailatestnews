@@ -4,7 +4,7 @@ import { buildEntityMetadata, getSiteUrl } from "@/lib/seo/fallback";
 describe("Data-driven SEO & Global Metadata Integration", () => {
   const siteUrl = getSiteUrl();
 
-  it("buildEntityMetadata applies custom entity title and canonicalUrl accurately", async () => {
+  it("buildEntityMetadata applies custom entity title, canonicalUrl, and normalizes legacy canonical origins", async () => {
     const meta = await buildEntityMetadata({
       entityType: "page",
       path: "/about",
@@ -12,14 +12,25 @@ describe("Data-driven SEO & Global Metadata Integration", () => {
       excerpt: "Independent AI reporting for India.",
       entitySeo: {
         metaTitle: "Custom Meta Title Overridden",
-        canonicalUrl: "https://ainews.kraviona.com/about",
+        canonicalUrl: `${siteUrl}/about`,
         robots: { index: true, follow: true, maxImagePreview: "large" },
       },
     });
 
     expect(meta.title).toBe("Custom Meta Title Overridden");
-    expect(meta.alternates?.canonical).toBe("https://ainews.kraviona.com/about");
+    expect(meta.alternates?.canonical).toBe(`${siteUrl}/about`);
     expect(meta.robots).toHaveProperty("googleBot");
+
+    const migratedMeta = await buildEntityMetadata({
+      entityType: "page",
+      path: "/about",
+      title: "About Our AI Mission",
+      excerpt: "Independent AI reporting for India.",
+      entitySeo: {
+        canonicalUrl: "https://ainews.kraviona.com/about",
+      },
+    });
+    expect(migratedMeta.alternates?.canonical).toBe(`${siteUrl}/about`);
   });
 
   it("buildEntityMetadata handles home entity fallback seamlessly", async () => {

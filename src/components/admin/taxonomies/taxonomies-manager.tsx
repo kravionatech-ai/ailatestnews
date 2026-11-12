@@ -30,6 +30,7 @@ import {
 import { slugify } from "@/lib/utils";
 import { SeoEditorPanel } from "@/components/admin/seo/seo-editor-panel";
 import type { ISeoMetadata } from "@/lib/seo/types";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 interface CategoryData {
   _id: string;
@@ -784,7 +785,7 @@ function CategoryEditorModal({
               title={name}
               slug={slug}
               excerpt={description}
-              baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
+              baseUrl={getSiteUrl()}
             />
           )}
         </div>
@@ -952,7 +953,7 @@ function TagEditorModal({
                   title={name}
                   slug={slug}
                   excerpt={description}
-                  baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
+                  baseUrl={getSiteUrl()}
                 />
               </div>
             )}

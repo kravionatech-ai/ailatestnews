@@ -18,6 +18,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { saveGlobalSettingsAction } from "@/actions/settings";
+import { getSiteHostname, getSiteUrl } from "@/lib/seo/domain";
 
 interface SettingsEditorProps {
   initialSettings: any;
@@ -49,7 +50,7 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
   const defaultFooter = {
     aboutText:
       "Kraviona AI News — AI, Technology, Research and Innovation Intelligence. Independent reporting on foundational models, research breakthroughs, AI tools, startups, cybersecurity, and technology.",
-    copyrightText: "Kraviona AI News (ainews.kraviona.com). All rights reserved.",
+    copyrightText: `Kraviona AI News (${getSiteHostname()}). All rights reserved.`,
     sections: [
       {
         title: "Categories",
@@ -249,9 +250,9 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
               <input
                 type="url"
                 name="siteUrl"
-                defaultValue={settings.siteUrl || "https://ainews.kraviona.com"}
+                defaultValue={settings.siteUrl || getSiteUrl()}
                 className={`${inputCls} font-mono`}
-                placeholder="https://ainews.kraviona.com"
+                placeholder={getSiteUrl()}
                 required
               />
             </div>

@@ -3,6 +3,7 @@
 import { useState, useMemo, useId } from "react";
 import type { ISeoMetadata, EntityType } from "@/lib/seo/types";
 import { analyzeSeoContent, estimateTitlePixelWidth, estimateDescriptionPixelWidth } from "@/lib/seo/analyzer";
+import { getSiteUrl } from "@/lib/seo/domain";
 import {
   Sparkles,
   Globe,
@@ -44,7 +45,7 @@ export function SeoEditorPanel({
   contentHtml = "",
   coverImage = "",
   excerpt = "",
-  baseUrl = "https://ainews.kraviona.com",
+  baseUrl = getSiteUrl(),
 }: SeoEditorPanelProps) {
   const [activeTab, setActiveTab] = useState<"general" | "social" | "advanced" | "schema" | "preview">("general");
   const [serpDevice, setSerpDevice] = useState<"desktop" | "mobile">("desktop");

@@ -4,6 +4,7 @@ import os from "os";
 import path from "path";
 import { promisify } from "util";
 import mongoose from "mongoose";
+import { getSiteUrl, rewriteLegacyOriginUrl } from "../../src/lib/seo/domain";
 
 const execFileAsync = promisify(execFile);
 
@@ -1079,14 +1080,14 @@ function buildPostGoogleDocMarkdown(params: {
   localEmbeddableImagePath?: string;
 }): string {
   const { post, liveUrl } = params;
-  const siteUrl = (post.siteUrl || "https://ainews.kraviona.com").replace(/\/$/, "");
+  const siteUrl = post.siteUrl ? rewriteLegacyOriginUrl(post.siteUrl) : getSiteUrl();
   const seo = post.seo ?? {};
   const robots = seo.robots ?? {};
   const sitemap = seo.sitemap ?? {};
   const pubIst = formatIstDateTime(post.publishedAt);
   const robotsSummary = `index=${robots.index ?? true}, follow=${robots.follow ?? true}, noarchive=${robots.noarchive ?? false}, nosnippet=${robots.nosnippet ?? false}, maxImagePreview=${robots.maxImagePreview ?? "large"}`;
   const sitemapSummary = `include=${sitemap.include ?? true}, priority=${sitemap.priority ?? 0.9}, changefreq=${sitemap.changefreq ?? "daily"}`;
-  const bodyMd = htmlToMarkdownForGdoc(post.contentHtml, post.siteUrl || "https://ainews.kraviona.com");
+  const bodyMd = htmlToMarkdownForGdoc(post.contentHtml, siteUrl);
 
   const lines: string[] = [
     `# ${post.title}`,
@@ -1196,7 +1197,7 @@ export async function syncSinglePostToGoogleWorkspace(
   ctx?: WorkspaceContext
 ): Promise<SyncPostResult> {
   const workspace = ctx ?? (await initWorkspaceContext());
-  const siteUrl = (post.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com").replace(/\/$/, "");
+  const siteUrl = post.siteUrl ? rewriteLegacyOriginUrl(post.siteUrl) : getSiteUrl();
   const liveUrl = `${siteUrl}/blog/${post.slug}`;
   const pubDate = post.publishedAt instanceof Date ? post.publishedAt : new Date(post.publishedAt);
   const dateFolderName = formatIstDate(pubDate);

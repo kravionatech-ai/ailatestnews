@@ -9,6 +9,7 @@ import {
   getGoogleNewsArticles,
   getRssFeedItems,
   deduplicateSitemapEntries,
+  normalizeSeoSettingsForDisplay,
 } from "@/lib/seo/seo-settings-service";
 
 export const dynamic = "force-dynamic";
@@ -162,7 +163,7 @@ export default async function AdminSeoPage({ searchParams }: AdminSeoPageProps) 
 
   return (
     <SeoManagementView
-      initialSettings={JSON.parse(JSON.stringify(settings))}
+      initialSettings={normalizeSeoSettingsForDisplay(settings)}
       stats={stats}
       indexingItems={indexingItems}
       inventoryItems={inventoryItems}

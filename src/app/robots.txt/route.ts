@@ -4,6 +4,7 @@ import {
   buildRobotsTxt,
   NO_CACHE_TEXT_HEADERS,
 } from "@/lib/seo/seo-settings-service";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -19,7 +20,8 @@ export async function GET() {
     });
   } catch (err: unknown) {
     console.error("[Robots.txt Generation Error]", err);
-    const fallback = `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/admin/\nDisallow: /login/\nDisallow: /dashboard/\nDisallow: /private/\n\nSitemap: https://ainews.kraviona.com/sitemap.xml\n`;
+    const siteUrl = getSiteUrl();
+    const fallback = `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/admin/\nDisallow: /login/\nDisallow: /dashboard/\nDisallow: /private/\n\nSitemap: ${siteUrl}/sitemap.xml\n`;
     return new NextResponse(fallback, {
       status: 200,
       headers: NO_CACHE_TEXT_HEADERS,

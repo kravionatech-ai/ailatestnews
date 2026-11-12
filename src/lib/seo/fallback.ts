@@ -2,28 +2,31 @@ import type { Metadata } from "next";
 import type { EntityType, ISeoMetadata, ISeoTemplateVariables } from "./types";
 import { connectDB } from "@/lib/db/connection";
 import Setting from "@/lib/db/models/setting.model";
+import {
+  buildCanonicalUrl,
+  getLocalSiteUrl,
+  getProductionSiteUrl,
+  getSiteUrl,
+  normalizeSiteUrl,
+  resolveEffectiveSiteUrl,
+  rewriteLegacyHtmlUrls,
+  rewriteLegacyOriginUrl,
+} from "./domain";
+
+export {
+  getLocalSiteUrl,
+  getProductionSiteUrl,
+  getSiteUrl,
+  normalizeSiteUrl,
+  resolveEffectiveSiteUrl,
+  rewriteLegacyOriginUrl,
+};
 
 const DEFAULT_SITE_NAME = "Kraviona AI News";
 const DEFAULT_TAGLINE = "AI, Technology, Research and Innovation Intelligence";
 const DEFAULT_SEPARATOR = "|";
 const DEFAULT_OG_IMAGE =
   "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80";
-
-/**
- * Get base site URL from environment or fallback
- */
-export function getSiteUrl(): string {
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
-  }
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/\/$/, "")}`;
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL.replace(/\/$/, "")}`;
-  }
-  return "https://ainews.kraviona.com";
-}
 
 /**
  * Replace template variables like {title}, {site}, {category}, {separator}, etc.
@@ -69,7 +72,19 @@ export async function getGlobalSeoSettings() {
     await connectDB();
     const settings = await Setting.findOne().lean();
     if (settings) {
-      return JSON.parse(JSON.stringify(settings));
+      const parsed = JSON.parse(JSON.stringify(settings));
+      const effectiveUrl = resolveEffectiveSiteUrl(parsed.siteUrl);
+      parsed.siteUrl = effectiveUrl;
+      if (parsed.defaultOgImage) {
+        parsed.defaultOgImage = rewriteLegacyOriginUrl(parsed.defaultOgImage, effectiveUrl);
+      }
+      if (parsed.organization) {
+        parsed.organization.url = resolveEffectiveSiteUrl(parsed.organization.url, effectiveUrl);
+        if (parsed.organization.logo) {
+          parsed.organization.logo = rewriteLegacyOriginUrl(parsed.organization.logo, effectiveUrl);
+        }
+      }
+      return parsed;
     }
   } catch (err) {
     console.error("Failed to load SEO settings from DB, using defaults:", err);
@@ -137,7 +152,7 @@ export async function buildEntityMetadata(
   opts: BuildMetadataOptions
 ): Promise<Metadata> {
   const settings = await getGlobalSeoSettings();
-  const siteUrl = (settings.siteUrl || getSiteUrl()).replace(/\/$/, "");
+  const siteUrl = resolveEffectiveSiteUrl(settings.siteUrl);
   const siteName = settings.siteName || DEFAULT_SITE_NAME;
   const separator = settings.separator || DEFAULT_SEPARATOR;
 
@@ -180,17 +195,20 @@ export async function buildEntityMetadata(
     opts.entitySeo?.canonicalUrl?.trim() ||
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (opts.entitySeo as any)?.canonical?.trim();
-  const finalCanonical = rawCanonical || `${siteUrl}${canonicalPath}`;
+  const finalCanonical = rawCanonical
+    ? buildCanonicalUrl(rawCanonical, siteUrl)
+    : buildCanonicalUrl(canonicalPath, siteUrl);
 
   // 4. OpenGraph & Images Fallback
   const ogTitle = opts.entitySeo?.ogTitle?.trim() || finalTitle;
   const ogDescription = opts.entitySeo?.ogDescription?.trim() || finalDescription;
-  const ogImage =
+  const rawOgImage =
     opts.entitySeo?.ogImage?.trim() ||
     opts.coverImage?.trim() ||
     settings.defaultOgImage ||
     `${siteUrl}/api/og?title=${encodeURIComponent(ogTitle)}` ||
     DEFAULT_OG_IMAGE;
+  const ogImage = rewriteLegacyOriginUrl(rawOgImage, siteUrl);
 
   // 5. Robots Fallback (Index, Follow, etc.)
   const isProd = process.env.NODE_ENV === "production";
@@ -236,7 +254,7 @@ export async function buildEntityMetadata(
   if (opts.entitySeo?.hreflang && opts.entitySeo.hreflang.length > 0) {
     for (const alt of opts.entitySeo.hreflang) {
       if (alt.lang && alt.url) {
-        alternatesLanguages[alt.lang] = alt.url;
+        alternatesLanguages[alt.lang] = rewriteLegacyOriginUrl(alt.url, siteUrl);
       }
     }
   }
@@ -303,7 +321,7 @@ export function buildJsonLd(
   // If the user provided a full custom JSON-LD override, parse and return it
   if (seo?.schemaOverrides && seo.schemaOverrides.trim().startsWith("{")) {
     try {
-      return JSON.parse(seo.schemaOverrides);
+      return JSON.parse(rewriteLegacyHtmlUrls(seo.schemaOverrides, siteUrl));
     } catch {
       // Fallback to auto schema if invalid JSON
     }
@@ -312,7 +330,10 @@ export function buildJsonLd(
   const schemaType = seo?.schemaType || (entityType === "post" ? "NewsArticle" : "WebPage");
 
   if (entityType === "post") {
-    const resolvedImage = seo?.ogImage || (entityData.coverImage as string | undefined);
+    const rawResolvedImage = seo?.ogImage || (entityData.coverImage as string | undefined);
+    const resolvedImage = rawResolvedImage
+      ? rewriteLegacyOriginUrl(rawResolvedImage, siteUrl)
+      : undefined;
     const publishedDate = entityData.publishedAt || entityData.createdAt;
     const modifiedDate = entityData.updatedAt || publishedDate;
     const authorObj = entityData.author as { name?: string; slug?: string } | null | undefined;

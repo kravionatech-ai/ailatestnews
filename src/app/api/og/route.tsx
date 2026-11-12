@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getSiteHostname } from "@/lib/seo/domain";
 
 export const runtime = "nodejs";
 
@@ -97,7 +98,7 @@ export async function GET(request: Request) {
             }}
           >
             <span>AI, Technology, Research &amp; Innovation Intelligence</span>
-            <span style={{ color: "#D94F35", fontWeight: 800 }}>ainews.kraviona.com</span>
+            <span style={{ color: "#D94F35", fontWeight: 800 }}>{getSiteHostname()}</span>
           </div>
         </div>
       ),

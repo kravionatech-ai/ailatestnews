@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 /**
  * Merge Tailwind CSS classes with clsx + twMerge.
@@ -79,7 +80,7 @@ export function formatNumber(num: number): string {
  * Get the absolute URL for a path.
  */
 export function absoluteUrl(path: string): string {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = getSiteUrl();
   return `${siteUrl}${path.startsWith("/") ? path : `/${path}`}`;
 }
 

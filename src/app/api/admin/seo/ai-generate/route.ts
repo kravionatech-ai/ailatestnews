@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { stripHtml } from "@/lib/utils";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 export async function POST(req: Request) {
   try {
@@ -148,7 +149,7 @@ export async function POST(req: Request) {
           description: excerpt || "Analysis from AI Latest News",
           mainEntityOfPage: {
             "@type": "WebPage",
-            "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}/blog/${title.toLowerCase().replace(/\s+/g, "-")}`,
+            "@id": `${getSiteUrl()}/blog/${title.toLowerCase().replace(/\s+/g, "-")}`,
           },
         };
 

@@ -30,6 +30,7 @@ import { SeoEditorPanel } from "@/components/admin/seo/seo-editor-panel";
 import { BulkSeoTable, type BulkSeoItem } from "@/components/admin/seo/bulk-seo-table";
 import { saveEntitySeoAction } from "@/actions/seo";
 import { estimateTitlePixelWidth } from "@/lib/seo/analyzer";
+import { getSiteUrl } from "@/lib/seo/domain";
 
 export interface SeoInventoryItem {
   id: string;
@@ -497,7 +498,7 @@ export function SeoHub({ items: initialItems }: SeoHubProps) {
                 excerpt={activeEditItem.excerpt}
                 coverImage={activeEditItem.coverImage}
                 contentHtml={activeEditItem.contentHtml}
-                baseUrl={process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com"}
+                baseUrl={getSiteUrl()}
               />
             </div>
 

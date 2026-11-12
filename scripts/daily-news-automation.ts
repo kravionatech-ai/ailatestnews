@@ -24,6 +24,7 @@ import {
   reconcileUnsyncedPostsToGoogleWorkspace,
   syncSinglePostToGoogleWorkspace,
 } from "./lib/google-workspace-sync";
+import { getSiteHostname, getSiteUrl } from "../src/lib/seo/domain";
 
 // ─── Load .env.local ──────────────────────────────────────────────────────────
 (function loadEnv() {
@@ -123,7 +124,7 @@ async function fetchRssItems(): Promise<RssItem[]> {
     try {
       console.log(`📡 Fetching RSS: ${feedUrl}`);
       const res = await fetch(feedUrl, {
-        headers: { "User-Agent": "AINews/1.0 (+https://ainews.kraviona.com)" },
+        headers: { "User-Agent": `AINews/1.0 (+${getSiteUrl()})` },
         signal: AbortSignal.timeout(15_000),
       });
       if (!res.ok) { console.warn(`⚠️  RSS ${res.status}: ${feedUrl}`); continue; }
@@ -235,7 +236,7 @@ async function generateArticle(topic: RssItem, existingPosts: ExistingPostRef[])
     ? existingPosts.slice(0, 3).map(p => `- <a href="/blog/${p.slug}">${p.title}</a>`).join("\n")
     : `- <a href="/category/ai-news">AI News Desk</a>\n- <a href="/tags/machine-learning">Machine Learning Trends</a>`;
 
-  const systemPrompt = `You are a chief technology editor and investigative AI journalist at "AI News" (ainews.kraviona.com), India's premier AI news platform.
+  const systemPrompt = `You are a chief technology editor and investigative AI journalist at "AI News" (${getSiteHostname()}), India's premier AI news platform.
 Your writing style is analytical, authoritative, and engaging. Never robotic, clichéd, or boilerplate.
 LANGUAGE REQUIREMENT: ALWAYS WRITE IN 100% PURE, PROFESSIONAL ENGLISH ONLY. Never output Hindi, Hinglish, or mixed language.
 Avoid phrases like "In this fast-paced world", "Delve into", or "In conclusion". Write with precision, citing concrete architectural implications, compute realities, and strategic impacts for software engineers and enterprise leaders.`;
@@ -319,7 +320,7 @@ Return a valid JSON object ONLY (no markdown code blocks, no backticks, no expla
   // Strategy B: Resilient Fallback Engine (Keyless Pollinations AI)
   console.log("🌐 Generating article via secondary AI engine...");
   try {
-    const htmlPrompt = `You are a chief technology editor and investigative AI journalist at "AI News" (ainews.kraviona.com).
+    const htmlPrompt = `You are a chief technology editor and investigative AI journalist at "AI News" (${getSiteHostname()}).
 Write a comprehensive, publication-grade editorial news article in 100% PURE ENGLISH about this breaking AI story:
 HEADLINE IDEA: "${topic.title}"
 SOURCE / WIRE: ${topic.source}
@@ -1326,7 +1327,7 @@ async function savePost(
   const seo = {
     metaTitle:         (article.seoTitle || article.title).slice(0, 65),
     metaDescription:   (article.seoDescription || article.excerpt).slice(0, 160),
-    canonicalUrl:      `https://ainews.kraviona.com/blog/${slug}`,
+    canonicalUrl:      `${getSiteUrl()}/blog/${slug}`,
     focusKeyword:      (article.seoKeywords?.[0] || "AI News").slice(0, 75),
     secondaryKeywords: (article.seoKeywords || []).slice(1, 5).map((k: string) => k.slice(0, 50)),
     ogTitle:           article.title.slice(0, 95),
@@ -1474,7 +1475,7 @@ async function main() {
     const slug = saved.slug;
 
     // 8. Trigger on-demand SEO revalidation + submit new post & feeds to IndexNow
-    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://ainews.kraviona.com").replace(/\/$/, "");
+    const siteUrl = getSiteUrl();
     const tagSlugs = (article.tags || []).slice(0, 7).map((t) => slugify(t)).filter(Boolean);
     const revalidateSecret =
       process.env.REVALIDATE_SECRET || process.env.INDEXNOW_KEY || process.env.AUTH_SECRET;
@@ -1560,6 +1561,37 @@ async function main() {
       throw new Error(`Live post verification failed: ${verifyUrl} did not return HTTP 200 OK.`);
     }
 
+    const ainewsVerifyUrl = `https://ainews.kraviona.com/blog/${slug}`;
+    if (ainewsVerifyUrl !== verifyUrl) {
+      console.log(`\n🔍 Verifying HTTP 200 on ainews.kraviona.com: ${ainewsVerifyUrl}`);
+      let ainewsVerified = false;
+      for (let attempt = 1; attempt <= 8; attempt++) {
+        try {
+          console.log(`   → ainews.kraviona.com HTTP check attempt ${attempt}/8...`);
+          const res = await fetch(ainewsVerifyUrl, {
+            method: "GET",
+            headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AINewsVerificationBot/1.0" },
+            signal: AbortSignal.timeout(15_000),
+          });
+          if (res.status === 200) {
+            console.log(`   ✅ Live URL returned HTTP 200 OK! (${ainewsVerifyUrl})`);
+            ainewsVerified = true;
+            break;
+          } else {
+            console.warn(`   ⚠️  HTTP status ${res.status}. Waiting 5s before retry...`);
+            await new Promise((r) => setTimeout(r, 5000));
+          }
+        } catch (e) {
+          console.warn(`   ⚠️  Attempt ${attempt} network error: ${(e as Error).message}`);
+          await new Promise((r) => setTimeout(r, 5000));
+        }
+      }
+
+      if (!ainewsVerified) {
+        throw new Error(`Live post verification failed: ${ainewsVerifyUrl} did not return HTTP 200 OK.`);
+      }
+    }
+
     for (const xmlEndpoint of ["/sitemap.xml", "/news-sitemap.xml", "/feed.xml"]) {
       try {
         const xmlRes = await fetch(`${siteUrl}${xmlEndpoint}`, {
@@ -1628,7 +1660,7 @@ async function main() {
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
     console.log("\n========================================================");
     console.log(`🎉 Pipeline Succeeded in ${elapsed}s!`);
-    console.log(`🔗 Live Article URL : https://ainews.kraviona.com/blog/${slug}`);
+    console.log(`🔗 Live Article URL : ${siteUrl}/blog/${slug}`);
     console.log(`📰 Title            : "${article.title}"`);
     console.log(`🖼️  Cover            : ${coverImage}`);
     console.log(`🏷️  Tags             : ${article.tags.join(", ")}`);

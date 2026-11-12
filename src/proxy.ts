@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { resolveDomainRedirect } from "@/lib/seo/domain";
 
-// Regex matching static file extensions to skip middleware processing
+// Regex matching static file extensions to skip auth/header proxy processing
 const STATIC_FILE_REGEX = /\.(ico|png|jpg|jpeg|svg|webp|gif|css|js|woff|woff2|ttf|eot|map|txt|xml|webmanifest)$/i;
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
+
+  // 0. Optional single-hop 301 Domain Migration Redirect
+  // Gated by ENABLE_DOMAIN_REDIRECTS === "true" (OFF until target domain is verified on Vercel).
+  // Runs before STATIC_FILE_REGEX so legacy /sitemap.xml, /robots.txt, and /feed.xml also redirect cleanly.
+  const domainRedirect = resolveDomainRedirect({
+    requestUrl: request.nextUrl,
+    hostHeader: request.headers.get("x-forwarded-host") || request.headers.get("host"),
+    forwardedProtoHeader: request.headers.get("x-forwarded-proto"),
+  });
+  if (domainRedirect) {
+    return NextResponse.redirect(domainRedirect.destination, domainRedirect.status);
+  }
 
   // 1. Skip next static assets, build chunks, and known asset files
   if (
