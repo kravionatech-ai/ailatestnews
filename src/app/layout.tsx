@@ -265,6 +265,17 @@ export default async function RootLayout({
         )}
       </head>
       <body className="min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--foreground)] selection:bg-[var(--accent)] selection:text-white">
+        {gtmId && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+              title="Google Tag Manager"
+            />
+          </noscript>
+        )}
         {gaId && (
           <Script
             id="google-analytics-gtag"

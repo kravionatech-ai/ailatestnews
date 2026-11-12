@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/db/connection";
 import Setting from "@/lib/db/models/setting.model";
 import { SettingsEditor } from "@/components/admin/settings/settings-editor";
 import {
+  getGoogleSiteVerification,
   getSiteHostname,
   getSiteUrl,
   replaceLegacyHostText,
@@ -21,6 +22,8 @@ export default async function AdminSettingsPage() {
     ? JSON.parse(JSON.stringify(rawSettings))
     : null;
 
+  const activeVerificationToken = getGoogleSiteVerification();
+
   if (parsedRaw) {
     parsedRaw.siteUrl = resolveEffectiveSiteUrl(parsedRaw.siteUrl, activeSiteUrl);
     if (parsedRaw.defaultOgImage) {
@@ -37,6 +40,12 @@ export default async function AdminSettingsPage() {
         parsedRaw.footer.copyrightText,
         activeSiteUrl
       );
+    }
+    if (!parsedRaw.verification) {
+      parsedRaw.verification = {};
+    }
+    if (!parsedRaw.verification.google?.trim()) {
+      parsedRaw.verification.google = activeVerificationToken;
     }
   }
 
@@ -88,7 +97,9 @@ export default async function AdminSettingsPage() {
     footer: {
       copyrightText: `Kraviona AI News (${activeHost}). All rights reserved.`,
     },
-    verification: {},
+    verification: {
+      google: activeVerificationToken,
+    },
     indexNow: {
       apiKey: "ailatestnews_indexnow_key_2026",
       autoSubmitOnPublish: true,

@@ -18,7 +18,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { saveGlobalSettingsAction } from "@/actions/settings";
-import { getSiteHostname, getSiteUrl } from "@/lib/seo/domain";
+import { getGoogleSiteVerification, getSiteHostname, getSiteUrl } from "@/lib/seo/domain";
 
 interface SettingsEditorProps {
   initialSettings: any;
@@ -626,7 +626,7 @@ export function SettingsEditor({ initialSettings }: SettingsEditorProps) {
               <input
                 type="text"
                 name="googleVerification"
-                defaultValue={settings.verification?.google || ""}
+                defaultValue={settings.verification?.google || getGoogleSiteVerification()}
                 placeholder="google-site-verification=..."
                 className={`${inputCls} font-mono`}
               />
