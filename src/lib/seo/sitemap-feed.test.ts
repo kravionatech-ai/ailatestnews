@@ -25,6 +25,7 @@ import {
   buildImageSitemapXml,
   buildRobotsTxt,
   normalizeSeoSettingsForDisplay,
+  toW3cDate,
 } from "./seo-settings-service";
 import { buildEntityMetadata } from "./fallback";
 import type { ICustomSeoEntry, ISeoSettings } from "@/lib/db/models/seo-settings.model";
@@ -487,6 +488,93 @@ describe("SEO Sitemap, News & RSS Feed Engine", () => {
       expect(feedItems.map((f) => f.url)).not.toContain(
         "https://www.kraviona.site/blog/noindex-post"
       );
+    });
+
+    it("deduplicates Google News items by normalized title and formats W3C date without milliseconds", () => {
+      const items = [
+        {
+          url: "https://www.kraviona.site/blog/alibaba-unveils-new-flagship-ai-model-in-riposte-to-us-rivals",
+          title: "Alibaba Unveils New Flagship AI Model in Riposte to US Rivals",
+          publicationDate: "2026-11-16T04:43:51Z",
+          publicationName: "Kraviona AI News",
+          publicationLanguage: "en",
+        },
+        {
+          url: "https://www.kraviona.site/blog/alibaba-unveils-new-flagship-ai-model-in-riposte-to-us-rivals-mwis7kni",
+          title: "Alibaba Unveils New Flagship AI Model in Riposte to US Rivals",
+          publicationDate: "2026-11-16T04:47:00Z",
+          publicationName: "Kraviona AI News",
+          publicationLanguage: "en",
+        },
+        {
+          url: "https://www.kraviona.site/blog/gemini-api",
+          title: "Google expands Gemini ecosystem",
+          publicationDate: "2026-11-16T04:30:00Z",
+          publicationName: "Kraviona AI News",
+          publicationLanguage: "en",
+        },
+      ];
+
+      const merged = mergeNewsItems(items);
+      expect(merged).toHaveLength(2);
+      expect(merged.map((i) => i.title)).toEqual([
+        "Alibaba Unveils New Flagship AI Model in Riposte to US Rivals",
+        "Google expands Gemini ecosystem",
+      ]);
+      // The newer version should take precedence
+      expect(merged[0]?.url).toBe(
+        "https://www.kraviona.site/blog/alibaba-unveils-new-flagship-ai-model-in-riposte-to-us-rivals-mwis7kni"
+      );
+
+      const d = toW3cDate("2026-11-16T04:43:51.123Z");
+      expect(d).toBe("2026-11-16T04:43:51Z");
+      expect(d).not.toContain(".");
+    });
+
+    it("falls back to recent published posts when no articles were published within the 48-hour window", async () => {
+      const recentPosts = [
+        {
+          slug: "historical-breakthrough",
+          title: "Historical Breakthrough from 3 Days Ago",
+          publishedAt: new Date(Date.now() - 72 * 3600 * 1000),
+          createdAt: new Date(Date.now() - 72 * 3600 * 1000),
+          seo: { robots: { index: true }, sitemap: { include: true } },
+        },
+      ];
+
+      let callCount = 0;
+      vi.spyOn(Post, "find").mockImplementation(() => {
+        callCount++;
+        if (callCount === 1) {
+          // First call: 48h cutoff query returns empty array
+          return {
+            sort: () => ({
+              select: () => ({ lean: vi.fn().mockResolvedValue([]) }),
+            }),
+          } as any;
+        }
+        // Second call: fallback query for recent published posts
+        return {
+          sort: () => ({
+            limit: () => ({
+              select: () => ({ lean: vi.fn().mockResolvedValue(recentPosts) }),
+            }),
+          }),
+        } as any;
+      });
+
+      const settingsWithoutCustom = {
+        ...mockSettings,
+        sitemap: {
+          ...mockSettings.sitemap,
+          customUrls: [],
+        },
+      };
+
+      const fallbackNews = await getGoogleNewsArticles(settingsWithoutCustom);
+      expect(fallbackNews).toHaveLength(1);
+      expect(fallbackNews[0]?.title).toBe("Historical Breakthrough from 3 Days Ago");
+      expect(fallbackNews[0]?.url).toBe("https://www.kraviona.site/blog/historical-breakthrough");
     });
   });
 

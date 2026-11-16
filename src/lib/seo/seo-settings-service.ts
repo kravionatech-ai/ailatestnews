@@ -95,6 +95,11 @@ function toSafeIsoDate(value: unknown, fallback: string = SYSTEM_BUILD_TIMESTAMP
   return isNaN(d.getTime()) ? fallback : d.toISOString();
 }
 
+export function toW3cDate(value: unknown, fallback: string = new Date().toISOString()): string {
+  const iso = toSafeIsoDate(value, fallback);
+  return iso.replace(/\.\d{3}Z$/, "Z");
+}
+
 export function normalizeChangeFrequency(
   val: unknown,
   fallback: SitemapChangeFrequency = "weekly"
@@ -801,7 +806,7 @@ export function buildCustomNewsItems(
     items.push({
       url: resolvedUrl,
       title,
-      publicationDate: pubDate.toISOString(),
+      publicationDate: toW3cDate(pubDate),
       publicationName: opts.publicationName,
       publicationLanguage: opts.publicationLanguage,
     });
@@ -812,20 +817,34 @@ export function buildCustomNewsItems(
 
 /**
  * Merge and deduplicate Google News items sorted descending by publicationDate.
+ * Deduplicates by both canonical URL and normalized headline title.
  */
 export function mergeNewsItems(items: NewsSitemapItem[]): NewsSitemapItem[] {
   const byUrl = new Map<string, NewsSitemapItem>();
-  for (const item of items) {
-    if (!item?.url || !item?.title) continue;
-    byUrl.set(item.url.toLowerCase(), item);
-  }
-  return Array.from(byUrl.values()).sort(
+  const seenTitles = new Set<string>();
+
+  // Sort descending by publication date so newer duplicate entries take precedence
+  const sorted = [...items].sort(
     (a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime()
   );
+
+  const result: NewsSitemapItem[] = [];
+  for (const item of sorted) {
+    if (!item?.url || !item?.title) continue;
+    const urlKey = item.url.toLowerCase();
+    const titleKey = item.title.trim().toLowerCase();
+    if (byUrl.has(urlKey) || seenTitles.has(titleKey)) continue;
+    byUrl.set(urlKey, item);
+    seenTitles.add(titleKey);
+    result.push(item);
+  }
+  return result;
 }
 
 /**
  * Retrieve fresh Google News eligible articles (last newsTimeWindowHours, default 48 hours).
+ * If no articles were published within the 48-hour window (e.g. publishing pause or weekend lull),
+ * automatically falls back to recent published articles (up to 10) to avoid an empty sitemap error in Google Search Console.
  */
 export async function getGoogleNewsArticles(settings: ISeoSettings): Promise<NewsSitemapItem[]> {
   await connectDB();
@@ -851,7 +870,6 @@ export async function getGoogleNewsArticles(settings: ISeoSettings): Promise<New
     .lean();
 
   const postNewsItems: NewsSitemapItem[] = articles
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((a: any) => {
       if (!a.slug || !a.title) return false;
       if (a.seo?.sitemap?.include === false) return false;
@@ -865,11 +883,10 @@ export async function getGoogleNewsArticles(settings: ISeoSettings): Promise<New
       if (isUrlExcluded(url, excluded)) return false;
       return true;
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((a: any) => ({
       url: `${siteUrl}/blog/${a.slug}`,
       title: String(a.title).trim(),
-      publicationDate: toSafeIsoDate(a.publishedAt || a.createdAt || a.updatedAt, new Date().toISOString()),
+      publicationDate: toW3cDate(a.publishedAt || a.createdAt || a.updatedAt),
       publicationName: pubName,
       publicationLanguage: pubLang,
     }));
@@ -882,7 +899,40 @@ export async function getGoogleNewsArticles(settings: ISeoSettings): Promise<New
     cutoffDate,
   });
 
-  return mergeNewsItems([...postNewsItems, ...customNewsItems]);
+  let merged = mergeNewsItems([...postNewsItems, ...customNewsItems]);
+
+  // Fallback: If no articles found within the 48-hour window (e.g. over a weekend or publishing pause),
+  // return the most recent published articles (up to 10) to prevent an empty sitemap error in Google Search Console.
+  if (merged.length === 0) {
+    const fallbackArticles = await Post.find({
+      status: "published",
+    })
+      .sort({ publishedAt: -1, createdAt: -1 })
+      .limit(10)
+      .select("title slug publishedAt updatedAt createdAt seo")
+      .lean();
+
+    const fallbackItems: NewsSitemapItem[] = fallbackArticles
+      .filter((a: any) => {
+        if (!a.slug || !a.title) return false;
+        if (a.seo?.sitemap?.include === false) return false;
+        if (a.seo?.robots?.index === false) return false;
+        const url = `${siteUrl}/blog/${a.slug}`;
+        if (isUrlExcluded(url, excluded)) return false;
+        return true;
+      })
+      .map((a: any) => ({
+        url: `${siteUrl}/blog/${a.slug}`,
+        title: String(a.title).trim(),
+        publicationDate: toW3cDate(a.publishedAt || a.createdAt || a.updatedAt),
+        publicationName: pubName,
+        publicationLanguage: pubLang,
+      }));
+
+    merged = mergeNewsItems(fallbackItems);
+  }
+
+  return merged;
 }
 
 /**
