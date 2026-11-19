@@ -143,8 +143,16 @@ export default async function SinglePostPage({
           "@type": "Person",
           name: rawAuthorName,
           ...(post.author?.slug ? { url: `${siteUrl}/author/${post.author.slug}` } : {}),
-          ...(!isGenericAuthRole ? { jobTitle: rawAuthorRole } : {}),
+          ...(!isGenericAuthRole ? { jobTitle: rawAuthorRole } : { jobTitle: "Contributing Technology Journalist" }),
           ...(post.author?.bio ? { description: post.author.bio } : {}),
+          worksFor: { "@id": `${siteUrl}/#organization` },
+          knowsAbout: [
+            "Artificial Intelligence",
+            "Large Language Models",
+            "Compute Infrastructure",
+            "Cybersecurity",
+            "Blockchain",
+          ],
           ...(post.author?.image
             ? {
                 image: {
@@ -175,13 +183,17 @@ export default async function SinglePostPage({
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": schemaType,
-    headline: post.seo?.metaTitle || post.title,
+    headline: post.title,
     ...(post.seo?.metaDescription || post.excerpt
       ? { description: post.seo?.metaDescription || post.excerpt }
       : {}),
     url: `${siteUrl}/blog/${post.slug}`,
     inLanguage: post.locale || "en",
     isAccessibleForFree: true,
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: [".article-tldr-box", ".prose-article > p:first-of-type"],
+    },
     ...(post.coverImage
       ? {
           image: [

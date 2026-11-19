@@ -185,6 +185,21 @@ export function StandardEditorialLayout({
               <TabletArticleAccordion initialHeadings={extractedHeadings} />
             )}
 
+            {/* Executive Direct Answer / TL;DR Box for GEO & Answer Engines */}
+            {post.excerpt && (
+              <section
+                aria-label="Executive Summary & Direct Answer"
+                className="article-tldr-box mb-8 rounded-xl border-l-4 border-[var(--accent,#D94F35)] bg-[var(--color-secondary-surface,#F4F2EB)] p-4 sm:p-5 text-sm"
+              >
+                <div className="flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[var(--accent,#D94F35)] mb-1.5">
+                  <span>Executive Takeaway &amp; Direct Answer</span>
+                </div>
+                <p className="font-medium text-[var(--color-heading,#171C22)] leading-relaxed">
+                  {post.excerpt}
+                </p>
+              </section>
+            )}
+
             {/* Prose Content */}
             <div
               className="prose-article max-w-none"
