@@ -361,7 +361,7 @@ describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
 
   describe("Tier 4: Cross-Origin Framing & Clickjacking Defense", () => {
     it("validates that SAMEORIGIN policy allows same-origin preview while blocking 3rd-party frames", () => {
-      const allowedOrigin = "https://kraviona.site";
+      const allowedOrigin = "https://ainews.kraviona.com";
       const attackerOrigin = "https://evil-clickjack.org";
 
       const isFrameAllowed = (parentOrigin: string, childOrigin: string, header: string): boolean => {

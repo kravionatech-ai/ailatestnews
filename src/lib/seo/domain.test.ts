@@ -73,55 +73,55 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
 
       expect(isLocalhostHost("localhost")).toBe(true);
       expect(isLocalhostUrl("http://localhost:3000")).toBe(true);
-      expect(isLocalhostUrl("https://www.kraviona.site")).toBe(false);
+      expect(isLocalhostUrl("https://ainews.kraviona.com")).toBe(false);
 
       expect(getLocalSiteUrl()).toBe(DEFAULT_LOCAL_SITE_URL);
-      expect(getProductionSiteUrl()).toBe("https://www.kraviona.site");
-      expect(getSiteUrl()).toBe("https://www.kraviona.site");
-      expect(getSiteHostname()).toBe("www.kraviona.site");
+      expect(getProductionSiteUrl()).toBe("https://ainews.kraviona.com");
+      expect(getSiteUrl()).toBe("https://ainews.kraviona.com");
+      expect(getSiteHostname()).toBe("ainews.kraviona.com");
     });
 
     it("reads NEXT_PUBLIC_SITE_URL dynamically and aligns with Vercel primary host", () => {
       delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
       delete process.env.NEXT_PUBLIC_VERCEL_PRODUCTION_URL;
 
-      process.env.NEXT_PUBLIC_SITE_URL = "https://www.kraviona.site/";
-      expect(getSiteUrl()).toBe("https://www.kraviona.site");
-      expect(getSiteHostname()).toBe("www.kraviona.site");
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com/";
+      expect(getSiteUrl()).toBe("https://ainews.kraviona.com");
+      expect(getSiteHostname()).toBe("ainews.kraviona.com");
 
       process.env.NEXT_PUBLIC_SITE_URL = "https://ailatestnews.in/";
       expect(getSiteUrl()).toBe("https://ailatestnews.in");
       expect(getSiteHostname()).toBe("ailatestnews.in");
 
-      // Stale Vercel env var pointing to retired ainews.kraviona.com is ignored automatically
-      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
-      process.env.VERCEL_PROJECT_PRODUCTION_URL = "www.kraviona.site";
-      expect(getSiteUrl()).toBe("https://www.kraviona.site");
-
-      // Apex vs www alignment when Vercel 308-redirects apex -> www.kraviona.site
+      // Stale Vercel env var pointing to retired kraviona.site is ignored automatically
       process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site";
-      process.env.VERCEL_PROJECT_PRODUCTION_URL = "www.kraviona.site";
-      expect(getSiteUrl()).toBe("https://www.kraviona.site");
+      process.env.VERCEL_PROJECT_PRODUCTION_URL = "ainews.kraviona.com";
+      expect(getSiteUrl()).toBe("https://ainews.kraviona.com");
+
+      // Apex vs www alignment when configured
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
+      process.env.VERCEL_PROJECT_PRODUCTION_URL = "ainews.kraviona.com";
+      expect(getSiteUrl()).toBe("https://ainews.kraviona.com");
     });
   });
 
   describe("Legacy Host Detection & DB Runtime Rewriting", () => {
     it("overrides stale legacy domains or localhost values stored in DB", () => {
-      process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site";
-      expect(resolveEffectiveSiteUrl("https://ainews.kraviona.com")).toBe("https://kraviona.site");
-      expect(resolveEffectiveSiteUrl("http://www.ainews.kraviona.com/")).toBe("https://kraviona.site");
-      expect(resolveEffectiveSiteUrl("http://localhost:3000")).toBe("https://kraviona.site");
-      expect(resolveEffectiveSiteUrl(undefined)).toBe("https://kraviona.site");
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
+      expect(resolveEffectiveSiteUrl("https://kraviona.site")).toBe("https://ainews.kraviona.com");
+      expect(resolveEffectiveSiteUrl("http://www.kraviona.site/")).toBe("https://ainews.kraviona.com");
+      expect(resolveEffectiveSiteUrl("http://localhost:3000")).toBe("https://ainews.kraviona.com");
+      expect(resolveEffectiveSiteUrl(undefined)).toBe("https://ainews.kraviona.com");
     });
 
     it("rewrites legacy internal URLs while leaving external asset URLs untouched", () => {
-      process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site";
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
 
-      expect(rewriteLegacyOriginUrl("https://ainews.kraviona.com/blog/sample?ref=nav#top")).toBe(
-        "https://kraviona.site/blog/sample?ref=nav#top"
+      expect(rewriteLegacyOriginUrl("https://kraviona.site/blog/sample?ref=nav#top")).toBe(
+        "https://ainews.kraviona.com/blog/sample?ref=nav#top"
       );
-      expect(rewriteLegacyOriginUrl("http://www.ainews.kraviona.com/")).toBe(
-        "https://kraviona.site"
+      expect(rewriteLegacyOriginUrl("http://www.kraviona.site/")).toBe(
+        "https://ainews.kraviona.com"
       );
       expect(
         rewriteLegacyOriginUrl("https://res.cloudinary.com/demo/image/upload/v1/cover.png")
@@ -130,25 +130,25 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
     });
 
     it("rewrites legacy internal links embedded in article HTML without altering external links", () => {
-      process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site";
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
 
       const html = `
-        <p>Read <a href="https://ainews.kraviona.com/blog/sarvam-ai">our coverage</a>
+        <p>Read <a href="https://kraviona.site/blog/sarvam-ai">our coverage</a>
         or see <a href="https://arxiv.org/abs/2501.00001">ArXiv</a> and
-        <a href="http://www.ainews.kraviona.com/category/ai-news?page=2">AI News</a>.</p>
+        <a href="http://www.kraviona.site/category/ai-news?page=2">AI News</a>.</p>
       `;
       const rewritten = rewriteLegacyHtmlUrls(html);
 
-      expect(rewritten).toContain('href="https://kraviona.site/blog/sarvam-ai"');
-      expect(rewritten).toContain('href="https://kraviona.site/category/ai-news?page=2"');
+      expect(rewritten).toContain('href="https://ainews.kraviona.com/blog/sarvam-ai"');
+      expect(rewritten).toContain('href="https://ainews.kraviona.com/category/ai-news?page=2"');
       expect(rewritten).toContain('href="https://arxiv.org/abs/2501.00001"');
-      expect(rewritten).not.toContain("ainews.kraviona.com");
+      expect(rewritten).not.toContain("kraviona.site");
     });
 
     it("rewrites display copy and deduplicates robots.txt sitemaps safely", () => {
-      process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site";
-      expect(replaceLegacyHostText("Kraviona AI News (ainews.kraviona.com). All rights reserved.")).toBe(
-        "Kraviona AI News (kraviona.site). All rights reserved."
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
+      expect(replaceLegacyHostText("Kraviona AI News (kraviona.site). All rights reserved.")).toBe(
+        "Kraviona AI News (ainews.kraviona.com). All rights reserved."
       );
 
       const rawRobots = [
@@ -156,24 +156,24 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
         "Allow: /",
         "Disallow: /admin/",
         "",
-        "Sitemap: https://ainews.kraviona.com/sitemap.xml",
         "Sitemap: https://kraviona.site/sitemap.xml",
-        "Sitemap: https://ainews.kraviona.com/news-sitemap.xml",
+        "Sitemap: https://ainews.kraviona.com/sitemap.xml",
+        "Sitemap: https://kraviona.site/news-sitemap.xml",
       ].join("\n");
 
       const normalized = rewriteLegacyRobotsTxt(rawRobots);
-      expect(normalized).not.toContain("ainews.kraviona.com");
-      expect(normalized.match(/Sitemap:\s*https:\/\/kraviona\.site\/sitemap\.xml/g)).toHaveLength(1);
-      expect(normalized).toContain("Sitemap: https://kraviona.site/news-sitemap.xml");
+      expect(normalized).not.toContain("kraviona.site");
+      expect(normalized.match(/Sitemap:\s*https:\/\/ainews\.kraviona\.com\/sitemap\.xml/g)).toHaveLength(1);
+      expect(normalized).toContain("Sitemap: https://ainews.kraviona.com/news-sitemap.xml");
     });
 
     it("builds canonical URLs cleanly without double slashes", () => {
-      expect(buildCanonicalUrl("/", "https://kraviona.site/")).toBe("https://kraviona.site/");
-      expect(buildCanonicalUrl("blog/example", "https://kraviona.site")).toBe(
-        "https://kraviona.site/blog/example"
+      expect(buildCanonicalUrl("/", "https://ainews.kraviona.com/")).toBe("https://ainews.kraviona.com/");
+      expect(buildCanonicalUrl("blog/example", "https://ainews.kraviona.com")).toBe(
+        "https://ainews.kraviona.com/blog/example"
       );
-      expect(buildCanonicalUrl("https://ainews.kraviona.com/category/ai-news", "https://kraviona.site")).toBe(
-        "https://kraviona.site/category/ai-news"
+      expect(buildCanonicalUrl("https://kraviona.site/category/ai-news", "https://ainews.kraviona.com")).toBe(
+        "https://ainews.kraviona.com/category/ai-news"
       );
     });
   });
@@ -206,34 +206,34 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
     it("issues 1-hop 301 redirects preserving exact path and query params when active", () => {
       const scenarios = [
         {
-          inUrl: "https://ainews.kraviona.com/",
-          host: "ainews.kraviona.com",
+          inUrl: "https://kraviona.site/",
+          host: "kraviona.site",
           proto: "https",
-          expected: "https://kraviona.site/",
+          expected: "https://ainews.kraviona.com/",
         },
         {
-          inUrl: "https://ainews.kraviona.com/blog/example?utm_source=x&page=2",
-          host: "ainews.kraviona.com",
+          inUrl: "https://kraviona.site/blog/example?utm_source=x&page=2",
+          host: "kraviona.site",
           proto: "https",
-          expected: "https://kraviona.site/blog/example?utm_source=x&page=2",
+          expected: "https://ainews.kraviona.com/blog/example?utm_source=x&page=2",
         },
         {
-          inUrl: "http://www.ainews.kraviona.com/category/ai-news",
-          host: "www.ainews.kraviona.com",
+          inUrl: "http://www.kraviona.site/category/ai-news",
+          host: "www.kraviona.site",
           proto: "http",
-          expected: "https://kraviona.site/category/ai-news",
+          expected: "https://ainews.kraviona.com/category/ai-news",
         },
         {
           inUrl: "https://www.kraviona.site/sitemap.xml",
           host: "www.kraviona.site",
           proto: "https",
-          expected: "https://kraviona.site/sitemap.xml",
+          expected: "https://ainews.kraviona.com/sitemap.xml",
         },
         {
           inUrl: "http://kraviona.site/feed.xml",
           host: "kraviona.site",
           proto: "http",
-          expected: "https://kraviona.site/feed.xml",
+          expected: "https://ainews.kraviona.com/feed.xml",
         },
       ];
 
@@ -243,9 +243,9 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
           hostHeader: s.host,
           forwardedProtoHeader: s.proto,
           enabled: true,
-          targetSiteUrl: "https://kraviona.site",
-          sourceDomainsRaw: "ainews.kraviona.com,www.ainews.kraviona.com",
-          legacyDomainsRaw: "ainews.kraviona.com",
+          targetSiteUrl: "https://ainews.kraviona.com",
+          sourceDomainsRaw: "kraviona.site,www.kraviona.site",
+          legacyDomainsRaw: "kraviona.site,www.kraviona.site",
         });
 
         expect(decision, `Failed redirect for ${s.inUrl}`).not.toBeNull();
@@ -257,13 +257,13 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
     it("never loops on canonical host and never redirects localhost, *.vercel.app, /_next, /api/health, or /api/auth", () => {
       const noRedirectCases = [
         {
-          url: "https://kraviona.site/",
-          host: "kraviona.site",
+          url: "https://ainews.kraviona.com/",
+          host: "ainews.kraviona.com",
           proto: "https",
         },
         {
-          url: "https://kraviona.site/blog/example?ref=ok",
-          host: "kraviona.site",
+          url: "https://ainews.kraviona.com/blog/example?ref=ok",
+          host: "ainews.kraviona.com",
           proto: "https",
         },
         {
@@ -299,9 +299,9 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
           hostHeader: c.host,
           forwardedProtoHeader: c.proto,
           enabled: true,
-          targetSiteUrl: "https://kraviona.site",
-          sourceDomainsRaw: "ainews.kraviona.com,www.ainews.kraviona.com",
-          legacyDomainsRaw: "ainews.kraviona.com",
+          targetSiteUrl: "https://ainews.kraviona.com",
+          sourceDomainsRaw: "kraviona.site,www.kraviona.site",
+          legacyDomainsRaw: "kraviona.site,www.kraviona.site",
         });
         expect(decision, `Unexpected redirect for ${c.url}`).toBeNull();
       }
@@ -352,12 +352,12 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
   });
 
   describe("Next.js Proxy Integration (src/proxy.ts)", () => {
-    it("does NOT redirect ainews.kraviona.com when ENABLE_DOMAIN_REDIRECTS is false", () => {
+    it("does NOT redirect kraviona.site when ENABLE_DOMAIN_REDIRECTS is false", () => {
       process.env.ENABLE_DOMAIN_REDIRECTS = "false";
-      process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site";
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
 
-      const req = new NextRequest("https://ainews.kraviona.com/blog/test", {
-        headers: { host: "ainews.kraviona.com" },
+      const req = new NextRequest("https://kraviona.site/blog/test", {
+        headers: { host: "kraviona.site" },
       });
       const res = proxy(req);
       expect(res.status).toBe(200);
@@ -366,26 +366,26 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
 
     it("issues 301 permanent redirect for legacy host across articles and /sitemap.xml when enabled", () => {
       process.env.ENABLE_DOMAIN_REDIRECTS = "true";
-      process.env.NEXT_PUBLIC_SITE_URL = "https://kraviona.site";
-      process.env.NEXT_PUBLIC_LEGACY_DOMAINS = "ainews.kraviona.com";
-      process.env.REDIRECT_SOURCE_DOMAINS = "ainews.kraviona.com,www.ainews.kraviona.com";
+      process.env.NEXT_PUBLIC_SITE_URL = "https://ainews.kraviona.com";
+      process.env.NEXT_PUBLIC_LEGACY_DOMAINS = "kraviona.site,www.kraviona.site";
+      process.env.REDIRECT_SOURCE_DOMAINS = "kraviona.site,www.kraviona.site";
 
-      const articleReq = new NextRequest("https://ainews.kraviona.com/blog/example?src=news", {
-        headers: { host: "ainews.kraviona.com", "x-forwarded-proto": "https" },
+      const articleReq = new NextRequest("https://kraviona.site/blog/example?src=news", {
+        headers: { host: "kraviona.site", "x-forwarded-proto": "https" },
       });
       const articleRes = proxy(articleReq);
       expect(articleRes.status).toBe(301);
-      expect(articleRes.headers.get("location")).toBe("https://kraviona.site/blog/example?src=news");
+      expect(articleRes.headers.get("location")).toBe("https://ainews.kraviona.com/blog/example?src=news");
 
-      const sitemapReq = new NextRequest("https://ainews.kraviona.com/sitemap.xml", {
-        headers: { host: "ainews.kraviona.com", "x-forwarded-proto": "https" },
+      const sitemapReq = new NextRequest("https://kraviona.site/sitemap.xml", {
+        headers: { host: "kraviona.site", "x-forwarded-proto": "https" },
       });
       const sitemapRes = proxy(sitemapReq);
       expect(sitemapRes.status).toBe(301);
-      expect(sitemapRes.headers.get("location")).toBe("https://kraviona.site/sitemap.xml");
+      expect(sitemapRes.headers.get("location")).toBe("https://ainews.kraviona.com/sitemap.xml");
 
-      const canonicalReq = new NextRequest("https://kraviona.site/blog/example?src=news", {
-        headers: { host: "kraviona.site", "x-forwarded-proto": "https" },
+      const canonicalReq = new NextRequest("https://ainews.kraviona.com/blog/example?src=news", {
+        headers: { host: "ainews.kraviona.com", "x-forwarded-proto": "https" },
       });
       const canonicalRes = proxy(canonicalReq);
       expect(canonicalRes.status).toBe(200);

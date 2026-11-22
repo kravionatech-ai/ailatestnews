@@ -6,10 +6,10 @@ import { buildJsonLd, getSiteUrl, interpolateVariables } from "@/lib/seo/fallbac
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const EXPECTED_CANONICAL_SLUG_PATTERNS = {
-  article: (slug: string) => `https://kraviona.site/blog/${slug}`,
-  category: (slug: string) => `https://kraviona.site/category/${slug}`,
-  tag: (slug: string) => `https://kraviona.site/tag/${slug}`,
-  author: (slug: string) => `https://kraviona.site/author/${slug}`,
+  article: (slug: string) => `https://ainews.kraviona.com/blog/${slug}`,
+  category: (slug: string) => `https://ainews.kraviona.com/category/${slug}`,
+  tag: (slug: string) => `https://ainews.kraviona.com/tag/${slug}`,
+  author: (slug: string) => `https://ainews.kraviona.com/author/${slug}`,
   staticPages: [
     "/ai-tools",
     "/model-launches",
@@ -87,19 +87,19 @@ describe("E2E SEO Preservation & Canonical Invariance (Tiers 1-4)", () => {
 
       for (const slug of slugs) {
         const canonical = EXPECTED_CANONICAL_SLUG_PATTERNS.article(slug);
-        expect(canonical).toBe(`https://kraviona.site/blog/${slug}`);
+        expect(canonical).toBe(`https://ainews.kraviona.com/blog/${slug}`);
       }
     });
 
     it("generates exact canonical URLs for categories, tags, and authors", () => {
       expect(EXPECTED_CANONICAL_SLUG_PATTERNS.category("frontier-models")).toBe(
-        "https://kraviona.site/category/frontier-models"
+        "https://ainews.kraviona.com/category/frontier-models"
       );
       expect(EXPECTED_CANONICAL_SLUG_PATTERNS.tag("indic-benchmarks")).toBe(
-        "https://kraviona.site/tag/indic-benchmarks"
+        "https://ainews.kraviona.com/tag/indic-benchmarks"
       );
       expect(EXPECTED_CANONICAL_SLUG_PATTERNS.author("editorial-desk")).toBe(
-        "https://kraviona.site/author/editorial-desk"
+        "https://ainews.kraviona.com/author/editorial-desk"
       );
     });
 
@@ -129,14 +129,14 @@ Disallow: /login/
 Disallow: /dashboard/
 Disallow: /private/
 
-Sitemap: https://kraviona.site/sitemap.xml
+Sitemap: https://ainews.kraviona.com/sitemap.xml
 `;
 
       const parsed = parseRobotsTxt(sampleRobotsTxt);
       expect(parsed.allows).toContain("/");
       expect(parsed.disallows).toContain("/admin/");
       expect(parsed.disallows).toContain("/api/admin/");
-      expect(parsed.sitemaps).toContain("https://kraviona.site/sitemap.xml");
+      expect(parsed.sitemaps).toContain("https://ainews.kraviona.com/sitemap.xml");
     });
 
     it("verifies all expected sitemap routes are accounted for", () => {
@@ -265,12 +265,12 @@ Sitemap: https://kraviona.site/sitemap.xml
       const sampleSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kraviona.site/</loc>
+    <loc>https://ainews.kraviona.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kraviona.site/blog/frontier-llm-reasoning-benchmark-2026</loc>
+    <loc>https://ainews.kraviona.com/blog/frontier-llm-reasoning-benchmark-2026</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -286,11 +286,11 @@ Sitemap: https://kraviona.site/sitemap.xml
       const sampleIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>https://kraviona.site/sitemap-articles.xml</loc>
+    <loc>https://ainews.kraviona.com/sitemap-articles.xml</loc>
     <lastmod>2026-11-09T03:00:00.000Z</lastmod>
   </sitemap>
   <sitemap>
-    <loc>https://kraviona.site/sitemap-categories.xml</loc>
+    <loc>https://ainews.kraviona.com/sitemap-categories.xml</loc>
     <lastmod>2026-11-09T03:00:00.000Z</lastmod>
   </sitemap>
 </sitemapindex>`;

@@ -10,12 +10,12 @@
  *   3. Set REDIRECT_SOURCE_DOMAINS=ainews.kraviona.com,www.ainews.kraviona.com,kraviona.site,www.kraviona.site
  */
 
-export const DEFAULT_PRODUCTION_SITE_URL = "https://www.kraviona.site";
+export const DEFAULT_PRODUCTION_SITE_URL = "https://ainews.kraviona.com";
 export const DEFAULT_LOCAL_SITE_URL = "http://localhost:3000";
 
 export const HISTORICAL_MIGRATION_HOSTS = [
-  "ainews.kraviona.com",
   "kraviona.site",
+  "www.kraviona.site",
 ] as const;
 
 /**
@@ -23,8 +23,8 @@ export const HISTORICAL_MIGRATION_HOSTS = [
  * origin even if a stale Vercel dashboard env var still points to them.
  */
 export const RETIRED_ENV_FALLBACK_HOSTS = [
-  "ainews.kraviona.com",
-  "www.ainews.kraviona.com",
+  "kraviona.site",
+  "www.kraviona.site",
 ] as const;
 
 export const DEFAULT_GOOGLE_SITE_VERIFICATION =
