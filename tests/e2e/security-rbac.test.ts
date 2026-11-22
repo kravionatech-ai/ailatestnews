@@ -167,7 +167,7 @@ export function evaluateMiddlewareSecurity(req: SimulatedRequest): SimulatedResp
 describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
   const superAdminUser: UserSession = {
     userId: "usr-super-1",
-    email: "super@kraviona.site",
+    email: "super@ainews.kraviona.com",
     name: "Super Administrator",
     role: "super_admin",
     isActive: true,
@@ -175,7 +175,7 @@ describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
 
   const adminUser: UserSession = {
     userId: "usr-admin-1",
-    email: "admin@kraviona.site",
+    email: "admin@ainews.kraviona.com",
     name: "Site Administrator",
     role: "admin",
     isActive: true,
@@ -183,7 +183,7 @@ describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
 
   const editorUser: UserSession = {
     userId: "usr-editor-1",
-    email: "editor@kraviona.site",
+    email: "editor@ainews.kraviona.com",
     name: "Section Editor",
     role: "editor",
     isActive: true,
@@ -191,7 +191,7 @@ describe("E2E Security, RBAC & Middleware Validation (Tiers 1-4)", () => {
 
   const authorUser: UserSession = {
     userId: "usr-author-1",
-    email: "author@kraviona.site",
+    email: "author@ainews.kraviona.com",
     name: "Contributing Author",
     role: "author",
     isActive: true,
