@@ -6,6 +6,7 @@ import { getActiveDesignTokens } from "@/lib/design-tokens/service";
 import { generateCssVariables } from "@/lib/design-tokens/css-generator";
 import { DEFAULT_DESIGN_TOKENS } from "@/lib/design-tokens/defaults";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { CookieConsentBanner } from "@/components/ui/cookie-consent-banner";
 import {
   getGaId,
   getGoogleSiteVerification,
@@ -283,7 +284,10 @@ export default async function RootLayout({
             strategy="afterInteractive"
           />
         )}
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <CookieConsentBanner />
+        </ThemeProvider>
       </body>
     </html>
   );

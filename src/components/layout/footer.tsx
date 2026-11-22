@@ -58,6 +58,7 @@ export function Footer({ aboutText, copyrightText, sections }: FooterProps = {})
         { label: "Contact", href: "/contact" },
         { label: "Newsletter", href: "/newsletter" },
         { label: "Privacy Policy", href: "/privacy" },
+        { label: "Cookie Policy", href: "/privacy#cookies" },
         { label: "Terms of Service", href: "/terms" },
       ],
     },
