@@ -758,7 +758,7 @@ export function SeoEditorPanel({
                       updateField("sitemap", {
                         include: seo.sitemap?.include ?? true,
                         priority: seo.sitemap?.priority ?? 0.7,
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                         
                         changefreq: e.target.value as any,
                       })
                     }

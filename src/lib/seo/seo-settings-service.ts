@@ -436,7 +436,7 @@ export async function getAllSitemapCollections(settings: ISeoSettings) {
 
   // Filter posts
   const postRoutes: SitemapItem[] = posts
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .filter((p: any) => {
       if (!p.slug) return false;
       if (p.seo?.sitemap?.include === false) return false;
@@ -445,7 +445,7 @@ export async function getAllSitemapCollections(settings: ISeoSettings) {
       if (isUrlExcluded(url, excluded)) return false;
       return true;
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .map((p: any) => {
       const validDate = toSafeIsoDate(p.updatedAt || p.publishedAt || p.createdAt);
       return {
@@ -458,7 +458,7 @@ export async function getAllSitemapCollections(settings: ISeoSettings) {
 
   // Filter categories
   const categoryRoutes: SitemapItem[] = categories
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .filter((c: any) => {
       if (!c.slug) return false;
       if (c.seo?.sitemap?.include === false) return false;
@@ -467,7 +467,7 @@ export async function getAllSitemapCollections(settings: ISeoSettings) {
       if (isUrlExcluded(url, excluded)) return false;
       return true;
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .map((c: any) => {
       const validDate = toSafeIsoDate(c.updatedAt || c.createdAt);
       return {
@@ -480,7 +480,7 @@ export async function getAllSitemapCollections(settings: ISeoSettings) {
 
   // Filter tags
   const tagRoutes: SitemapItem[] = tags
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .filter((t: any) => {
       if (!t.slug) return false;
       if (t.seo?.sitemap?.include === false) return false;
@@ -489,7 +489,7 @@ export async function getAllSitemapCollections(settings: ISeoSettings) {
       if (isUrlExcluded(url, excluded)) return false;
       return true;
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .map((t: any) => {
       const validDate = toSafeIsoDate(t.updatedAt || t.createdAt);
       return {
@@ -520,7 +520,7 @@ export async function getAllSitemapCollections(settings: ISeoSettings) {
     "zeroai",
   ]);
   const pageRoutes: SitemapItem[] = pages
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .filter((pg: any) => {
       if (!pg.slug) return false;
       if (coreSlugs.has(pg.slug)) return false;
@@ -530,7 +530,7 @@ export async function getAllSitemapCollections(settings: ISeoSettings) {
       if (isUrlExcluded(url, excluded)) return false;
       return true;
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .map((pg: any) => {
       const validDate = toSafeIsoDate(pg.updatedAt || pg.createdAt);
       return {
@@ -689,7 +689,7 @@ export async function getImageSitemapEntries(settings: ISeoSettings): Promise<Im
 
   const items: ImageSitemapItem[] = [];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   for (const p of posts as any[]) {
     if (!p?.slug) continue;
     if (p.seo?.sitemap?.include === false) continue;
@@ -1016,7 +1016,7 @@ export async function getRssFeedItems(settings: ISeoSettings, limit = 30): Promi
     .lean();
 
   const postFeedItems: RssFeedItem[] = posts
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .filter((p: any) => {
       if (!p.slug || !p.title) return false;
       if (p.seo?.sitemap?.include === false) return false;
@@ -1025,7 +1025,7 @@ export async function getRssFeedItems(settings: ISeoSettings, limit = 30): Promi
       if (isUrlExcluded(url, excluded)) return false;
       return true;
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     .map((p: any) => ({
       url: `${siteUrl}/blog/${p.slug}`,
       title: String(p.title).trim(),

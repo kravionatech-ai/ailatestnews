@@ -14,11 +14,11 @@ export const getAllCategories = cache(async function getAllCategories() {
     ]);
 
     const countMap = new Map<string, number>(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       counts.map((c: any) => [c._id ? c._id.toString() : "", c.count])
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const categoriesWithCount = categories.map((cat: any) => ({
       ...cat,
       postCount: countMap.get(cat._id.toString()) || 0,
@@ -56,11 +56,11 @@ export const getAllTags = cache(async function getAllTags() {
     ]);
 
     const countMap = new Map<string, number>(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       counts.map((c: any) => [c._id ? c._id.toString() : "", c.count])
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const tagsWithCount = tags.map((tag: any) => ({
       ...tag,
       postCount: countMap.get(tag._id.toString()) || 0,

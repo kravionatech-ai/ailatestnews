@@ -15,9 +15,9 @@ export async function getCommentsByPost(postId: string) {
   const parsed = JSON.parse(JSON.stringify(comments));
 
   // Build nested threaded comments tree
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const commentMap = new Map<string, any>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const rootComments: any[] = [];
 
   parsed.forEach((c: { _id: string; replies?: unknown[] }) => {

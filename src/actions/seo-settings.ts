@@ -759,7 +759,7 @@ export async function updateItemIndexingAction({
     const adminUser = await requireAdminSession();
     await connectDB();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     let doc: any = null;
     let path = "/";
 

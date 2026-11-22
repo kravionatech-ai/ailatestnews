@@ -3,15 +3,15 @@
 import { HeroMagazineSection, type HeroMagazineProps } from "./sections/hero-magazine";
 
 export interface HeroProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   featuredPost?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   secondaryPosts?: any[];
   badge?: string;
   title?: string;
   subtitle?: string;
   onOpenChat?: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   [key: string]: any;
 }
 

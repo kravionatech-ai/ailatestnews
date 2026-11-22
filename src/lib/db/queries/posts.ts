@@ -44,7 +44,7 @@ export async function getPublishedPosts({
     await connectDB();
 
     const statusFilter = getStatusFilter(status);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const query: any = { status: statusFilter };
 
     if (excludeIds.length > 0) {
@@ -147,7 +147,7 @@ export const getPostBySlug = cache(async function getPostBySlug(
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const query: any = { slug };
     if (!allowDraft) {
       query.status = "published";
@@ -256,7 +256,7 @@ export async function getFeaturedPosts(limit = 4, excludeIds: string[] = []) {
   try {
     await connectDB();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const query: any = {
       status: "published",
       featured: true,
@@ -285,7 +285,7 @@ export async function getTrendingPosts(limit = 5, excludeIds: string[] = []) {
   try {
     await connectDB();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const query: any = { status: "published" };
     if (excludeIds.length > 0) {
       query._id = { $nin: excludeIds };

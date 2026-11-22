@@ -118,7 +118,7 @@ Content: ${textContent}
         .slice(0, 3)
         .join(" ");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const query: any = { status: "published" };
       if (searchTerms) {
         query.$or = [

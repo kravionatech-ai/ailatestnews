@@ -51,7 +51,7 @@ export default async function ArchivePage() {
   const posts = JSON.parse(JSON.stringify(postsRaw));
 
   // Group by year and month
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const grouped: Record<string, Record<string, any[]>> = {};
 
   posts.forEach((post: any) => {

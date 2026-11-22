@@ -35,9 +35,9 @@ export default async function AdminCommentsPage() {
 
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--color-card-background)] shadow-xs divide-y divide-[var(--border)] overflow-hidden">
         {comments.map((comment) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           
           const author = comment.author as any;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           
           const post = comment.post as any;
 
           return (

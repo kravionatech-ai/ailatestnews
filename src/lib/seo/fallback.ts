@@ -193,7 +193,7 @@ export async function buildEntityMetadata(
   const canonicalPath = opts.path.startsWith("/") ? opts.path : `/${opts.path}`;
   const rawCanonical =
     opts.entitySeo?.canonicalUrl?.trim() ||
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (opts.entitySeo as any)?.canonical?.trim();
   const finalCanonical = rawCanonical
     ? buildCanonicalUrl(rawCanonical, siteUrl)
@@ -213,7 +213,7 @@ export async function buildEntityMetadata(
   // 5. Robots Fallback (Index, Follow, etc.)
   const isProd = process.env.NODE_ENV === "production";
   const userRobots = opts.entitySeo?.robots;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const legacyNoindex = (opts.entitySeo as any)?.noindex;
   const shouldIndex =
     userRobots?.index !== undefined

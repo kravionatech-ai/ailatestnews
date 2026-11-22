@@ -7,14 +7,14 @@ import { env } from "@/env";
  * where module-level state is shared across requests.
  */
 
-/* eslint-disable no-var */
+ 
 declare global {
   var mongooseConnection: {
     conn: typeof mongoose | null;
     promise: Promise<typeof mongoose> | null;
   };
 }
-/* eslint-enable no-var */
+ 
 
 const MONGODB_URI = env.MONGODB_URI;
 

@@ -18,7 +18,7 @@ export default async function EditAdminPage({ params }: EditPageProps) {
     notFound();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const p = page as any;
 
   const initialData = {

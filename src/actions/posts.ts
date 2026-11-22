@@ -730,7 +730,7 @@ export async function duplicatePostAction(id: string) {
   }
 
   await connectDB();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const original: any = await Post.findById(id).lean();
   if (!original) {
     return { success: false, error: "Post not found" };

@@ -32,7 +32,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
     notFound();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const p = post as any;
 
   const initialData = {
