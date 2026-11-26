@@ -28,8 +28,8 @@ export const RETIRED_ENV_FALLBACK_HOSTS = [
 ] as const;
 
 export const DEFAULT_GOOGLE_SITE_VERIFICATION =
-  "-XV8p9zE9MYruAbDWo-gSDEYRFLrSB200khCkukUysg";
-export const DEFAULT_GTM_ID = "GTM-5Q53H625";
+  "google0c0618e03e1cd921";
+export const DEFAULT_GTM_ID = "G-RC5GPJKKW2";
 export const DEFAULT_GA_ID = "G-RC5GPJKKW2";
 
 export interface DomainRedirectDecision {

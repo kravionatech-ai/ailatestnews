@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { resolveDomainRedirect } from "@/lib/seo/domain";
 
 // Regex matching static file extensions to skip auth/header proxy processing
-const STATIC_FILE_REGEX = /\.(ico|png|jpg|jpeg|svg|webp|gif|css|js|woff|woff2|ttf|eot|map|txt|xml|webmanifest)$/i;
+const STATIC_FILE_REGEX = /\.(ico|png|jpg|jpeg|svg|webp|gif|css|js|woff|woff2|ttf|eot|map|txt|xml|webmanifest|html)$/i;
 
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;

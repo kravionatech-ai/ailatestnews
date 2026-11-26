@@ -185,9 +185,9 @@ describe("Centralized Domain Configuration & Migration Engine", () => {
       delete process.env.NEXT_PUBLIC_GA_ID;
 
       expect(getGoogleSiteVerification()).toBe(DEFAULT_GOOGLE_SITE_VERIFICATION);
-      expect(getGoogleSiteVerification()).toBe("-XV8p9zE9MYruAbDWo-gSDEYRFLrSB200khCkukUysg");
+      expect(getGoogleSiteVerification()).toBe("google0c0618e03e1cd921");
       expect(getGtmId()).toBe(DEFAULT_GTM_ID);
-      expect(getGtmId()).toBe("GTM-5Q53H625");
+      expect(getGtmId()).toBe("G-RC5GPJKKW2");
       expect(getGaId()).toBe(DEFAULT_GA_ID);
     });
   });

@@ -260,13 +260,13 @@ export default async function RootLayout({
         {(gtmId || gaId) && (
           <script
             dangerouslySetInnerHTML={{
-              __html: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());${gaId ? `\ngtag('config', '${gaId}');` : ""}`,
+              __html: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());${gaId && gaId !== gtmId ? `\ngtag('config', '${gaId}');` : ""}`,
             }}
           />
         )}
       </head>
       <body className="min-h-screen bg-[var(--background)] font-sans antialiased text-[var(--foreground)] selection:bg-[var(--accent)] selection:text-white">
-        {gtmId && (
+        {gtmId && gtmId.startsWith("GTM-") && (
           <noscript>
             <iframe
               src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
@@ -277,7 +277,7 @@ export default async function RootLayout({
             />
           </noscript>
         )}
-        {gaId && (
+        {gaId && gaId !== gtmId && (
           <Script
             id="google-analytics-gtag"
             src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}

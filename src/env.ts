@@ -67,8 +67,8 @@ export const env = createEnv({
     NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: z
       .string()
       .optional()
-      .default("-XV8p9zE9MYruAbDWo-gSDEYRFLrSB200khCkukUysg"),
-    NEXT_PUBLIC_GTM_ID: z.string().optional().default("GTM-5Q53H625"),
+      .default("google0c0618e03e1cd921"),
+    NEXT_PUBLIC_GTM_ID: z.string().optional().default("G-RC5GPJKKW2"),
     NEXT_PUBLIC_SITE_NAME: z.string().min(1).default("AI Latest News"),
     NEXT_PUBLIC_GA_ID: z.string().optional().default(""),
   },
